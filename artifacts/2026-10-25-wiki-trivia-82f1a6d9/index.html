@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101914">
+<title>WikiQuest - A little curiosity goes a long way</title>
+<style>
+:root{color-scheme:dark;--bg:#101914;--panel:#19251e;--line:#35463a;--muted:#a6b8aa;--ink:#f3f5ec;--lime:#d5f87a;--good:#a9e5a9;--bad:#ffb4a9;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#2c3d25 0,transparent 47%),var(--bg);color:var(--ink);min-height:100vh}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}button:disabled{cursor:default}button:focus-visible,a:focus-visible{outline:3px solid var(--lime);outline-offset:5px}button{color:inherit}a{color:var(--lime)}[hidden]{display:none!important}.wrap{max-width:1180px;margin:auto;padding:28px 36px 24px}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:22px;gap:12px}.brand{font-size:23px;font-weight:800;letter-spacing:-1px;display:flex;align-items:center;gap:10px}.brand-mark{width:34px;height:34px;background:var(--lime);color:var(--bg);border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif;font-size:28px}.header-note,.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:700;color:var(--muted)}.header-note{letter-spacing:1px}.intro{padding:58px 0 34px;max-width:780px}.eyebrow{color:var(--lime)}h1,h2,h3,p{margin:0}h1{font-size:clamp(44px,6.6vw,78px);font-weight:550;letter-spacing:-4px;line-height:1.06;margin:16px 0 20px}h1 em{font-family:Georgia,serif;font-weight:400;color:var(--lime)}.intro>p:last-child{color:var(--muted);max-width:540px;line-height:1.7;font-size:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 16px}.section-head h2{font-size:16px;font-weight:600}.section-head span{font-size:12px;color:var(--muted)}.categories{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.category{position:relative;text-align:left;display:flex;flex-direction:column;padding:22px;min-height:240px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,#25352a,var(--panel));transition:transform .2s,border-color .2s}.category:hover{transform:translateY(-4px);border-color:#91a571}.category[aria-pressed=true]{border-color:var(--lime);box-shadow:inset 0 0 0 1px var(--lime)}.category .number{position:absolute;top:21px;right:20px;color:var(--muted);font-size:11px}.category svg{width:58px;height:58px;margin-bottom:24px;color:var(--accent)}.category h3{font-size:22px;letter-spacing:-.6px;line-height:1.2;max-width:170px}.category p{font-size:12px;color:var(--muted);margin-top:10px}.category .best{font-size:11px;margin-top:14px;color:var(--accent)}.start-row{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:20px}.selection-note{font-size:13px;color:var(--muted);line-height:1.6}.primary{background:var(--lime);border:1px solid var(--lime);color:#17200f;border-radius:9px;font-weight:750;padding:16px 26px;min-height:50px}.primary:hover{background:#e1ff9b}.primary:disabled{background:#344333;border-color:#44523c;color:#b4bca6}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;border-top:1px solid var(--line);margin-top:42px;padding-top:24px}.rule{display:flex;gap:12px;align-items:flex-start}.rule-icon{color:var(--lime);font-family:Georgia,serif;font-size:23px;min-width:28px}.rule strong{font-size:12px;font-weight:650}.rule p{color:var(--muted);font-size:12px;line-height:1.6;margin-top:4px}footer{display:flex;justify-content:space-between;gap:16px;font-size:11px;color:var(--muted);padding-top:32px;line-height:1.6}footer a{color:var(--muted)}.quiet{background:none;border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:12px}.quiet:hover{border-color:var(--muted)}.game-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:28px 0}.game-title{font-size:15px;font-weight:600}.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 238px;gap:36px}.question-card{background:linear-gradient(155deg,#233329,#18241d);border:1px solid var(--line);border-radius:20px;padding:32px}.question-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:12px}.level{color:var(--lime);background:#d5f87a14;border:1px solid #d5f87a45;border-radius:20px;padding:6px 11px;font-size:11px}.progress-track{height:3px;background:#3b4b3b;border-radius:2px;margin:20px 0 30px}.progress-track>div{height:100%;background:var(--lime);transition:width .3s}#question{font-size:clamp(23px,3vw,34px);font-weight:550;line-height:1.3;letter-spacing:-.7px;min-height:90px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px}.answer{text-align:left;border:1px solid #4a5d4d;border-radius:10px;background:#142119;padding:17px 15px;min-height:72px;display:flex;gap:12px;align-items:center;font-size:14px;line-height:1.4}.answer:not(:disabled):hover{background:#31442b;border-color:var(--lime)}.letter{display:grid;place-items:center;border:1px solid #4a5d4d;border-radius:50%;width:25px;height:25px;flex-shrink:0;font-size:11px;color:var(--lime)}.answer.correct{border-color:var(--good);background:#25432b}.answer.wrong{border-color:var(--bad);background:#472c27}.answer.removed{opacity:.3}.answer:disabled{color:var(--ink)}.answer.removed:disabled{color:var(--muted)}.lifelines{margin-top:24px}.lifeline-heading{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:10px}.lifeline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.lifeline{border:1px solid var(--line);border-radius:9px;background:#1d2c22;padding:13px 5px;font-size:12px;min-height:66px}.lifeline b{display:block;font-size:17px;margin-bottom:5px;color:var(--lime)}.lifeline:disabled{opacity:.38}.lifeline:not(:disabled):hover{border-color:var(--lime)}#help-message{background:#202f25;border:1px solid var(--line);padding:16px;border-radius:10px;margin-top:14px;font-size:13px;line-height:1.7;color:#dce8d8}#help-message:empty{display:none}.poll-row{display:flex;gap:10px;align-items:center;margin-top:6px;font-size:12px}.poll-bar{height:7px;background:var(--lime);display:inline-block;border-radius:4px}.feedback{border-top:1px solid var(--line);padding-top:22px;margin-top:24px;line-height:1.6}.feedback h3{font-size:18px;margin-bottom:8px}.feedback p{font-size:14px;color:#c2d0c1}.feedback a{display:inline-block;font-size:12px;margin:12px 0 20px}.feedback .primary{display:block;width:100%}.score-panel{padding-top:8px}.score-number{font-size:37px;font-variant-numeric:tabular-nums;letter-spacing:-1.5px}.score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}.score-panel>p{color:var(--muted);font-size:12px;margin:8px 0 24px}.ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column-reverse;gap:3px}.ladder li{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:5px 10px;color:#94a892;border-radius:5px;min-height:23px}.ladder li.current{background:var(--lime);color:#17200f;font-weight:700}.ladder li.hit{color:var(--good)}.ladder li.miss{color:var(--bad)}.ladder-title{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px}.result{text-align:center;max-width:720px;margin:60px auto 30px}.result h1{font-size:clamp(42px,7vw,68px)}.result .result-score{font-size:64px;letter-spacing:-3px;color:var(--lime);margin:28px 0 6px}.result>p{color:var(--muted);line-height:1.7}.result-actions{display:flex;justify-content:center;gap:12px;margin:28px 0}.review-list{text-align:left;border-top:1px solid var(--line);margin-top:36px}.review-list details{padding:15px 0;border-bottom:1px solid var(--line);font-size:13px}.review-list summary{cursor:pointer;line-height:1.6}.review-list p{color:var(--muted);line-height:1.7;margin:12px 0}.review-list a{font-size:12px}.result-badge{display:inline-block;border:1px solid var(--line);padding:8px 16px;border-radius:30px;color:var(--lime);font-size:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){.categories{grid-template-columns:repeat(2,1fr)}.category{min-height:208px}.category h3{max-width:none}.game-layout{grid-template-columns:minmax(0,1fr) 180px;gap:20px}.question-card{padding:24px}.rules{gap:16px}.header-note{font-size:9px}h1{letter-spacing:-2.5px}}
+@media(max-width:620px){.wrap{padding:20px 18px}header{padding-bottom:18px}.brand{font-size:21px}.header-note{max-width:125px;text-align:right;line-height:1.7}.intro{padding:36px 0 28px}h1{font-size:47px;letter-spacing:-2.5px}.intro>p:last-child{font-size:14px}.categories{gap:10px}.category{min-height:215px;padding:18px 14px}.category svg{width:46px;height:46px;margin-bottom:22px}.category h3{font-size:20px}.category .number{right:13px;top:18px}.category p{font-size:11px}.section-head span{font-size:11px}.start-row{align-items:stretch;flex-direction:column;gap:14px}.start-row .primary{width:100%}.rules{grid-template-columns:1fr;gap:18px;margin-top:28px;padding-top:24px}.rule p{margin-top:2px}.game-top{margin:22px 0}.game-title{font-size:13px}.game-layout{display:block}.question-card{padding:22px 17px}.question-meta{font-size:11px}#question{min-height:90px;font-size:26px}.answers{grid-template-columns:1fr;margin-top:22px;gap:10px}.answer{min-height:60px;padding:14px}.score-panel{margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:20px}.score-panel>p{margin:0;max-width:140px;text-align:right;line-height:1.5}.score-number{font-size:30px}.ladder-wrap{display:none}.lifeline{font-size:11px}.result{margin-top:36px}.result-actions{flex-direction:column}.result .result-score{font-size:56px}footer{font-size:10px;flex-wrap:wrap;padding-top:28px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand"><span class="brand-mark" aria-hidden="true">w</span>WikiQuest<span style="color:var(--lime)">.</span></div><span class="header-note">Big questions. Real sources.</span></header>
+<main>
+<section id="home" aria-labelledby="home-title">
+<div class="intro"><p class="eyebrow">For the wonderfully curious</p><h1 id="home-title">A little curiosity.<br>A <em>great big quest.</em></h1><p>Pick your world. Climb through 20 questions, from familiar favorites to the delightfully obscure. Every answer starts with Wikipedia.</p></div>
+<div class="section-head"><h2>Choose your rabbit hole</h2><span>4 categories &middot; 80 questions</span></div>
+<div class="categories" id="categories"></div>
+<div class="start-row"><p class="selection-note" id="selection-note" aria-live="polite">Choose a category to begin.<br>No timer. Just you and your curiosity.</p><button id="start" class="primary" disabled>Start your quest &rarr;</button></div>
+<div class="rules">
+<div class="rule"><span class="rule-icon" aria-hidden="true">01</span><div><strong>Easy in. Expert out.</strong><p>20 fixed questions per category, in five increasing difficulty tiers.</p></div></div>
+<div class="rule"><span class="rule-icon" aria-hidden="true">02</span><div><strong>A little help, wisely spent.</strong><p>50:50, a simulated audience, and a second chance. Each once per quest.</p></div></div>
+<div class="rule"><span class="rule-icon" aria-hidden="true">03</span><div><strong>Leave knowing a little more.</strong><p>Every answer includes an explanation and its Wikipedia article.</p></div></div>
+</div>
+</section>
+<section id="game" hidden aria-labelledby="question">
+<div class="game-top"><span class="game-title" id="game-category"></span><button class="quiet" id="leave">Leave quest</button></div>
+<div class="game-layout">
+<div><div class="question-card">
+<div class="question-meta"><span id="question-count"></span><span class="level" id="difficulty"></span></div>
+<div class="progress-track" role="progressbar" aria-label="Questions completed" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="progress"><div id="progress-fill"></div></div>
+<h2 id="question" tabindex="-1"></h2><div class="answers" id="answers"></div>
+<div id="feedback" class="feedback" hidden aria-live="polite"></div>
+</div>
+<div class="lifelines"><div class="lifeline-heading"><span>Your lifelines</span><span>One use each, per quest</span></div><div class="lifeline-grid">
+<button class="lifeline" id="fifty" aria-label="50:50: remove two wrong answers"><b>50:50</b>Cut the odds</button>
+<button class="lifeline" id="audience" aria-label="Ask a simulated audience"><b aria-hidden="true">&#9636;</b>Ask the audience</button>
+<button class="lifeline" id="second" aria-label="Activate a second chance before answering"><b aria-hidden="true">&#8634;</b>Second chance</button>
+</div><div id="help-message" role="status"></div></div>
+</div>
+<aside class="score-panel" aria-label="Your score"><div><div class="score-label">Your score</div><div class="score-number" id="score">0</div></div><p id="accuracy">Each question is worth more than the last.</p><div class="ladder-wrap"><div class="ladder-title"><span>The climb</span><span>Points per question</span></div><ol class="ladder" id="ladder"></ol></div></aside>
+</div></section>
+<section id="result" class="result" hidden aria-labelledby="result-title"></section>
+</main>
+<footer><span>Made for curious minds. Not affiliated with Wikipedia.</span><span>Facts paraphrased from <a href="https://en.wikipedia.org/" target="_blank" rel="noopener noreferrer">Wikipedia</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></span></footer>
+</div>
+<script>
+"use strict";
+// Each entry keeps the correct answer first; choices are shuffled for every quest.
+const BANK = {
+rock: [
+["Who was Queen's lead singer during the 1970s?",["Freddie Mercury","Robert Plant","Roger Daltrey","Mick Jagger"],"Freddie Mercury fronted Queen alongside Brian May, Roger Taylor and John Deacon.","Queen (band)"],
+["Which band recorded \"Stairway to Heaven\"?",["Led Zeppelin","Deep Purple","Black Sabbath","The Who"],"Led Zeppelin released the song on their untitled fourth album in 1971.","Led Zeppelin"],
+["Which band released The Dark Side of the Moon?",["Pink Floyd","Yes","Genesis","King Crimson"],"Pink Floyd released The Dark Side of the Moon in 1973.","Pink Floyd"],
+["Rumours is a landmark 1977 album by which band?",["Fleetwood Mac","The Eagles","Heart","Aerosmith"],"Fleetwood Mac's Rumours became one of the best-selling albums of all time.","Fleetwood Mac"],
+["Which band released the song and album \"Hotel California\"?",["Eagles","America","Boston","Journey"],"Hotel California is the Eagles' 1976 studio album and the title of its famous song.","Eagles (band)"],
+["Who played drums for Led Zeppelin?",["John Bonham","Keith Moon","Ian Paice","Bill Ward"],"John Bonham was Led Zeppelin's drummer; the band disbanded after his death in 1980.","Led Zeppelin"],
+["On which Queen album did \"Bohemian Rhapsody\" first appear?",["A Night at the Opera","News of the World","Jazz","Sheer Heart Attack"],"Queen released Bohemian Rhapsody on A Night at the Opera in 1975.","Queen (band)"],
+["Which guitarist joined Pink Floyd shortly before Syd Barrett's departure?",["David Gilmour","Steve Hackett","Steve Howe","Ritchie Blackmore"],"David Gilmour joined the band before Barrett's departure in 1968.","Pink Floyd"],
+["Which duo joined Fleetwood Mac for its self-titled 1975 album?",["Lindsey Buckingham and Stevie Nicks","Ann Wilson and Nancy Wilson","Don Henley and Glenn Frey","Grace Slick and Paul Kantner"],"Buckingham and Nicks joined at the end of 1974 and appeared on Fleetwood Mac's self-titled 1975 album.","Fleetwood Mac"],
+["In which city were the Eagles formed in 1971?",["Los Angeles","San Francisco","Nashville","Austin"],"The Eagles formed in Los Angeles with Glenn Frey, Don Henley, Bernie Leadon and Randy Meisner.","Eagles (band)"],
+["In what year was the untitled album commonly called Led Zeppelin IV released?",["1971","1970","1972","1973"],"The fourth Led Zeppelin album was released in November 1971.","Led Zeppelin"],
+["Which Queen member played bass guitar?",["John Deacon","Roger Taylor","Brian May","Freddie Mercury"],"John Deacon was Queen's bass guitarist; Roger Taylor played drums and Brian May played guitar.","Queen (band)"],
+["Who replaced Bernie Leadon in the Eagles in 1975?",["Joe Walsh","Don Felder","Timothy B. Schmit","Randy Meisner"],"Joe Walsh joined the Eagles after Bernie Leadon left in 1975.","Eagles (band)"],
+["Which Pink Floyd double album came out in 1979?",["The Wall","The Final Cut","Wish You Were Here","Ummagumma"],"The Wall was released in 1979; its story later became a film.","Pink Floyd"],
+["Which guitarist founded Fleetwood Mac with Mick Fleetwood in 1967?",["Peter Green","Lindsey Buckingham","Danny Kirwan","Bob Welch"],"Peter Green formed Fleetwood Mac in London in 1967 with drummer Mick Fleetwood.","Fleetwood Mac"],
+["Which label released Led Zeppelin's Physical Graffiti?",["Swan Song Records","Harvest Records","Vertigo Records","Island Records"],"Physical Graffiti was the first Led Zeppelin album released on the band's Swan Song label.","Physical Graffiti"],
+["Pink Floyd's Animals loosely draws on which George Orwell book?",["Animal Farm","Nineteen Eighty-Four","Homage to Catalonia","Coming Up for Air"],"Animals uses a social allegory loosely based on Orwell's Animal Farm.","Animals (Pink Floyd album)"],
+["Which Fleetwood Mac double album followed Rumours in 1979?",["Tusk","Mirage","Tango in the Night","Bare Trees"],"The ambitious double album Tusk followed Rumours in 1979.","Fleetwood Mac"],
+["Glenn Frey co-wrote the Eagles' debut single \"Take It Easy\" with whom?",["Jackson Browne","J. D. Souther","Warren Zevon","Bob Seger"],"Take It Easy was written by Jackson Browne and Glenn Frey.","Take It Easy"],
+["What is the name of the guitar Brian May built with his father?",["Red Special","Black Strat","Old Black","The Log"],"Brian May and his father Harold built the Red Special in the 1960s; it became central to Queen's sound.","Red Special"]
+],
+soccer: [
+["Which country won the first men's FIFA World Cup in 1930?",["Uruguay","Argentina","Brazil","Italy"],"Host nation Uruguay beat Argentina 4-2 in the first World Cup final.","1930 FIFA World Cup"],
+["Which country hosted the 1966 men's World Cup?",["England","France","West Germany","Spain"],"England hosted the 1966 tournament and won its only men's World Cup title that year.","1966 FIFA World Cup"],
+["Which country won the men's World Cup in 1970?",["Brazil","Italy","West Germany","Uruguay"],"Brazil beat Italy 4-1 in the 1970 final in Mexico.","1970 FIFA World Cup"],
+["Which player is famous for the \"Hand of God\" goal at the 1986 World Cup?",["Diego Maradona","Pelé","Michel Platini","Johan Cruyff"],"Maradona scored the Hand of God goal in Argentina's quarter-final against England.","1986 FIFA World Cup"],
+["Which country won its first men's World Cup in 2010?",["Spain","Netherlands","Portugal","Ghana"],"Spain won its first title by beating the Netherlands 1-0 in the final.","2010 FIFA World Cup"],
+["Which country hosted the first FIFA Women's World Cup in 1991?",["China","United States","Sweden","Germany"],"China hosted the inaugural FIFA Women's World Cup in 1991; the United States won the tournament.","1991 FIFA Women's World Cup"],
+["Who scored a hat-trick for England in the 1966 final?",["Geoff Hurst","Bobby Charlton","Roger Hunt","Jimmy Greaves"],"Geoff Hurst scored three goals in England's 4-2 extra-time victory over West Germany.","1966 FIFA World Cup"],
+["Which country hosted the 1970 World Cup?",["Mexico","Brazil","Argentina","Chile"],"Mexico hosted the 1970 tournament, the first men's World Cup held in North America.","1970 FIFA World Cup"],
+["Which club won the first European Cup, in 1956?",["Real Madrid","AC Milan","Benfica","Stade de Reims"],"Real Madrid beat Stade de Reims 4-3 in the first European Cup final.","1956 European Cup final"],
+["Who scored the winning goal in the 2010 final?",["Andrés Iniesta","David Villa","Xavi","Fernando Torres"],"Iniesta's extra-time goal gave Spain a 1-0 victory over the Netherlands.","2010 FIFA World Cup"],
+["How many teams took part in the 1930 World Cup?",["13","12","16","24"],"Thirteen teams participated in the inaugural tournament.","1930 FIFA World Cup"],
+["Who was the top scorer at the 1966 World Cup?",["Eusébio","Geoff Hurst","Bobby Charlton","Franz Beckenbauer"],"Portugal's Eusébio finished as top scorer with nine goals.","1966 FIFA World Cup"],
+["Which team won the first European Nations' Cup in 1960, now known as the Euros?",["Soviet Union","Yugoslavia","Spain","Czechoslovakia"],"The Soviet Union beat Yugoslavia 2-1 after extra time to win the inaugural European Nations' Cup.","1960 European Nations' Cup"],
+["Which country was originally chosen to host the 1986 World Cup before withdrawing?",["Colombia","Chile","Peru","Venezuela"],"Colombia withdrew as host, and Mexico was selected to stage the 1986 tournament.","1986 FIFA World Cup"],
+["Which country became the first host eliminated in the group stage of a men's World Cup, in 2010?",["South Africa","Japan","Mexico","United States"],"South Africa became the first men's World Cup host not to advance from the opening group stage.","2010 FIFA World Cup"],
+["Who was the top scorer at the 1930 World Cup?",["Guillermo Stábile","José Nasazzi","Héctor Scarone","Pedro Cea"],"Argentina's Guillermo Stábile led the scoring with eight goals.","1930 FIFA World Cup"],
+["Who was the top scorer at the inaugural FIFA Women's World Cup in 1991?",["Michelle Akers","Mia Hamm","Heidi Mohr","Carolina Morace"],"Michelle Akers scored ten goals for the United States at the 1991 tournament.","1991 FIFA Women's World Cup"],
+["Who won the Golden Boot as the leading scorer at the 1970 World Cup?",["Gerd Müller","Jairzinho","Pelé","Teófilo Cubillas"],"West Germany's Gerd Müller scored ten goals to lead the 1970 tournament.","1970 FIFA World Cup"],
+["Which player won the Golden Boot at the 1986 World Cup?",["Gary Lineker","Diego Maradona","Careca","Emilio Butragueño"],"England's Gary Lineker finished with six goals, the most at the 1986 tournament.","1986 FIFA World Cup"],
+["Who received the Golden Ball as the best player of the 2010 World Cup?",["Diego Forlán","Wesley Sneijder","David Villa","Andrés Iniesta"],"Uruguay's Diego Forlán won the Golden Ball; Germany's Thomas Müller won the Golden Boot.","2010 FIFA World Cup"]
+],
+flags: [
+["Which country's flag features a red maple leaf?",["Canada","Austria","Denmark","Peru"],"Canada's national flag has a stylized red maple leaf on a white square between red bands.","Flag of Canada"],
+["A red disc on a white field is the national flag of which country?",["Japan","Bangladesh","Palau","Laos"],"Japan's flag shows a crimson-red disc representing the sun on a white field.","Flag of Japan"],
+["Which country's flag has a white cross on a red square?",["Switzerland","Denmark","Finland","Sweden"],"Switzerland's national flag is square, with a white cross on a red field.","Flag of Switzerland"],
+["Which country's flag has a blue globe inside a yellow diamond on green?",["Brazil","Portugal","Bolivia","Guyana"],"Brazil's flag places a blue celestial globe inside a yellow rhombus on a green field.","Flag of Brazil"],
+["Which country's national flag consists of two joined triangular pennants?",["Nepal","Bhutan","Sri Lanka","Maldives"],"Nepal's flag is made of two triangular pennants and is the only non-quadrilateral national flag.","Flag of Nepal"],
+["Which country's flag features a dragon on yellow and orange?",["Bhutan","Mongolia","Cambodia","Thailand"],"Bhutan's flag shows the Druk, or thunder dragon, over yellow and orange.","Flag of Bhutan"],
+["Which country's flag has a green Y-shaped band and was introduced in 1994?",["South Africa","Zimbabwe","Namibia","Zambia"],"South Africa introduced its current flag in April 1994 during the transition to democracy.","Flag of South Africa"],
+["Which country's national flag includes an AK-47 rifle?",["Mozambique","Angola","Kenya","Uganda"],"Mozambique's flag includes an AK-47 with a bayonet, a hoe, a book and a star.","Flag of Mozambique"],
+["The flag known as the Dannebrog belongs to which country?",["Denmark","Norway","Iceland","Finland"],"Dannebrog is the Danish flag: a white Nordic cross on a red field.","Flag of Denmark"],
+["Which Central American country's flag shows two men supporting a coat of arms?",["Belize","Honduras","Guatemala","El Salvador"],"Belize's coat of arms includes two human supporters and appears on its national flag.","Flag of Belize"],
+["How many points does the maple leaf on Canada's flag have?",["11","7","9","13"],"The stylized maple leaf on Canada's national flag has eleven points.","Flag of Canada"],
+["What does the red disc on Japan's flag represent?",["The sun","The moon","A chrysanthemum","Mount Fuji"],"The disc symbolizes the sun; the flag is commonly called Hinomaru.","Flag of Japan"],
+["Which shape is Switzerland's national flag, unlike most national flags?",["Square","An elongated rectangle","A swallowtail","A triangle"],"The national flag is square, while the Swiss civil ensign used at sea is rectangular.","Flag of Switzerland"],
+["What motto appears on Brazil's flag?",["Ordem e Progresso","Paz e Liberdade","Unidade e Justiça","Deus e Pátria"],"Ordem e Progresso means Order and Progress and appears across the blue globe.","Flag of Brazil"],
+["Which border color surrounds the crimson field of Nepal's flag?",["Blue","White","Gold","Green"],"Nepal's flag has a blue border around its crimson-red field.","Flag of Nepal"],
+["What does the dragon on Bhutan's flag hold in its claws?",["Jewels","Arrows","Lotus flowers","Swords"],"The dragon holds jewels, associated with wealth and prosperity.","Flag of Bhutan"],
+["Who designed the current South African national flag?",["Frederick Brownell","Gerard Sekoto","William Kentridge","Esther Mahlangu"],"State herald Frederick Brownell designed South Africa's flag.","Flag of South Africa"],
+["What agricultural tool appears with the rifle on Mozambique's flag?",["A hoe","A sickle","A plough","A rake"],"A hoe crosses the rifle on Mozambique's flag and represents agriculture.","Flag of Mozambique"],
+["According to legend, at which 1219 battle did the Dannebrog fall from the sky?",["Battle of Lindanise","Battle of Stamford Bridge","Battle of Hastings","Battle of Grunwald"],"Danish legend links the flag's descent from the sky to the Battle of Lindanise in 1219; this is a legend, not established history.","Flag of Denmark"],
+["What Latin motto appears on Belize's flag?",["Sub umbra floreo","E pluribus unum","In hoc signo vinces","Semper fidelis"],"Belize's coat of arms bears Sub umbra floreo, meaning Under the shade I flourish.","Flag of Belize"]
+],
+events: [
+["In what year did World War I begin?",["1914","1912","1916","1918"],"World War I began in 1914 and ended in 1918.","World War I"],
+["Which city was the target of the first atomic bomb used in war, in 1945?",["Hiroshima","Nagasaki","Tokyo","Osaka"],"The United States dropped an atomic bomb on Hiroshima on 6 August 1945, before the bombing of Nagasaki.","Atomic bombings of Hiroshima and Nagasaki"],
+["Who became the first person to walk on the Moon?",["Neil Armstrong","Buzz Aldrin","Yuri Gagarin","Michael Collins"],"Neil Armstrong became the first person to step onto the Moon during Apollo 11 in 1969.","Apollo 11"],
+["In which year did the Berlin Wall open to mass crossings?",["1989","1987","1990","1991"],"The Berlin Wall opened on 9 November 1989; German reunification followed in 1990.","Fall of the Berlin Wall"],
+["Which ship sank on its maiden voyage in April 1912?",["RMS Titanic","RMS Lusitania","RMS Mauretania","HMHS Britannic"],"Titanic sank in the North Atlantic after striking an iceberg on its maiden voyage.","Sinking of the Titanic"],
+["In what year was the United Nations founded?",["1945","1919","1939","1955"],"The United Nations came into existence in October 1945, following the Second World War.","United Nations"],
+["Who led the Bolsheviks during Russia's October Revolution in 1917?",["Vladimir Lenin","Leon Trotsky","Joseph Stalin","Alexander Kerensky"],"The Bolshevik Party, led by Vladimir Lenin, overthrew Russia's Provisional Government.","October Revolution"],
+["Who led the 1930 Salt March against British colonial rule?",["Mahatma Gandhi","Jawaharlal Nehru","Muhammad Ali Jinnah","Subhas Chandra Bose"],"Gandhi led the Salt March as an act of nonviolent civil disobedience against the British salt monopoly.","Salt March"],
+["In what year did the Cuban Missile Crisis take place?",["1962","1956","1968","1973"],"The Cuban Missile Crisis brought the United States and Soviet Union to a nuclear standoff in October 1962.","Cuban Missile Crisis"],
+["Which country held its first general election with universal adult suffrage in April 1994?",["South Africa","Zimbabwe","Kenya","Nigeria"],"South Africa's 1994 election was the first in which citizens of all races could participate.","1994 South African general election"],
+["Which year saw the Wall Street Crash that helped usher in the Great Depression?",["1929","1923","1933","1937"],"The Wall Street Crash occurred in October 1929 and marked a major turning point in the global economic crisis.","Wall Street Crash of 1929"],
+["In what year did the Chernobyl nuclear disaster occur?",["1986","1979","1989","1991"],"The Chernobyl disaster began on 26 April 1986 at a nuclear power plant in Soviet Ukraine.","Chernobyl disaster"],
+["Which Egyptian president nationalized the Suez Canal in 1956?",["Gamal Abdel Nasser","Anwar Sadat","Hosni Mubarak","Mohamed Naguib"],"Nasser nationalized the Suez Canal Company in July 1956, before the Suez Crisis.","Suez Crisis"],
+["What was the name of the first artificial satellite to orbit Earth, launched in 1957?",["Sputnik 1","Explorer 1","Vanguard 1","Luna 1"],"The Soviet Union launched Sputnik 1 on 4 October 1957, beginning the satellite era.","Sputnik 1"],
+["Who performed the first human-to-human heart transplant in 1967?",["Christiaan Barnard","Christian Cabrol","Norman Shumway","Denton Cooley"],"Christiaan Barnard performed the operation in Cape Town in December 1967.","Christiaan Barnard"],
+["In which room was the Treaty of Versailles signed in 1919?",["Hall of Mirrors","Hall of a Hundred","White Drawing Room","Hall of Knights"],"The peace treaty was signed in the Hall of Mirrors at the Palace of Versailles on 28 June 1919.","Treaty of Versailles"],
+["Which country hosted the 1955 Bandung Conference of Asian and African states?",["Indonesia","India","Egypt","Ghana"],"The Asian-African Conference took place in Bandung, Indonesia, in April 1955.","Bandung Conference"],
+["Which military alliance led the invasion that ended the Prague Spring in 1968?",["Warsaw Pact","NATO","SEATO","CENTO"],"A Soviet-led Warsaw Pact invasion of Czechoslovakia brought the Prague Spring reforms to an end.","Prague Spring"],
+["The Carnation Revolution of April 1974 took place in which country?",["Portugal","Spain","Greece","Romania"],"The Carnation Revolution overthrew Portugal's Estado Novo regime on 25 April 1974.","Carnation Revolution"],
+["In which U.S. state was the 1944 Bretton Woods Conference held?",["New Hampshire","Vermont","Massachusetts","New York"],"Delegates met at Bretton Woods, New Hampshire, to shape the postwar international monetary system.","Bretton Woods Conference"]
+]
+};
+const META=[
+{id:"rock",title:"70s rock bands",desc:"Big riffs. Bigger legends.",color:"#e8ba8b",icon:'<path d="M16 41 36 21m-8-9 18 18M34 14l10-8 8 8-8 10M15 26c-8 0-13 7-9 15 3 7 13 12 20 7 4-3 6-7 4-12l-6-6c-3 1-4-4-9-4Z"/><circle cx="18" cy="37" r="4"/>'},
+{id:"soccer",title:"World soccer history",desc:"The beautiful game's story.",color:"#bbd89c",icon:'<circle cx="29" cy="29" r="23"/><path d="m29 18 11 8-4 13H22l-4-13ZM29 18V6M41 26l10-5M36 39l7 9M22 39l-7 9M18 26 7 21"/>'},
+{id:"flags",title:"Flags & countries",desc:"Small symbols. A whole world.",color:"#aac9e8",icon:'<path d="M13 52V7m0 3c12-10 22 10 36 0v27c-14 10-24-10-36 0"/><path d="M13 20c12-10 22 10 36 0"/>'},
+{id:"events",title:"20th-century world events",desc:"A century that changed us.",color:"#c8b5e8",icon:'<circle cx="29" cy="29" r="23"/><ellipse cx="29" cy="29" rx="11" ry="23"/><path d="M7 29h44M11 16h36M11 42h36"/>'}
+];
+const TIERS=["Warm-up","Finding your feet","Deep dive","Expert territory","The final stretch"];
+const $=id=>document.getElementById(id);
+const letters=["A","B","C","D"];
+const storeKey="wikiquest-v1-best";
+let best={};try{best=JSON.parse(localStorage.getItem(storeKey))||{};}catch{}
+let selected=null,round=null;
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function sourceURL(title){return "https://en.wikipedia.org/wiki/"+encodeURIComponent(title.replaceAll(" ","_"));}
+function sourceLink(title){return `<a href="${sourceURL(title)}" target="_blank" rel="noopener noreferrer">Read on Wikipedia: ${escapeHTML(title)} &#8599;</a>`;}
+function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function show(id){for(const screen of ["home","game","result"])$(screen).hidden=screen!==id;window.scrollTo(0,0);}
+function renderCategories(){
+ $("categories").innerHTML=META.map((m,i)=>`<button class="category" data-category="${m.id}" aria-pressed="${selected===m.id}" style="--accent:${m.color}"><span class="number">0${i+1}</span><svg viewBox="0 0 58 58" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">${m.icon}</svg><h3>${m.title}</h3><p>${m.desc}</p><span class="best">${Number.isFinite(best[m.id])?"Personal best: "+best[m.id].toLocaleString()+" pts":"20 questions · Easy to expert"}</span></button>`).join("");
+ for(const b of $("categories").querySelectorAll("button"))b.onclick=()=>{selected=b.dataset.category;renderCategories();$("start").disabled=false;$("selection-note").textContent=META.find(m=>m.id===selected).title+" selected. Your three lifelines are ready.";document.querySelector(`[data-category="${selected}"]`).focus();};
+}
+function startQuest(){
+ round={category:selected,index:0,score:0,hits:0,history:[],used:{fifty:false,audience:false,second:false},choices:[],removed:[],answered:false,armed:false,tried:[]};
+ $("game-category").textContent=META.find(m=>m.id===selected).title;show("game");renderQuestion();
+}
+function renderQuestion(){
+ const q=BANK[round.category][round.index];round.choices=shuffle(q[1].map((text,id)=>({text,id})));round.removed=[];round.tried=[];round.answered=false;round.armed=false;
+ $("question-count").textContent=`Question ${round.index+1} of 20 · ${(round.index+1)*100} pts`;
+ $("difficulty").textContent=TIERS[Math.floor(round.index/4)];
+ $("question").textContent=q[0];$("progress").setAttribute("aria-valuenow",round.index);$("progress-fill").style.width=round.index/20*100+"%";
+ $("feedback").hidden=true;$("feedback").innerHTML="";$("help-message").innerHTML="";
+ renderAnswers();renderLifelines();renderScore();$("question").focus();
+}
+function renderAnswers(){
+ $("answers").innerHTML=round.choices.map((choice,i)=>{
+ const removed=round.removed.includes(i),tried=round.tried.includes(i),correct=round.answered&&choice.id===0,wrong=tried&&choice.id!==0;
+ const label=removed?"Removed by 50:50":choice.text;
+ return `<button class="answer${removed?" removed":""}${correct?" correct":""}${wrong?" wrong":""}" ${round.answered||removed||tried?"disabled":""} data-choice="${i}"><span class="letter">${letters[i]}</span><span>${escapeHTML(label)}${correct?" ✓":wrong?" ✕":""}</span></button>`;
+ }).join("");
+ for(const button of $("answers").querySelectorAll("button"))button.onclick=()=>answer(Number(button.dataset.choice));
+}
+function renderLifelines(){for(const id of ["fifty","audience","second"]){$(id).disabled=round.used[id]||round.answered;$(id).title=round.used[id]?"Already used this quest":"";} }
+function renderScore(){
+ $("score").textContent=round.score.toLocaleString();$("accuracy").textContent=round.history.length?`${round.hits} correct out of ${round.history.length} answered. No elimination: keep climbing.`:"Each question is worth more than the last.";
+ $("ladder").innerHTML=Array.from({length:20},(_,i)=>{const h=round.history[i];return `<li class="${i===round.index?"current":h?h.correct?"hit":"miss":""}" ${i===round.index?'aria-current="step"':""}><span>${String(i+1).padStart(2,"0")} ${h?h.correct?"✓":"✕":""}</span><span>${((i+1)*100).toLocaleString()}</span></li>`;}).join("");
+}
+function answer(i){
+ if(!round||round.answered||round.removed.includes(i)||round.tried.includes(i))return;
+ const q=BANK[round.category][round.index],correct=round.choices[i].id===0;round.tried.push(i);
+ if(!correct&&round.armed&&round.tried.length===1){
+  $("help-message").textContent="Not that one. Your second chance is active: try one more answer.";renderAnswers();$("answers").querySelector("button:not(:disabled)").focus();return;
+ }
+ round.answered=true;if(correct){round.score+=(round.index+1)*100;round.hits++;}
+ round.history.push({correct,chosen:round.choices[i].text});
+ $("feedback").innerHTML=`<h3 style="color:${correct?"var(--good)":"var(--bad)"}">${correct?"That's the one. +"+((round.index+1)*100).toLocaleString()+" points":"A little more knowledge, unlocked."}</h3><p>${correct?"":`The answer is <strong>${escapeHTML(q[1][0])}</strong>. `}${escapeHTML(q[2])}</p>${sourceLink(q[3])}<button class="primary" id="next">${round.index===19?"See your results":"Next question"} &rarr;</button>`;
+ $("feedback").hidden=false;$("help-message").innerHTML="";renderAnswers();renderLifelines();renderScore();$("progress-fill").style.width=(round.index+1)/20*100+"%";$("progress").setAttribute("aria-valuenow",round.index+1);
+ $("next").onclick=()=>{if(round.index===19)finishQuest();else{round.index++;renderQuestion();}};$("next").focus();
+}
+function useLifeline(id){
+ if(!round||round.answered||round.used[id])return;
+ round.used[id]=true;
+ if(id==="fifty"){
+  const eligible=round.choices.map((c,i)=>({c,i})).filter(x=>x.c.id!==0&&!round.tried.includes(x.i));
+  round.removed=shuffle(eligible).slice(0,2).map(x=>x.i);renderAnswers();
+  $("help-message").textContent="Two wrong answers removed. Your 50:50 is spent for this quest.";
+ }else if(id==="second"){
+  round.armed=true;$("help-message").textContent="Second chance armed. If your first answer is wrong, you get one more try on this question.";
+ }else{
+  const eligible=round.choices.map((c,i)=>({c,i})).filter(x=>!round.removed.includes(x.i)&&!round.tried.includes(x.i));
+  const favored=eligible.find(x=>x.c.id===0).i,others=shuffle(eligible.filter(x=>x.i!==favored)),poll=[0,0,0,0];poll[favored]=others.length?70:100;let rest=100-poll[favored];
+  others.forEach((x,j)=>{const share=j===others.length-1?rest:Math.floor(rest/(others.length-j));poll[x.i]=share;rest-=share;});
+  $("help-message").innerHTML=`<strong>A simulated audience says...</strong><p>This is a game-generated hint, not a real poll.</p>${poll.map((v,i)=>`<div class="poll-row"><span>${letters[i]}</span><span class="poll-bar" style="width:${v}%"></span><span>${v}%</span></div>`).join("")}`;
+ }
+ renderLifelines();
+}
+function finishQuest(){
+ const previous=Number.isFinite(best[round.category])?best[round.category]:-1,isBest=round.score>previous;
+ best[round.category]=Math.max(previous,round.score);try{localStorage.setItem(storeKey,JSON.stringify(best));}catch{}
+ const title=round.hits===20?"An extraordinary mind.":round.hits>=15?"Curiosity looks good on you.":round.hits>=10?"A very worthy quest.":"Every question is a new beginning.";
+ const qs=BANK[round.category];
+ $("result").innerHTML=`<p class="eyebrow">Quest complete · ${escapeHTML(META.find(m=>m.id===round.category).title)}</p><h1 id="result-title" tabindex="-1">${title}</h1><div class="result-badge">${round.hits} / 20 correct${isBest?" · New personal best":""}</div><div class="result-score">${round.score.toLocaleString()}<span style="font-size:18px;letter-spacing:0"> pts</span></div><p>Out of 21,000 possible points. No prizes, just a bigger world.<br>Same questions on replay; answer positions are shuffled.</p><div class="result-actions"><button class="primary" id="replay">Play this category again</button><button class="quiet" id="choose-another">Explore another category</button></div><div class="review-list"><h2 style="font-size:20px;margin:24px 0 8px">Your Wikipedia field notes</h2>${qs.map((q,i)=>`<details><summary><span style="color:${round.history[i].correct?"var(--good)":"var(--bad)"}">${round.history[i].correct?"✓":"✕"}</span> ${i+1}. ${escapeHTML(q[0])}</summary><p>Your answer: ${escapeHTML(round.history[i].chosen)}<br><strong>Correct answer: ${escapeHTML(q[1][0])}</strong><br>${escapeHTML(q[2])}</p>${sourceLink(q[3])}</details>`).join("")}</div>`;
+ show("result");$("replay").onclick=startQuest;$("choose-another").onclick=()=>{round=null;renderCategories();show("home");$("home-title").setAttribute("tabindex","-1");$("home-title").focus();};$("result-title").focus();
+}
+$("start").onclick=startQuest;$("leave").onclick=()=>{if(window.confirm("Leave this quest? Your current score will not be saved.")){round=null;renderCategories();show("home");$("start").focus();}};
+for(const id of ["fifty","audience","second"])$(id).onclick=()=>useLifeline(id);
+document.addEventListener("keydown",event=>{if(!round||$("game").hidden||event.altKey||event.ctrlKey||event.metaKey||event.repeat)return;if(/^[1-4]$/.test(event.key)){event.preventDefault();answer(Number(event.key)-1);}else if(event.key==="Enter"&&round.answered&&event.target===document.body){event.preventDefault();$("next").click();}});
+renderCategories();
+</script>
+</body>
+</html>
