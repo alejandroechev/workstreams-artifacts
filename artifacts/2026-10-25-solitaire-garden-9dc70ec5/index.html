@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#194c3e">
+<title>Solitaire Garden — Classic Card Games in Spanish</title>
+<style>
+:root{--ink:#203e33;--muted:#626b60;--cream:#f7f5ed;--green:#245b48;--gold:#b68a41;--cw:86px;--ch:122px;--step:33px}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:18px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,a:focus-visible,select:focus-visible{outline:4px solid #d6a844;outline-offset:4px}button{touch-action:manipulation}button.primary{background:var(--green);color:white;border:1px solid var(--green)}.btn{border:1px solid #d6d9ce;background:#fffefa;border-radius:10px;padding:11px 20px;font-weight:600;color:var(--ink);min-height:50px}.btn:hover:not(:disabled){filter:brightness(.94)}.hidden,[hidden]{display:none!important}.site-header{max-width:1216px;padding:25px 30px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #dfe1d5}.brand{display:flex;align-items:center;gap:12px}.brand-icon{background:var(--green);color:#fff7dd;width:44px;height:48px;border-radius:11px;font-size:32px;line-height:46px;text-align:center;transform:rotate(-7deg)}.brand-name{font:600 24px Georgia,serif;letter-spacing:-.7px}.tag{font-size:14px;color:var(--muted)}.header-note{font-size:15px;color:var(--muted)}.home{max-width:1156px;margin:auto;padding:48px 30px 30px}.intro{text-align:center;margin-bottom:35px}.eyebrow{font-size:12px;font-weight:750;letter-spacing:2.1px;color:#72714d;text-transform:uppercase}.intro h1{font:400 clamp(36px,5vw,54px)/1.15 Georgia,serif;margin:13px 0 16px;letter-spacing:-1.6px}.intro p{color:var(--muted);margin:0;font-size:18px}.collection-heading{display:flex;justify-content:space-between;align-items:center;margin:27px 0 17px}.collection-heading h2{font-size:18px;margin:0;font-weight:650}.collection-heading span{color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:23px}.game-tile{text-align:left;padding:0;overflow:hidden;background:#fffefa;border:1px solid #dedfd5;border-radius:15px;color:var(--ink);box-shadow:0 3px 0 #233d3305;transition:transform .18s,box-shadow .18s}.game-tile:hover{transform:translateY(-4px);box-shadow:0 9px 24px #25453415}.tile-art{height:164px;background:#225542;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #d8dfcf}.tile-art:after,.table-surface:before{content:"";position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23ffffff' opacity='.12' filter='url(%23n)' d='M0 0h120v120H0z'/%3E%3C/svg%3E");opacity:.28}.tile-art.spider{background:#315c4b}.tile-art.freecell{background:#365e58}.tile-art.pyramid{background:#61694b}.tile-art.tripeaks{background:#476450}.tile-art.golf{background:#3c6653}.mini{position:absolute;width:51px;height:73px;border-radius:5px;background:#fffdf4;border:1px solid #e4e1d6;box-shadow:0 3px 6px #001c242f;padding:4px 6px;color:#23342e;font:600 18px/1.05 Georgia,serif}.mini.red{color:#ac3839}.mini b{position:absolute;inset:22px 0 0;text-align:center;font-size:27px}.mini.back{background:repeating-linear-gradient(45deg,#59776a 0 3px,#668678 3px 5px);border:4px solid #f3f0e1}.tile-copy{padding:20px 22px 19px}.tile-title{display:flex;justify-content:space-between;align-items:center}.tile-title h3{font:400 26px Georgia,serif;margin:0}.arrow{font-size:23px;color:#477058}.tile-copy p{font-size:15px;line-height:1.5;color:var(--muted);margin:8px 0 16px;min-height:45px}.pill{display:inline-block;border-radius:5px;background:#edf1e7;padding:3px 8px;font-size:12px;font-weight:600;color:#516343}.home-foot{display:flex;justify-content:center;gap:30px;color:#72776b;font-size:14px;margin:33px 0 10px}.resume{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #cad8c7;border-radius:12px;padding:15px 20px;background:#edf2e7;margin:25px 0}.resume p{margin:0}.resume small{display:block;color:var(--muted)}.game-header{max-width:1280px;margin:auto;padding:20px 24px;display:flex;align-items:center;gap:20px;justify-content:space-between}.game-heading h1{font:400 30px Georgia,serif;margin:0}.game-heading p{margin:2px 0 0;font-size:14px;color:var(--muted)}.game-header-left{display:flex;gap:20px;align-items:center}.actions{display:flex;gap:9px;flex-wrap:wrap}.table-surface{background:radial-gradient(ellipse at 50% 10%,#2e6a52,#164735);position:relative;min-height:calc(100vh - 204px);color:#fffdf2;border-top:5px solid #d1ba85;border-bottom:5px solid #d1ba85;padding:16px 24px 38px}.table-content{position:relative;max-width:1156px;margin:auto}.status-line{display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:15px;color:#e0e8d9;min-height:37px;margin-bottom:13px}.status-line p{margin:0}.status-line .instruction{color:#fff8e5}.board-scroll{overflow-x:auto;overscroll-behavior-x:contain;padding:8px 6px 25px;margin:0 -6px;scrollbar-color:#9fae96 #1c503e}.board{min-width:710px}.top-row{display:flex;gap:15px;margin-bottom:30px;min-height:var(--ch);align-items:flex-start}.pile-group{display:flex;gap:13px}.foundations{margin-left:auto}.slot{position:relative;width:var(--cw);height:var(--ch);border:2px solid #ffffff32;border-radius:9px;background:#123e2c24;color:#e9eed180;display:flex;align-items:center;justify-content:center;font:30px Georgia,serif;flex-shrink:0;padding:0}.slot-label{position:absolute;top:calc(var(--ch) + 5px);left:-4px;right:-4px;text-align:center;color:#e5e8d2;font:12px system-ui}.slot .card{position:absolute;inset:-2px}.stock{background:repeating-linear-gradient(45deg,#2b624e 0 4px,#36735a 4px 7px);border:4px solid #eee9d6;box-shadow:0 2px 4px #082d27}.stock:before{content:"♧";font-size:46px;border:1px solid #dddfb888;width:calc(100% - 9px);height:calc(100% - 9px);border-radius:4px;display:grid;place-items:center;color:#ebe5bf}.stock.empty{background:#123e2c24;border:2px dashed #ffffff50;box-shadow:none}.stock.empty:before{content:"↻";border:0;color:#eceddb}.card{position:relative;display:block;width:var(--cw);height:var(--ch);border:1px solid #deddd2;border-radius:8px;background:#fffdf5;color:#243b31;box-shadow:0 2px 3px #062c2933;padding:0;font-family:Georgia,serif;flex-shrink:0;text-align:left}.card.red{color:#b0393c}.corner{position:absolute;left:8px;top:6px;display:flex;flex-direction:column;align-items:center;font-size:24px;font-weight:600;line-height:1.02}.corner .suit{font-size:21px}.center-suit{position:absolute;inset:37px 0 0;text-align:center;font-size:43px}.card .bottom{inset:auto 7px 6px auto;transform:rotate(180deg);font-size:17px}.card .bottom .suit{font-size:16px}.card.back{background:repeating-linear-gradient(45deg,#3e6b58 0 4px,#507d68 4px 7px);border:4px solid #f5edda}.card.back:after{content:"";position:absolute;inset:5px;border:1px solid #e4dfbd80;border-radius:3px}.card.selected{outline:4px solid #f5ce72;outline-offset:0;transform:translateY(-4px);z-index:40!important}.hinted{outline:4px dashed #ffdf82!important;outline-offset:3px;z-index:41!important}.columns{display:grid;grid-template-columns:repeat(var(--cols),var(--cw));justify-content:space-between;gap:10px;align-items:start;padding-bottom:10px}.column{position:relative;min-height:var(--ch)}.column>.slot{position:absolute;top:0;left:0}.column>.card{position:absolute;left:0;top:calc(var(--i)*var(--step))}.column>.card.covered .bottom,.column>.card.covered .center-suit{display:none}.column>.card.covered .corner{flex-direction:row;gap:4px;top:3px;font-size:20px}.column>.card.covered .suit{font-size:19px}.game-bottom{max-width:1204px;padding:17px 24px;margin:auto;display:flex;justify-content:space-between;gap:15px;font-size:14px;color:var(--muted);align-items:center}.text-button{background:transparent;border:0;text-decoration:underline;text-underline-offset:4px;color:inherit;padding:8px;font:inherit;min-height:44px}.layout-notice{display:none;font-size:13px;color:#e1e8d7;margin:0 0 8px}.peaks{height:290px;position:relative;margin:8px auto 25px;width:850px}.peaks.pyramid{width:610px;height:360px}.peaks .card{position:absolute;left:calc(var(--x)*43px);top:calc(var(--y)*45px)}.peaks.pyramid .card{top:calc(var(--y)*39px)}.peaks .card.blocked{background:#d6dfcf;color:#466054;box-shadow:0 2px 3px #062c2922}.peaks .card.blocked .center-suit{opacity:.5}.flat-columns .column>.card{top:calc(var(--i)*38px)}.modal{border:0;border-radius:18px;max-width:580px;width:calc(100% - 30px);padding:30px;background:#fffdf5;color:var(--ink);box-shadow:0 20px 90px #0b271b66}.modal::backdrop{background:#102d25aa}.modal h2{font:400 32px Georgia,serif;margin:0 0 16px}.modal p,.modal li{font-size:18px;line-height:1.65}.modal ul{padding-left:23px}.modal .actions{justify-content:flex-end;margin-top:25px}.rule-note{padding:12px 15px;background:#edf1e7;border-radius:9px}.settings-row{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:20px 0}select{padding:10px;border:1px solid #b9c4b4;border-radius:8px;background:white;color:var(--ink);max-width:100%}.larger{--cw:100px;--ch:142px;--step:39px}.larger .board{min-width:820px}.larger .center-suit{font-size:51px;top:44px}.larger .corner{font-size:29px}.larger .peaks{width:990px;height:330px}.larger .peaks .card{left:calc(var(--x)*50px);top:calc(var(--y)*51px)}.larger .peaks.pyramid{width:710px;height:410px}.larger .peaks.pyramid .card{top:calc(var(--y)*44px)}.win{border:1px solid #e5d18b;background:#fff6d7;color:#344628;border-radius:12px;padding:16px;margin:5px 0 18px;display:flex;justify-content:space-between;align-items:center;gap:14px}.win p{margin:0}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#fffdf2;color:#203e33;border:1px solid #d7ceab;box-shadow:0 5px 25px #102d2540;padding:14px 24px;border-radius:12px;z-index:100;max-width:calc(100% - 28px);width:max-content;font-size:17px}.key-tip{opacity:.9}.save-note{font-size:13px;color:var(--muted)}@media(min-width:1450px){.home{padding-top:60px}.tile-art{height:185px}.tile-copy{padding:22px 24px}}@media(max-width:980px){.game-header{align-items:flex-start}.game-header-left{gap:12px}.actions .btn{padding:10px 13px}.grid{gap:16px}.tile-copy{padding:17px}.tile-copy p{min-height:68px}.game-header{flex-wrap:wrap}.game-header>.actions{margin-left:auto}.board.spider-board{min-width:980px}.larger .board.spider-board{min-width:1130px}}@media(max-width:650px){.site-header{padding:17px 20px}.brand-name{font-size:22px}.header-note{display:none}.home{padding:30px 18px 20px}.intro{margin-bottom:25px}.intro h1{font-size:38px}.intro p{font-size:16px;max-width:300px;margin:auto}.eyebrow{font-size:11px}.grid{grid-template-columns:repeat(2,1fr);gap:14px}.tile-art{height:126px}.mini{transform:scale(.85)}.tile-copy{padding:14px 12px}.tile-title h3{font-size:23px}.tile-copy p{font-size:14px;min-height:63px;margin:7px 0 11px}.pill{font-size:11px}.home-foot{gap:13px;flex-wrap:wrap;font-size:12px;margin-top:25px}.collection-heading span{font-size:12px}.collection-heading h2{font-size:16px}.resume{padding:13px;font-size:15px}.resume .btn{padding:9px 12px;font-size:15px}.game-header{padding:13px 14px;gap:12px}.game-heading h1{font-size:27px}.game-header-left{width:100%;justify-content:space-between;flex-direction:row-reverse}.game-heading p{font-size:12px}.game-header>.actions{width:100%;margin:0;display:grid;grid-template-columns:1fr 1fr 1fr}.actions .btn{font-size:15px;min-height:48px}.table-surface{padding:12px 14px 20px;min-height:65vh}.status-line{align-items:flex-start;font-size:14px;gap:10px}.status-line .instruction{max-width:75%}.layout-notice{display:block}.game-bottom{padding:10px 12px;align-items:flex-start;flex-wrap:wrap;font-size:12px}.key-tip{display:none}.modal{padding:24px}.modal p,.modal li{font-size:17px}.win{align-items:flex-start;font-size:16px}.toast{font-size:15px}.top-row{gap:12px}.board{min-width:710px}.save-note{font-size:12px}}
+.game-tile{display:flex;flex-direction:column}.tile-art,.tile-copy{width:100%}.tile-art{flex-shrink:0}.tile-copy{flex:1}.card:disabled{opacity:1}
+@media(max-width:650px){.tile-art>div{transform:scale(.75)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="home-screen">
+<header class="site-header"><div class="brand"><span class="brand-icon" aria-hidden="true">♧</span><div><div class="brand-name">Un ratito de solitario</div><div class="tag">Los de siempre. A tu ritmo.</div></div></div><span class="header-note">Sin prisa. Sin anuncios. Solo jugar.</span><button class="text-button" id="home-settings">Ajustes</button></header>
+<main class="home">
+<div class="intro"><span class="eyebrow">Tu mesa está lista</span><h1>Un buen momento para jugar.</h1><p>Elige tu solitario favorito y disfruta de un rato para ti.</p></div>
+<div id="resume" class="resume" hidden><p><strong id="resume-title"></strong><small>Tu partida te está esperando.</small></p><button class="btn primary" id="resume-btn">Continuar</button></div>
+<div class="collection-heading"><h2>¿A qué jugamos hoy?</h2><span>6 clásicos para disfrutar</span></div>
+<div class="grid" id="game-grid"></div>
+<footer class="home-foot"><span>♧ Cartas grandes y claras</span><span>↶ Siempre puedes deshacer</span><span>♡ Sin reloj ni presión</span></footer>
+<p class="save-note" id="home-save" style="text-align:center">La partida se guarda en este dispositivo.</p>
+</main></div>
+<main id="game-screen" hidden>
+<header class="game-header"><div class="game-header-left"><button class="btn" id="home-btn">← Juegos</button><div class="game-heading"><h1 id="game-title"></h1><p id="game-subtitle"></p></div></div><div class="actions"><button class="btn" id="undo-btn">↶ Deshacer</button><button class="btn" id="hint-btn">☀ Pista</button><button class="btn primary" id="new-btn">Nueva partida</button></div></header>
+<section class="table-surface" aria-label="Mesa de juego"><div class="table-content"><div id="win" class="win" hidden><p><strong>¡Muy bien! Has ganado.</strong><br>Una partida para celebrar, a tu ritmo.</p><button class="btn primary" id="win-new">Volver a jugar</button></div><div class="status-line"><p id="instruction" class="instruction" role="status" aria-live="polite"></p><p><span id="moves">0</span> jugadas</p></div><p class="layout-notice">Desliza la mesa hacia los lados para ver todas las cartas ↔</p><div class="board-scroll" id="board-scroll"><div id="board" class="board"></div></div></div></section>
+<footer class="game-bottom"><div><button class="text-button" id="rules-btn">Cómo jugar</button><button class="text-button" id="settings-btn">Tamaño de cartas</button><span class="key-tip">Esc: cancelar selección · Ctrl / ⌘ Z: deshacer</span></div><span id="save-status">Partida guardada en este dispositivo</span></footer>
+</main>
+<dialog class="modal" id="dialog" aria-labelledby="dialog-title"><h2 id="dialog-title"></h2><div id="dialog-body"></div><div class="actions" id="dialog-actions"></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script>
+'use strict';
+const $=s=>document.querySelector(s);
+const games={
+ klondike:{name:'Solitario',subtitle:'Klondike · el clásico de siempre',description:'El de toda la vida. Ordena los palos del as al rey.',tag:'El favorito de siempre',rules:['Lleva todas las cartas a las cuatro bases, arriba a la derecha: un palo por base, del as al rey.','En las columnas, coloca cartas en orden descendente y alternando rojo y negro. Puedes mover una secuencia ordenada. Solo un rey puede ocupar una columna vacía.','Toca el mazo para sacar cartas. Puedes volver a recorrerlo cuando se termine. Elige sacar una o tres cartas en Ajustes.']},
+ spider:{name:'Spider',subtitle:'Un palo · dos barajas · ocho escaleras',description:'Construye escaleras completas, del rey al as.',tag:'Un palo · paso a paso',rules:['Forma ocho escaleras del rey al as, todas de picas. Una escalera completa se retira sola.','Coloca una carta sobre otra de valor inmediatamente superior. Puedes mover juntas las cartas que formen una secuencia descendente. Cualquier carta o secuencia puede ocupar una columna vacía.','El mazo reparte una carta en cada columna. Antes de repartir, todas las columnas deben tener al menos una carta. Esta versión relajada usa un solo palo.']},
+ freecell:{name:'Carta blanca',subtitle:'FreeCell · todas las cartas a la vista',description:'Cuatro espacios libres para pensar tu próxima jugada.',tag:'Para jugar con estrategia',rules:['Lleva los cuatro palos a las bases, del as al rey. Todas las cartas empiezan boca arriba.','En las columnas, ordena de mayor a menor alternando rojo y negro. Las cuatro celdas de arriba a la izquierda guardan una carta cada una. Cualquier carta puede ocupar una columna vacía.','Puedes mover secuencias si hay suficientes celdas y columnas vacías para trasladarlas carta a carta. La capacidad es (celdas libres + 1) × 2 por cada columna vacía disponible, sin contar la de destino.']},
+ pyramid:{name:'Pirámide',subtitle:'Parejas que suman trece',description:'Encuentra parejas y despeja la pirámide.',tag:'Sencillo y entretenido',rules:['Retira todas las cartas de la pirámide formando parejas que sumen 13. As = 1, J = 11, Q = 12 y K = 13. Un rey se retira solo.','Solo puedes usar cartas que no tengan ninguna carta encima de su parte inferior. Toca una carta y luego su pareja. También puedes usar la carta superior del descarte.','Toca el mazo para sacar una carta. Puedes recorrer el mazo tres veces en total. Ganas al despejar la pirámide; no hace falta vaciar el mazo.']},
+ tripeaks:{name:'Tres picos',subtitle:'TriPeaks · una carta antes o después',description:'Sube y baja los números para descubrir los tres picos.',tag:'Una pequeña aventura',rules:['Despeja los tres picos llevando cartas descubiertas al descarte. Una carta está libre cuando ya no hay cartas que la cubran por abajo.','Puedes retirar una carta de valor inmediatamente anterior o posterior a la carta del descarte, sin importar el palo. Aquí el as conecta con el dos y con el rey.','Si no hay jugada, toca el mazo para sacar otra carta. Solo hay una vuelta al mazo. Ganas al retirar las 28 cartas de los picos.']},
+ golf:{name:'Golf',subtitle:'Siete columnas · un recorrido tranquilo',description:'Vacía las columnas, una carta antes o después.',tag:'Ideal para un ratito',rules:['Retira las 35 cartas de las siete columnas. Solo puedes tomar la carta inferior de cada columna.','Lleva al descarte una carta de valor inmediatamente anterior o posterior, sin importar el palo. En esta versión, el as conecta solo con el dos y el rey solo con la reina: no se unen rey y as.','Si no puedes seguir, toca el mazo para sacar otra carta. Solo hay una vuelta al mazo. Ganas cuando todas las columnas estén vacías.']}
+};
+const suitSymbols=['♠','♥','♣','♦'],suitNames=['picas','corazones','tréboles','diamantes'];
+const value=r=>r===1?'A':r===11?'J':r===12?'Q':r===13?'K':String(r);
+const red=c=>c.s%2===1;
+const cardName=c=>(c.r===1?'As':c.r===11?'Jota':c.r===12?'Reina':c.r===13?'Rey':c.r)+' de '+suitNames[c.s];
+const copy=o=>JSON.parse(JSON.stringify(o));
+const STORE='ratito-solitaire-v1', PREFS='ratito-solitaire-prefs-v1';
+let state=null,selected=null,history=[],hinted=[],toastTimer,storageOK=true,prefs={large:false,draw:1};
+function readStorage(key){try{return JSON.parse(localStorage.getItem(key))}catch{return null}}
+const storedPrefs=readStorage(PREFS);
+if(storedPrefs){prefs.large=storedPrefs.large===true;prefs.draw=storedPrefs.draw===3?3:1}
+function validSaved(s){
+ if(!s||s.version!==1||!games[s.type]||!Array.isArray(s.cols)||!Array.isArray(s.found)||!Array.isArray(s.cells)||!Array.isArray(s.stock)||!Array.isArray(s.waste)||!Array.isArray(s.nodes)||!Number.isInteger(s.moves)||!Number.isInteger(s.round)||![1,3].includes(s.draw))return false;
+ if(s.cols.some(c=>!Array.isArray(c))||s.found.length!==4||s.found.some(c=>!Array.isArray(c))||s.cells.length!==4)return false;
+ if(s.nodes.some(n=>!n||!n.card||!Array.isArray(n.children)))return false;
+ const cards=[...s.cols.flat(),...s.found.flat(),...s.cells.filter(Boolean),...s.stock,...s.waste,...s.nodes.filter(n=>!n.removed).map(n=>n.card)];
+ return cards.every(c=>c&&Number.isInteger(c.r)&&c.r>=1&&c.r<=13&&Number.isInteger(c.s)&&c.s>=0&&c.s<4&&typeof c.id==='string'&&typeof c.face==='boolean')&&new Set(cards.map(c=>c.id)).size===cards.length&&s.nodes.every(n=>Array.isArray(n.children)&&n.children.every(i=>Number.isInteger(i)&&i>=0&&i<s.nodes.length));
+}
+const saved=readStorage(STORE);if(validSaved(saved))state=saved;
+function save(){try{if(state)localStorage.setItem(STORE,JSON.stringify(state));localStorage.setItem(PREFS,JSON.stringify(prefs))}catch{storageOK=false}$('#save-status').textContent=storageOK?'Partida guardada en este dispositivo':'No se puede guardar en este navegador. Mantén esta página abierta.';$('#home-save').textContent=storageOK?'La partida se guarda en este dispositivo.':'El guardado no está disponible en este navegador.'}
+function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,4200)}
+function deck(spider=false){let cards=[];for(let d=0;d<(spider?2:1);d++)for(let s=0;s<4;s++)for(let r=1;r<=13;r++)cards.push({r,s:spider?0:s,face:true,id:`${d}-${s}-${r}`});for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]]}return cards}
+function deal(type){
+ const d=deck(type==='spider');state={version:1,type,cols:[],found:[[],[],[],[]],cells:[null,null,null,null],stock:[],waste:[],nodes:[],moves:0,round:1,completed:0,won:false,draw:prefs.draw};history=[];selected=null;hinted=[];
+ if(type==='klondike'||type==='spider'||type==='freecell'||type==='golf'){
+  const n=type==='spider'?10:type==='freecell'?8:7;
+  for(let i=0;i<n;i++){const count=type==='klondike'?i+1:type==='spider'?(i<4?6:5):type==='freecell'?(i<4?7:6):5;const col=d.splice(0,count);col.forEach((c,j)=>c.face=type==='freecell'||type==='golf'||j===count-1);state.cols.push(col)}
+ }else{
+  const rows=type==='pyramid'?Array.from({length:7},(_,r)=>Array.from({length:r+1},(_,c)=>6-r+2*c)):[[2,8,14],[1,3,7,9,13,15],[0,2,4,6,8,10,12,14,16],[-1,1,3,5,7,9,11,13,15,17]];
+  rows.forEach((xs,y)=>xs.forEach(x=>state.nodes.push({x:type==='pyramid'?x:x+1,y,card:d.shift(),removed:false,children:[]})));
+  state.nodes.forEach(n=>n.children=state.nodes.map((m,i)=>m.y===n.y+1&&Math.abs(m.x-n.x)===1?i:-1).filter(i=>i!==-1));
+ }
+ state.stock=d;
+ if(type==='golf'||type==='tripeaks')state.waste.push(state.stock.pop());
+ save();showGame();
+}
+function miniArt(type){
+ const cards=type==='klondike'?[[105,40,13,0,-14],[141,34,12,1,-3],[177,41,11,2,10]]:type==='spider'?[[94,29,8,0,-5],[128,47,7,0,-2],[162,65,6,0,2],[196,83,5,0,5]]:type==='freecell'?[[78,50,1,1,-8],[143,50,1,0,0],[208,50,1,3,8]]:type==='pyramid'?[[143,13,13,1,0],[113,48,5,0,-3],[173,48,8,1,3],[83,83,1,1,-5],[143,83,12,0,0],[203,83,6,0,5]]:type==='tripeaks'?[[80,26,3,0,-5],[143,18,8,1,0],[206,26,5,2,5],[110,64,4,1,-3],[174,64,7,0,3],[143,99,6,1,0]]:[[77,40,5,0,-8],[111,48,6,1,-4],[145,56,7,0,0],[179,64,8,1,4],[213,72,9,0,8]];
+ return `<div class="tile-art ${type}" aria-hidden="true"><div style="position:relative;width:340px;height:164px;flex-shrink:0">${cards.map(([x,y,r,s,rot])=>`<div class="mini ${s%2?'red':''}" style="left:${x-9}px;top:${y}px;rotate:${rot}deg">${value(r)}<b>${suitSymbols[s]}</b></div>`).join('')}</div></div>`;
+}
+$('#game-grid').innerHTML=Object.entries(games).map(([type,g])=>`<button class="game-tile" data-game="${type}">${miniArt(type)}<div class="tile-copy"><div class="tile-title"><h3>${g.name}</h3><span class="arrow" aria-hidden="true">↗</span></div><p>${g.description}</p><span class="pill">${g.tag}</span></div></button>`).join('');
+function home(){selected=null;hinted=[];$('#game-screen').hidden=true;$('#home-screen').hidden=false;$('#resume').hidden=!state||state.won;if(state)$('#resume-title').textContent=`Continuar: ${games[state.type].name}`;window.scrollTo(0,0)}
+function showGame(){document.body.classList.toggle('larger',prefs.large);$('#home-screen').hidden=true;$('#game-screen').hidden=false;$('#game-title').textContent=games[state.type].name;$('#game-subtitle').textContent=games[state.type].subtitle;render();window.scrollTo(0,0)}
+function topCard(list){return list[list.length-1]}
+function equal(a,b){return a&&b&&a.kind===b.kind&&a.i===b.i&&a.j===b.j}
+function refKey(ref){return `${ref.kind}:${ref.i??''}:${ref.j??''}`}
+function cardHTML(c,ref,covered=false,blocked=false){
+ const sel=equal(selected,ref),hint=hinted.includes(refKey(ref));
+ const label=c.face?cardName(c):'Carta boca abajo';
+ return `<button class="card ${c.face?'':'back'} ${red(c)?'red':''} ${covered?'covered':''} ${blocked?'blocked':''} ${sel?'selected':''} ${hint?'hinted':''}" data-ref='${JSON.stringify(ref)}' aria-label="${label}${blocked?', cubierta':''}${sel?', seleccionada':''}" aria-pressed="${!!sel}" style="${ref.kind==='col'?`--i:${ref.j};z-index:${ref.j+1}`:''}" ${!c.face||blocked?'disabled':''}>${c.face?`<span class="corner">${value(c.r)}<span class="suit">${suitSymbols[c.s]}</span></span><span class="center-suit" aria-hidden="true">${suitSymbols[c.s]}</span><span class="corner bottom" aria-hidden="true">${value(c.r)}<span class="suit">${suitSymbols[c.s]}</span></span>`:''}</button>`;
+}
+function slotHTML(kind,i,label,symbol,card){const ref={kind,i};return `<div class="slot ${hinted.includes(refKey(ref))?'hinted':''}">${card?cardHTML(card,ref):`<button class="slot" data-ref='${JSON.stringify(ref)}' aria-label="${label}">${symbol}</button>`}<span class="slot-label">${label}</span></div>`}
+function baseInstruction(){return state.type==='pyramid'?'Toca dos cartas libres que sumen 13. Los reyes se retiran solos.':state.type==='golf'||state.type==='tripeaks'?'Toca una carta libre anterior o posterior a la del descarte.':'Toca una carta y después el lugar donde quieres ponerla.'}
+function render(){
+ const activeRef=document.activeElement?.dataset.ref;
+ const activeStock=document.activeElement?.id==='stock';
+ const t=state.type;let html='';
+ const stockLabel=t==='spider'?`Repartir diez cartas. ${state.stock.length/10} repartos disponibles`:state.stock.length?`Sacar carta. Quedan ${state.stock.length}`:t==='klondike'?'Volver a pasar el mazo':t==='pyramid'&&state.round<3?'Volver a pasar el mazo':'Mazo agotado';
+ if(t==='freecell')html+='<div class="top-row"><div class="pile-group">'+state.cells.map((c,i)=>slotHTML('cell',i,'Libre '+(i+1),'',c)).join('')+'</div>';
+ else html+=`<div class="top-row"><div class="pile-group"><button class="slot stock ${state.stock.length?'':'empty'} ${hinted.includes('stock::')?'hinted':''}" id="stock" aria-label="${stockLabel}" ${state.won?'disabled':''}><span class="slot-label">${state.stock.length?state.stock.length+' cartas':t==='klondike'?'Otra vuelta':t==='pyramid'&&state.round<3?'Otra vuelta':'Sin cartas'}</span></button>${t==='spider'?'':slotHTML('waste',0,'Descarte','',topCard(state.waste))}</div>`;
+ if(t==='klondike'||t==='freecell')html+='<div class="pile-group foundations">'+state.found.map((f,i)=>slotHTML('found',i,'Base '+suitSymbols[i],suitSymbols[i],topCard(f))).join('')+'</div>';
+ if(t==='spider')html+=`<div style="margin-left:auto;padding:15px;text-align:right;font-size:17px">Escaleras completas<br><strong style="font:36px Georgia">${state.completed} / 8</strong></div>`;
+ if(t==='pyramid')html+=`<div style="margin-left:auto;padding:16px;text-align:right">Vuelta ${state.round} de 3<br><strong>${state.nodes.filter(n=>n.removed).length} / 28 retiradas</strong></div>`;
+ html+='</div>';
+ if(t==='pyramid'||t==='tripeaks')html+=`<div class="peaks ${t==='pyramid'?'pyramid':''}">`+state.nodes.map((n,i)=>n.removed?'':`<div style="position:absolute;--x:${n.x};--y:${n.y};left:0;top:0;z-index:${n.y+1}">${cardHTML(n.card,{kind:'node',i},false,!exposed(i))}</div>`).join('')+'</div>';
+ else html+=`<div class="columns ${t==='golf'?'flat-columns':''}" style="--cols:${state.cols.length}">`+state.cols.map((col,i)=>`<div class="column" style="height:calc(var(--ch) + ${Math.max(0,col.length-1)} * ${t==='golf'?'38px':'var(--step)'})"><button class="slot ${hinted.includes(refKey({kind:'col',i}))?'hinted':''}" data-ref='${JSON.stringify({kind:'col',i})}' aria-label="Columna ${i+1} vacía"${col.length?' disabled':''}></button>${col.map((c,j)=>cardHTML(c,{kind:'col',i,j},j<col.length-1,t==='golf'&&j<col.length-1)).join('')}</div>`).join('')+'</div>';
+ $('#board').innerHTML=html;$('#board').className='board '+(t==='spider'?'spider-board':'');$('#moves').textContent=state.moves;$('#undo-btn').disabled=!history.length;$('#hint-btn').disabled=state.won;$('#win').hidden=!state.won;
+ $('#instruction').textContent=state.won?'¡Partida completada!':selected?`${cardName(getCard(selected))} seleccionada. Toca su destino, o vuelve a tocarla para cancelar.`:baseInstruction();
+ if(activeRef){const focusTarget=[...$('#board').querySelectorAll('[data-ref]')].find(el=>el.dataset.ref===activeRef&&!el.disabled);focusTarget?.focus({preventScroll:true})}
+ else if(activeStock)$('#stock')?.focus({preventScroll:true});
+}
+function getCard(ref){if(ref.kind==='col')return state.cols[ref.i][ref.j??state.cols[ref.i].length-1];if(ref.kind==='waste')return topCard(state.waste);if(ref.kind==='cell')return state.cells[ref.i];if(ref.kind==='found')return topCard(state.found[ref.i]);if(ref.kind==='node')return state.nodes[ref.i].card}
+function exposed(i){return !state.nodes[i].removed&&state.nodes[i].children.every(j=>state.nodes[j].removed)}
+function sequence(ref){
+ if(ref.kind!=='col')return getCard(ref)?[getCard(ref)]:[];
+ return state.cols[ref.i].slice(ref.j??state.cols[ref.i].length-1);
+}
+function movable(ref){
+ const c=getCard(ref);if(!c||!c.face)return false;
+ if(ref.kind==='found'&&state.type!=='klondike'||ref.kind==='node')return false;
+ const seq=sequence(ref);
+ return seq.every((c,i)=>!i||seq[i-1].r===c.r+1&&(state.type==='spider'||red(seq[i-1])!==red(c)));
+}
+function canMove(from,to){
+ if(!movable(from)||from.kind===to.kind&&from.i===to.i)return false;
+ const seq=sequence(from),c=seq[0];
+ if(to.kind==='found'){const f=state.found[to.i];return seq.length===1&&c.s===to.i&&c.r===f.length+1}
+ if(to.kind==='cell')return state.type==='freecell'&&!state.cells[to.i]&&seq.length===1;
+ if(to.kind!=='col')return false;
+ const col=state.cols[to.i],dest=topCard(col);
+ if(dest?dest.r!==c.r+1||(state.type!=='spider'&&red(dest)===red(c)):state.type==='klondike'&&c.r!==13)return false;
+ if(state.type==='freecell'){
+  const empty=state.cols.filter((col,i)=>!col.length&&i!==to.i).length;
+  return seq.length<=(state.cells.filter(c=>!c).length+1)*2**empty;
+ }
+ return true;
+}
+function checkpoint(){history.push(copy(state));if(history.length>120)history.shift()}
+function take(ref){if(ref.kind==='col')return state.cols[ref.i].splice(ref.j??state.cols[ref.i].length-1);if(ref.kind==='waste')return [state.waste.pop()];if(ref.kind==='found')return [state.found[ref.i].pop()];if(ref.kind==='cell'){const c=state.cells[ref.i];state.cells[ref.i]=null;return[c]}return[]}
+function finishMove(){
+ state.cols.forEach(col=>{if(col.length)topCard(col).face=true});
+ if(state.type==='spider'){
+  state.cols.forEach(col=>{let again=true;while(again&&col.length>=13){const last=col.slice(-13);again=last.every((c,i)=>c.face&&c.r===13-i);if(again){col.splice(-13);state.completed++;if(col.length)topCard(col).face=true}}});
+ }
+ state.moves++;selected=null;hinted=[];
+ state.won=state.type==='spider'?state.completed===8:state.type==='pyramid'||state.type==='tripeaks'?state.nodes.every(n=>n.removed):state.type==='golf'?state.cols.every(c=>!c.length):state.found.every(f=>f.length===13);
+ save();render();
+ if(state.won){$('#win-new').focus();toast('¡Felicitaciones! Has completado la partida.')}
+}
+function move(from,to){if(!canMove(from,to))return false;checkpoint();const seq=take(from);if(to.kind==='col')state.cols[to.i].push(...seq);else if(to.kind==='cell')state.cells[to.i]=seq[0];else state.found[to.i].push(seq[0]);finishMove();return true}
+function adjacent(a,b){return Math.abs(a.r-b.r)===1||state.type==='tripeaks'&&Math.abs(a.r-b.r)===12}
+function pyramidAvailable(ref){return ref.kind==='node'&&exposed(ref.i)||ref.kind==='waste'&&!!state.waste.length}
+function removePyramid(ref){if(ref.kind==='node')state.nodes[ref.i].removed=true;else state.waste.pop()}
+function choose(ref){
+ if(state.won)return;
+ if(state.type==='pyramid'){
+  if(!pyramidAvailable(ref))return;
+  const c=getCard(ref);
+  if(c.r===13){checkpoint();removePyramid(ref);finishMove();return}
+  if(equal(selected,ref)){selected=null;render();return}
+  if(selected&&getCard(selected).r+c.r===13){checkpoint();removePyramid(selected);removePyramid(ref);finishMove();return}
+  selected=ref;hinted=[];render();$('#instruction').textContent=`${cardName(c)}: busca ${value(13-c.r)} para sumar 13.`;return;
+ }
+ if(state.type==='golf'||state.type==='tripeaks'){
+  const valid=state.type==='golf'?ref.kind==='col'&&ref.j===state.cols[ref.i].length-1:ref.kind==='node'&&exposed(ref.i);
+  if(!valid)return;
+  if(adjacent(getCard(ref),topCard(state.waste))){checkpoint();state.waste.push(getCard(ref));if(ref.kind==='node')state.nodes[ref.i].removed=true;else state.cols[ref.i].pop();finishMove()}
+  else toast('Elige una carta un número antes o después de la del descarte.');
+  return;
+ }
+ if(equal(selected,ref)){selected=null;hinted=[];render();return}
+ if(selected&&move(selected,ref))return;
+ if(movable(ref)){selected=ref;hinted=[];render()}
+ else if(selected)toast('Ahí no se puede. Prueba otro destino o toca la carta para cancelar.');
+}
+function draw(){
+ if(state.won)return;
+ const t=state.type;
+ if(t==='spider'&&state.cols.some(c=>!c.length)){toast('Llena las columnas vacías antes de repartir.');return}
+ if(state.stock.length){checkpoint();const n=t==='spider'?10:t==='klondike'?state.draw:1;for(let i=0;i<n&&state.stock.length;i++){const c=state.stock.pop();c.face=true;if(t==='spider')state.cols[i].push(c);else state.waste.push(c)}finishMove()}
+ else if((t==='klondike'||t==='pyramid'&&state.round<3)&&state.waste.length){checkpoint();state.stock=state.waste.reverse();state.waste=[];state.round++;finishMove()}
+ else toast('El mazo se ha terminado. Puedes deshacer o empezar otra partida.');
+}
+function findHint(){
+ const t=state.type;
+ if(t==='pyramid'){
+  const refs=state.nodes.map((_,i)=>({kind:'node',i})).filter(pyramidAvailable);if(state.waste.length)refs.push({kind:'waste',i:0});
+  for(let i=0;i<refs.length;i++){if(getCard(refs[i]).r===13)return {refs:[refs[i]],text:'Toca el rey: vale 13 y se retira solo.'};for(let j=i+1;j<refs.length;j++)if(getCard(refs[i]).r+getCard(refs[j]).r===13)return{refs:[refs[i],refs[j]],text:`${cardName(getCard(refs[i]))} y ${cardName(getCard(refs[j]))} suman 13.`}}
+ }else if(t==='golf'||t==='tripeaks'){
+  const refs=t==='golf'?state.cols.map((c,i)=>({kind:'col',i,j:c.length-1})).filter(r=>r.j>=0):state.nodes.map((_,i)=>({kind:'node',i})).filter(r=>exposed(r.i));
+  for(const r of refs)if(adjacent(getCard(r),topCard(state.waste)))return{refs:[r],text:`Lleva ${cardName(getCard(r))} al descarte.`};
+ }else{
+  const sources=state.cols.flatMap((col,i)=>col.map((_,j)=>({kind:'col',i,j})));
+  if(state.waste.length)sources.unshift({kind:'waste',i:0});
+  state.cells.forEach((c,i)=>{if(c)sources.unshift({kind:'cell',i})});
+  const dests=[...(t!=='spider'?state.found.map((_,i)=>({kind:'found',i})):[]),...state.cols.map((_,i)=>({kind:'col',i})),...(t==='freecell'?state.cells.map((_,i)=>({kind:'cell',i})):[])];
+  for(const d of dests)for(const s of sources)if(canMove(s,d)){
+   if(d.kind==='col'&&!state.cols[d.i].length&&s.kind==='col'&&s.j===0)continue;
+   const dest=d.kind==='found'?'su base':d.kind==='cell'?'la celda libre '+(d.i+1):'la columna '+(d.i+1);
+   return{refs:[s,d],text:`Mueve ${cardName(getCard(s))} a ${dest}.`};
+  }
+ }
+ if(state.stock.length&&!(t==='spider'&&state.cols.some(c=>!c.length)))return{refs:[{kind:'stock'}],text:t==='spider'?'Toca el mazo para repartir una carta en cada columna.':'Toca el mazo para sacar otra carta.'};
+ if((t==='klondike'||t==='pyramid'&&state.round<3)&&state.waste.length)return{refs:[{kind:'stock'}],text:'Toca el mazo vacío para volver a pasarlo.'};
+ return null;
+}
+function hint(){selected=null;const h=findHint();hinted=h?h.refs.map(refKey):[];render();$('#instruction').textContent=h?h.text:'No quedan jugadas directas. Puedes deshacer para probar otro camino o empezar otra partida.'}
+function undo(){if(!history.length)return;state=history.pop();selected=null;hinted=[];save();render()}
+function modal(title,body,buttons){
+ $('#dialog-title').textContent=title;$('#dialog-body').innerHTML=body;$('#dialog-actions').replaceChildren();
+ buttons.forEach(({text,action,primary})=>{const b=document.createElement('button');b.className='btn'+(primary?' primary':'');b.textContent=text;b.onclick=()=>{$('#dialog').close();action?.()};$('#dialog-actions').appendChild(b)});
+ $('#dialog').showModal();
+}
+function start(type){if(state&&!state.won)modal('¿Empezar una partida nueva?','<p>La partida en curso se reemplazará. Si prefieres, puedes seguir jugando donde la dejaste.</p>',[{text:'Seguir mi partida',action:showGame},{text:'Empezar nueva',primary:true,action:()=>deal(type)}]);else deal(type)}
+function newGame(){modal('¿Repartimos otra vez?','<p>Se reemplazará esta partida por una nueva.</p>',[{text:'Seguir jugando'},{text:'Nueva partida',primary:true,action:()=>deal(state.type)}])}
+function settings(){
+ modal('A tu gusto',`<label class="settings-row">Tamaño de las cartas<select id="size-choice"><option value="normal">Grandes</option><option value="large">Extra grandes</option></select></label><label class="settings-row">Solitario clásico<select id="draw-choice"><option value="1">Sacar una carta</option><option value="3">Sacar tres cartas</option></select></label><p class="rule-note">El tamaño cambia al instante. La opción de una o tres cartas se aplica a la próxima partida de Solitario.</p><p class="save-note">No hay reloj, sonidos ni anuncios. Puedes usar el ratón, tocar la pantalla o navegar con Tab y Enter.</p>`,[{text:'Listo',primary:true}]);
+ $('#size-choice').value=prefs.large?'large':'normal';$('#draw-choice').value=String(prefs.draw);
+ $('#size-choice').onchange=e=>{prefs.large=e.target.value==='large';document.body.classList.toggle('larger',prefs.large);save()};
+ $('#draw-choice').onchange=e=>{prefs.draw=Number(e.target.value);save()};
+}
+$('#game-grid').onclick=e=>{const tile=e.target.closest('[data-game]');if(tile)start(tile.dataset.game)};
+$('#board').onclick=e=>{if(e.target.closest('#stock'))draw();else{const el=e.target.closest('[data-ref]');if(el&&!el.disabled)choose(JSON.parse(el.dataset.ref))}};
+$('#home-btn').onclick=()=>{save();home()};$('#resume-btn').onclick=showGame;$('#undo-btn').onclick=undo;$('#hint-btn').onclick=hint;$('#new-btn').onclick=newGame;$('#win-new').onclick=()=>deal(state.type);
+$('#rules-btn').onclick=()=>modal('Cómo jugar: '+games[state.type].name,'<ul>'+games[state.type].rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><p class="rule-note">Sin prisa: usa Pista cuando quieras y Deshacer para volver atrás. No todas las partidas tienen solución.</p>',[{text:'¡A jugar!',primary:true}]);
+$('#settings-btn').onclick=settings;$('#home-settings').onclick=settings;
+document.addEventListener('keydown',e=>{if($('#dialog').open||$('#game-screen').hidden)return;if(e.key==='Escape'){selected=null;hinted=[];render()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo()}});
+document.body.classList.toggle('larger',prefs.large);save();home();
+</script>
+</body>
+</html>
