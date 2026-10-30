@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171d2c">
+<meta name="description" content="A handcrafted 3D shadow puzzle. Move the camera, shape the light, and discover eight hidden silhouettes. Play offline, without downloads or accounts.">
+<title>Shadow Studio — A little light. A different perspective.</title>
+<style>
+:root{color-scheme:light;--paper:#f4f1eb;--ink:#252c39;--muted:#6d726f;--line:#deded5;--green:#466a54;--lime:#d8e6a3;--orange:#d79464;--serif:Georgia,'Times New Roman',serif;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}button,input,summary{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.42}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible,canvas:focus-visible{outline:3px solid #b08243;outline-offset:4px}button{touch-action:manipulation}button:disabled:hover{transform:none}button:not(:disabled):active{transform:translateY(1px)}.shell{max-width:1390px;margin:auto;padding:0 40px}header{height:92px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:12px}.brand{display:flex;gap:12px;align-items:center;font-size:20px;letter-spacing:-.7px;font-weight:650}.mark{width:37px;height:37px;background:var(--ink);border-radius:50%;display:grid;place-items:center;position:relative;overflow:hidden}.mark:before{content:"";width:20px;height:20px;border-radius:50%;background:var(--lime);transform:translate(5px,-4px)}.mark:after{content:"";position:absolute;background:var(--ink);width:20px;height:20px;border-radius:50%;transform:translate(-3px,3px)}.header-actions{display:flex;gap:8px}.quiet{background:transparent;border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--ink);font-size:12px;font-weight:550;min-height:39px}.quiet:hover{background:#e9e7df}.eyebrow{font-size:10px;letter-spacing:1.9px;font-weight:700;text-transform:uppercase;color:var(--green)}.intro{padding:27px 0 23px;display:flex;align-items:end;justify-content:space-between;gap:20px}h1{font-family:var(--serif);font-size:clamp(28px,3.8vw,42px);font-weight:400;line-height:1.12;letter-spacing:-1.4px;margin:9px 0 10px}.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}.journey{display:flex;gap:7px;align-items:center;padding-bottom:8px}.step{width:26px;height:5px;border:0;border-radius:3px;background:#d9dbd1;padding:0;min-height:18px;background-clip:content-box}.step.active{background-color:var(--ink)}.step.complete{background-color:var(--green)}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 315px;gap:22px;align-items:start}.left{min-width:0}.shadow-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:15px}.card{border:1px solid var(--line);border-radius:12px;background:#faf9f5;overflow:hidden}.card-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;font-size:11px;font-weight:650;letter-spacing:.1px;gap:8px}.dot{display:inline-block;width:6px;height:6px;background:#82a66b;border-radius:50%;margin-right:6px}.live-badge{font-size:9px;color:var(--muted);font-weight:500;letter-spacing:1.1px}.shadow-wrap{position:relative;max-width:390px;margin:0 auto;width:100%;padding:0 12px}.shadow-wrap canvas{display:block;width:100%;aspect-ratio:1;touch-action:pan-y}.live-card .shadow-wrap:before,.live-card .shadow-wrap:after{content:"";position:absolute;pointer-events:none;inset:17% 15%;border-top:1px solid #deddd5;border-bottom:1px solid #deddd5;z-index:1}.live-card .shadow-wrap:after{inset:15% 17%;border:0;border-left:1px solid #deddd5;border-right:1px solid #deddd5}.target-card{background:#eaece2}.target-card .shadow-wrap{padding:12px}.target-note{font-family:var(--serif);font-style:italic;font-size:18px;text-align:center;padding:0 12px 17px;margin:0;color:#586454}.live-note{margin:0;text-align:center;padding:5px 12px 16px;font-size:10px;color:var(--muted)}.target-footer{text-align:center;font-size:10px;color:#63705f;line-height:1.6;padding:0 14px 15px}.score-strip{display:flex;align-items:center;gap:15px;padding:15px 18px;background:#faf9f5;border:1px solid var(--line);border-radius:10px;margin:15px 0}.score-value{font-size:26px;letter-spacing:-1.2px;font-variant-numeric:tabular-nums;min-width:64px}.score-value small{font-size:14px;color:var(--muted);letter-spacing:0}.score-track{flex:1}.track{height:5px;border-radius:5px;background:#e6e7dc;overflow:hidden;margin:6px 0}.fill{height:100%;width:0;background:var(--green);transition:width .18s}.score-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}.seal{border:0;background:var(--green);color:white;padding:13px 15px;border-radius:7px;font-size:12px;font-weight:600;white-space:nowrap;min-height:44px}.seal:disabled{opacity:1;background:#e2e4da;color:#7a8175}.studio{background:#171d2c;color:#cbd1d9;position:relative;border-radius:12px;overflow:hidden;border:1px solid #272e3d}.studio .card-head{position:absolute;top:0;left:0;right:0;z-index:2;pointer-events:none;color:#b5beca;letter-spacing:1.2px;font-size:9px}.studio canvas{width:100%;height:265px;display:block;touch-action:none;cursor:grab}.studio canvas:active{cursor:grabbing}.studio-caption{position:absolute;bottom:13px;left:17px;font-size:9px;letter-spacing:.4px;color:#a8b2c3;pointer-events:none}.studio-key{position:absolute;bottom:13px;right:15px;display:flex;gap:13px;font-size:9px;color:#b7c0cc;pointer-events:none}.key-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;background:#e9bd7a}.key-dot.camera{background:#9cd8c5}.inspector{padding:20px 20px 16px}.control-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.control-top .eyebrow{color:var(--muted);font-size:9px}.level-number{font-variant-numeric:tabular-nums;font-size:11px;color:var(--muted)}h2{font-family:var(--serif);font-size:27px;font-weight:400;letter-spacing:-.7px;margin:0 0 8px}.level-description{font-size:12px;color:var(--muted);line-height:1.65;margin:0 0 16px;min-height:40px}.unlock{background:#e8ecdf;color:#466044;border-radius:6px;font-size:10px;padding:9px 10px;line-height:1.6;margin-bottom:18px}.control-group{padding:16px 0 5px;border-top:1px solid var(--line)}.group-title{font-size:11px;font-weight:650;display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.group-title span{font-size:9px;color:var(--muted);font-weight:400}.slider-row{margin-bottom:13px}.slider-row label{display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-bottom:5px;color:#646b6b}.slider-row output{font-variant-numeric:tabular-nums;color:#414e49;font-size:10px}.slider-row input{width:100%;height:20px;display:block;margin:0;accent-color:var(--green);cursor:pointer}.slider-row input::-webkit-slider-runnable-track{height:3px;background:#daddd2;border-radius:2px}.slider-row input::-webkit-slider-thumb{-webkit-appearance:none;margin-top:-6px}.locked{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:16px 0;color:#898c83;font-size:10px}.inspector-actions{display:flex;gap:8px;margin-top:8px}.inspector-actions button{flex:1}.hint-note{font-size:11px;line-height:1.7;background:#f0e7d8;border-radius:7px;padding:11px;color:#725a3c;margin:12px 0 0}.overlay-toggle{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);margin:14px 0 3px;cursor:pointer}.overlay-toggle input{accent-color:var(--green);width:15px;height:15px}.light-selector{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}.light-selector button{font-size:10px;padding:8px 10px;border:1px solid var(--line);background:transparent;border-radius:6px;color:var(--ink)}.light-selector button.selected{border-color:var(--green);background:#e5eadc}.light-selector button.add{border-style:dashed}.remove-light{font-size:10px;color:#966044;border:0;background:none;padding:6px 0;margin-bottom:9px}.footer{display:flex;justify-content:space-between;gap:14px;padding:24px 0 28px;color:var(--muted);font-size:10px;line-height:1.6}.footer em{font-family:var(--serif);font-size:13px}.legend{padding:12px 2px 0;font-size:10px;line-height:1.7;color:var(--muted)}dialog{border:1px solid var(--line);border-radius:16px;padding:28px;background:var(--paper);color:var(--ink);max-width:590px;width:calc(100% - 32px);max-height:85dvh;overflow:auto;box-shadow:0 30px 100px #0005}dialog::backdrop{background:#111b2c99;backdrop-filter:blur(5px)}dialog h2{font-size:33px;margin:6px 0 15px}dialog p{color:var(--muted);font-size:13px;line-height:1.8}.dialog-head{display:flex;align-items:center;justify-content:space-between}.close{border:1px solid var(--line);background:transparent;border-radius:50%;width:32px;height:32px;font-size:18px;color:var(--ink)}.level-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.level-tile{background:#faf9f5;border:1px solid var(--line);border-radius:9px;text-align:left;padding:14px;min-height:85px;color:var(--ink)}.level-tile strong{display:block;font-family:var(--serif);font-size:19px;font-weight:400;margin:6px 0}.level-tile small{font-size:10px;color:var(--muted)}.level-tile.current{border-color:var(--green)}.success-art{width:115px;height:115px;margin:12px auto;background:#e2e7d7;border-radius:50%;display:grid;place-items:center;font-size:52px;color:var(--green);font-family:var(--serif)}.success{text-align:center}.stars{color:#8f7133;font-size:29px;letter-spacing:8px;margin:12px 0}.success-actions{display:flex;justify-content:center;gap:9px;margin-top:23px}.help-list{padding-left:20px;color:var(--muted);font-size:13px;line-height:1.8}.help-list li{padding:5px 0}.help-list strong{color:var(--ink)}.help-keys{background:#e8ecdf;border-radius:8px;padding:13px;font-size:11px;line-height:1.8}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}#status{font-size:11px;color:var(--green);line-height:1.6;min-height:18px;margin-top:10px}.storage-note{font-size:10px;color:#8b5a40;display:none}
+@media(min-width:1450px){.studio canvas{height:300px}}@media(max-width:1000px){.shell{padding:0 24px}.workspace{grid-template-columns:minmax(0,1fr) 275px;gap:16px}.inspector{padding:17px}.shadow-grid{gap:10px}.card-head{padding:13px 12px}.target-note{font-size:16px}.score-strip{gap:10px;padding:12px}.seal{padding:12px 10px}}@media(max-width:760px){.shell{padding:0 18px}header{height:73px}.brand{font-size:18px}.header-actions .quiet{padding:9px 10px;font-size:11px}.intro{padding:23px 0 20px;display:block}.intro p{font-size:12px}.journey{padding:15px 0 0;gap:6px}.step{width:24px}.workspace{grid-template-columns:1fr}.shadow-grid{grid-template-columns:1fr 1fr;gap:10px}.card-head{font-size:10px}.live-badge{font-size:8px;letter-spacing:.4px}.shadow-wrap{padding:0 6px}.target-card .shadow-wrap{padding:0 6px}.target-note{font-size:16px;padding-bottom:10px}.target-footer{font-size:9px;padding-bottom:12px}.live-note{font-size:9px;padding-bottom:12px}.score-strip{margin:12px 0}.score-value{font-size:25px;min-width:55px}.score-label{font-size:9px}.seal{font-size:11px}.studio canvas{height:245px}.studio-key{font-size:8px;gap:9px}.studio-caption{font-size:8px;max-width:190px}.inspector{padding:21px}.level-description{min-height:0}.control-group{padding-top:17px}.slider-row{margin-bottom:18px}.slider-row input{height:27px}.slider-row label{font-size:12px}.footer{display:block;padding:24px 0}.footer em{display:block;margin-bottom:7px}.legend{padding-bottom:1px}.level-list{gap:8px}.level-tile{padding:12px}.studio .card-head{padding:14px}.storage-note{line-height:1.6}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<style>
+@media(max-width:760px){
+  .brand{font-size:15px;white-space:nowrap;gap:7px;letter-spacing:-.6px}.mark{width:28px;height:28px;flex-shrink:0}.header-actions{gap:4px}.header-actions .quiet{font-size:10px;padding:8px;min-height:36px}header{gap:8px}
+  .workspace{display:flex;flex-direction:column;align-items:stretch;gap:13px}.left{display:contents}
+  .comparison{order:1;position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0 0}
+  .inspector{order:2}.studio{order:3}.legend{order:4}
+  .shadow-grid .card-head{font-size:9px;padding:11px 12px}.shadow-grid .live-badge,.target-footer,.live-note{display:none}
+  .target-note{font-size:14px;padding:3px 8px 12px}.score-strip{margin:10px 0 0;padding:10px 12px}.score-value{font-size:23px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand"><span class="mark" aria-hidden="true"></span>shadow studio</div>
+    <nav class="header-actions" aria-label="Game menu">
+      <button class="quiet" id="levels-button">The collection</button>
+      <button class="quiet" id="help-button">How to play</button>
+      <button class="quiet" id="sound-button" aria-pressed="false" aria-label="Enable sound">Sound off</button>
+    </nav>
+  </header>
+  <section class="intro">
+    <div><div class="eyebrow">A game of light &amp; perspective</div><h1>Find the extraordinary<br>in the ordinary.</h1><p>A few strange objects. One familiar shadow. The right point of view.</p></div>
+    <nav class="journey" id="journey" aria-label="Level progression"></nav>
+  </section>
+  <main class="workspace">
+    <section class="left" aria-label="Shadow puzzle and 3D workshop">
+      <div class="comparison">
+      <div class="shadow-grid">
+        <div class="card live-card">
+          <div class="card-head"><span><span class="dot"></span>Your camera</span><span class="live-badge">LIVE SHADOW</span></div>
+          <div class="shadow-wrap"><canvas id="live" width="480" height="480" tabindex="0" role="img" aria-label="Live shadow through your puzzle camera. Use the labeled camera sliders to match the target."></canvas></div>
+          <p class="live-note" id="live-note">Move the camera. Watch the silhouette change.</p>
+        </div>
+        <div class="card target-card">
+          <div class="card-head"><span>The silhouette to find</span><span class="live-badge">TARGET</span></div>
+          <div class="shadow-wrap"><canvas id="target" width="480" height="480" role="img" aria-label="Target shadow"></canvas></div>
+          <p class="target-note" id="target-name">A paper voyage</p>
+          <div class="target-footer" id="target-footer">Same pieces. Another perspective.</div>
+        </div>
+      </div>
+      <div class="score-strip">
+        <div class="score-value"><span id="score">0</span><small>%</small></div>
+        <div class="score-track"><div class="score-label"><span>Silhouette match</span><span id="goal-label">Goal: 90%</span></div><div class="track"><div class="fill" id="score-fill"></div></div><div class="score-label"><span id="warmth">Find your angle</span><span id="best-label">Best: 0%</span></div></div>
+        <button class="seal" id="seal" disabled>Seal silhouette</button>
+      </div>
+      </div>
+      <div class="studio">
+        <div class="card-head"><span>THE 3D WORKSHOP</span><span>DRAG TO LOOK AROUND</span></div>
+        <canvas id="studio" width="1000" height="430" tabindex="0" role="img" aria-label="Interactive 3D view of the objects, lights and camera. Drag or use arrow keys to inspect. This inspection view does not change your puzzle."></canvas>
+        <div class="studio-caption">Explore the pieces. This view does not affect your score.</div>
+        <div class="studio-key"><span><i class="key-dot"></i>Light</span><span><i class="key-dot camera"></i>Your camera</span></div>
+      </div>
+      <div class="legend" id="lesson">Perspective changes what lines up, not what is there.</div>
+    </section>
+    <aside class="card inspector" aria-label="Puzzle controls">
+      <div class="control-top"><span class="eyebrow" id="chapter">Chapter I / Perspective</span><span class="level-number" id="level-number">01 / 08</span></div>
+      <h2 id="level-title">A paper voyage</h2>
+      <p class="level-description" id="description"></p>
+      <div class="unlock" id="unlock"></div>
+      <div id="controls"></div>
+      <div class="inspector-actions"><button class="quiet" id="hint">A little hint</button><button class="quiet" id="reset">Reset scene</button></div>
+      <label class="overlay-toggle"><input type="checkbox" id="overlay"> Trace target <span>(assisted)</span></label>
+      <p class="hint-note" id="hint-note" hidden></p>
+      <div id="status" role="status" aria-live="polite"></div>
+      <p class="storage-note" id="storage-note">Progress cannot be saved in this browser session. You can still play every level.</p>
+    </aside>
+  </main>
+  <footer class="footer"><em>A little light. A different perspective.</em><span>8 handcrafted puzzles &middot; No timer &middot; Saved on this device &middot; Works offline once saved</span></footer>
+</div>
+<dialog id="help-dialog" aria-labelledby="help-title">
+  <div class="dialog-head"><span class="eyebrow">Welcome to the workshop</span><button class="close" data-close aria-label="Close instructions">&times;</button></div>
+  <h2 id="help-title">Nothing is quite<br>what it seems.</h2>
+  <p>The colored pieces are already in the right places. Your job is to make their cast shadows look like the <strong>target</strong> using the camera and, later, the lights.</p>
+  <ol class="help-list">
+    <li><strong>Compare the two silhouettes.</strong> Match position, shape, size, and darkness. The match meter measures all four; filling the frame with darkness will not work.</li>
+    <li><strong>Move one control at a time.</strong> Orbit the puzzle camera, then learn to tilt it, move lights, and eventually create a second light.</li>
+    <li><strong>Inspect the real 3D scene.</strong> Drag the dark workshop to see how the pieces and rays line up. This is a separate inspection camera, not a puzzle move.</li>
+    <li><strong>Reach the goal, then seal your silhouette.</strong> Earn three stars by exceeding the goal by 9 points, two by 4, or one for clearing it. Tracing or a hint caps stars at two; a nudge caps them at one. Replay for a cleaner solve.</li>
+  </ol>
+  <p>Later, two lights make two partly transparent shadows. Their overlap is darker. You must match both the silhouette and these tones.</p>
+  <div class="help-keys"><strong>Keyboard:</strong> Tab to any slider, then use arrow keys for fine adjustments. Focus the live shadow and use Left/Right for orbit, Up/Down for tilt once unlocked. Focus the workshop and use arrows to inspect.<br><strong>Stuck?</strong> The first hint points you in a useful direction. Further hints gently nudge one control. There is no timer or move limit.</div>
+  <p><button class="seal" data-close>Let's find a shadow</button></p>
+</dialog>
+<dialog id="levels-dialog" aria-labelledby="collection-title">
+  <div class="dialog-head"><span class="eyebrow">Your collection</span><button class="close" data-close aria-label="Close collection">&times;</button></div>
+  <h2 id="collection-title">Eight small discoveries.</h2>
+  <p>New tools arrive a little at a time. Complete a silhouette to open the next one. Revisit any finished puzzle to improve your stars.</p>
+  <div class="level-list" id="level-list"></div>
+</dialog>
+<dialog id="success-dialog" class="success" aria-labelledby="success-title">
+  <div class="dialog-head"><span class="eyebrow" id="success-eyebrow">Silhouette discovered</span><button class="close" data-close aria-label="Close result">&times;</button></div>
+  <div class="success-art" aria-hidden="true">&#10003;</div>
+  <h2 id="success-title">A paper voyage.</h2>
+  <div class="stars" id="success-stars" aria-label="Stars earned"></div>
+  <p id="success-copy"></p>
+  <div class="success-actions"><button class="quiet" id="keep-playing">Keep refining</button><button class="seal" id="next">Next discovery &rarr;</button></div>
+</dialog>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const PI = Math.PI, rad = n => n * PI / 180, clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const add = (a,b) => a.map((v,i)=>v+b[i]), sub = (a,b) => a.map((v,i)=>v-b[i]);
+const mul = (a,s) => a.map(v=>v*s), dot = (a,b) => a.reduce((s,v,i)=>s+v*b[i],0);
+const cross = (a,b) => [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const norm = v => mul(v,1/(Math.hypot(...v)||1));
+const poly = (...points) => points;
+const rect = (x,y,w,h) => [[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
+const ellipse = (x,y,rx,ry,n=30) => Array.from({length:n},(_,i)=>[x+Math.cos(i*PI*2/n)*rx,y+Math.sin(i*PI*2/n)*ry]);
+const SAIL = [
+  poly([-2,-1],[2,-1],[1.3,-1.85],[-1.25,-1.85]),
+  rect(-.11,-.95,.18,3.5),
+  poly([-.27,2.4],[-.27,-.7],[-2,-.7]),
+  poly([.28,1.8],[1.9,-.7],[.28,-.7])
+];
+const OWL = [
+  ellipse(0,-.55,1.32,1.55),ellipse(0,.95,1.45,1.05),
+  poly([-1.43,1.17],[-1.39,2.2],[-.58,1.7]),
+  poly([1.43,1.17],[1.39,2.2],[.58,1.7]),
+  ellipse(-1.06,-.6,.47,.95),ellipse(1.06,-.6,.47,.95),
+  poly([-.35,.65],[.35,.65],[0,.16]),
+  rect(-.8,-2.14,.55,.18),rect(.25,-2.14,.55,.18),
+  rect(-2,-2.38,4,.17)
+];
+const ROCKET = [
+  poly([-.7,-1.15],[-.7,.75],[-.4,1.75],[0,2.38],[.4,1.75],[.7,.75],[.7,-1.15]),
+  poly([-.66,-.2],[-1.4,-1.3],[-1.4,-1.95],[-.5,-1.15]),
+  poly([.66,-.2],[1.4,-1.3],[1.4,-1.95],[.5,-1.15]),
+  poly([-.38,-1.32],[.38,-1.32],[.22,-1.85],[0,-2.38],[-.23,-1.85])
+];
+const FOX = [
+  poly([-1.65,.45],[-1.4,2.13],[-.42,1.28],[.42,1.28],[1.4,2.13],[1.65,.45],[.8,-.4],[0,-.93],[-.8,-.4]),
+  ellipse(0,-1.12,.66,.95),poly([.3,-1.6],[1.3,-1.73],[1.92,-.98],[2.12,-.2],[1.5,-.35],[1.32,-1],[.5,-1.2]),
+  rect(-.5,-2.15,.38,.7),rect(.15,-2.15,.38,.7)
+];
+const GARDEN = [
+  poly([-2.2,.25],[-1.95,1.13],[-1.3,1.9],[-.4,2.25],[.5,2.1],[1.25,1.5],[1.75,.65],[1.85,.25]),
+  poly([-.65,.32],[.45,.32],[.3,-1.5],[.8,-1.7],[.65,-1.95],[-.8,-1.95],[-1,-1.7],[-.55,-1.5]),
+  poly([1.1,-.95],[1.25,-.5],[1.8,-.3],[2.3,-.55],[2.5,-.95]),
+  rect(1.7,-1.85,.23,.95),rect(-2.45,-2.25,5,.16),
+  poly([-1.8,-2.1],[-2,-1.55],[-1.7,-1.83],[-1.5,-1.38],[-1.4,-2.1])
+];
+const CASTLE = [
+  rect(-1.5,-2.1,3,2.3),rect(-2.25,-2.1,.9,3.2),rect(1.35,-2.1,.9,3.2),
+  poly([-2.55,1.1],[-1.8,2.15],[-1.05,1.1]),poly([1.05,1.1],[1.8,2.15],[2.55,1.1]),
+  rect(-.65,.1,1.3,1.65),rect(-.85,1.5,1.7,.23),
+  rect(-.85,1.65,.35,.42),rect(-.18,1.65,.35,.42),rect(.5,1.65,.35,.42),
+  rect(-.08,1.9,.12,.8),poly([.04,2.7],[.8,2.38],[.04,2.12]),rect(-2.55,-2.28,5.1,.18)
+];
+const BIRD = [
+  ellipse(0,-.15,.65,.38),
+  poly([-.25,.05],[-1.15,1.3],[-1.8,1.75],[-1.63,.8],[-.45,-.35]),
+  poly([.2,.06],[1.0,1.4],[1.65,1.82],[1.45,.7],[.5,-.35]),
+  ellipse(.65,.02,.3,.28),poly([.88,.08],[1.3,-.03],[.87,-.13]),
+  poly([-.5,-.2],[-1,-.65],[-1.06,-.22],[-1.4,-.23],[-.6,.1])
+];
+const HARBOR = [
+  ...SAIL.map(p=>p.map(([x,y])=>[x*.55-.8,y*.55-.65])),
+  poly([.65,-1.85],[1.7,-1.85],[1.5,1.38],[.85,1.38]),
+  rect(.7,1.28,1,.25),rect(.84,1.48,.72,.63),
+  poly([.65,2.1],[1.2,2.55],[1.76,2.1]),
+  rect(.67,1.67,1.05,.1),rect(-2.35,-2.12,4.7,.12)
+];
+const camera = (yaw=0,pitch=0,roll=0,zoom=1,panX=0,panY=0) => ({yaw,pitch,roll,zoom,panX,panY});
+const light = (x,y,z=8) => ({x,y,z});
+const LEVELS = [
+  {name:'A paper voyage',chapter:'I / Perspective',shape:SAIL,goal:90,keys:['yaw'],solution:camera(),lights:[light(-1.7,2.5)],start:camera(34),startLights:[light(-1.7,2.5)],unlock:'First tool: camera orbit. Just one slider to find your sea legs.',description:'A hull, two sails, and a mast. Find the angle where the scattered pieces become a little sailboat.',lesson:'Orbit moves your camera around the screen. A side-on view squeezes and skews the shadow.',hint:'Watch the width of the sails. Orbit toward a less side-on view.'},
+  {name:'The night watch',chapter:'I / Perspective',shape:OWL,goal:89,keys:['yaw','pitch'],solution:camera(-12,8),lights:[light(1.8,2.7)],start:camera(19,-23),startLights:[light(1.8,2.7)],unlock:'New tool: camera tilt. Look up or down to change vertical perspective.',description:'An owl is hiding among these rounded pieces. Its ears and perch will help you find the right perspective.',lesson:'Tilt changes vertical proportions. Compare the head to the perch before making small adjustments.'},
+  {name:'Small steps, giant leaps',chapter:'I / Perspective',shape:ROCKET,goal:88,keys:['yaw','pitch','roll'],solution:camera(15,-9,9),lights:[light(-2,2)],start:camera(-20,17,-23),startLights:[light(-2,2)],unlock:'New tool: camera roll. Turn the frame without moving the objects.',description:'This tiny rocket is ready for lift-off. Straighten its course, then let its fins guide you home.',lesson:'Roll turns the entire picture. Orbit and tilt change its shape. Solve these separately.'},
+  {name:'A fox in the light',chapter:'II / Illumination',shape:FOX,goal:87,keys:['yaw','pitch','roll','lightXY'],solution:camera(-10,10,-7),lights:[light(1.6,2.2)],start:camera(13,-12,12),startLights:[light(-1.7,-.3)],unlock:'New tools: light left / right and light height. Move the source, not the pieces.',description:'A fox with a magnificent tail. Different depths make its ears and tail slide apart when the light moves.',lesson:'A light shifts deeper pieces more than shallow ones. Notice which parts separate, not just where the whole shadow goes.'},
+  {name:'After the rain',chapter:'II / Illumination',shape:GARDEN,goal:86,keys:['yaw','pitch','roll','lightXY','lightZ'],solution:camera(14,-8,8),lights:[light(-1.3,2.6,8.5)],start:camera(-12,14,-10),startLights:[light(.9,.6,6.6)],unlock:'New tool: light distance. Close lights make larger, more scattered shadows.',description:'Two mushrooms and a blade of grass. Bring their caps and stems back together, without losing their scale.',lesson:'Moving the light away shrinks shadows toward the objects. Moving it closer magnifies them unevenly.'},
+  {name:'A castle in the air',chapter:'III / Composition',shape:CASTLE,goal:85,keys:['yaw','pitch','roll','lightXY','lightZ','frame'],solution:camera(-15,8,-9,1.03,.22,-.12),lights:[light(1.6,2.5,8.4)],start:camera(9,-12,13,.83,-.4,.4),startLights:[light(-.7,.6,7)],unlock:'New tools: camera framing. Pan and zoom after you have found the shape.',description:'Turrets, battlements, a little flag. Get the architecture right first; then place your castle inside the frame.',lesson:'Zoom changes the size of the whole picture equally. Light distance changes pieces by different amounts.'},
+  {name:'Birds of a feather',chapter:'IV / Two lights',shape:BIRD,goal:84,keys:['yaw','pitch','roll','lightXY','lightZ','frame','multi'],solution:camera(12,-9,6,.94,.06,0),lights:[light(-2.8,2.7,8.5),light(2.4,.7,8.8)],start:camera(-9,12,-12,1.06,-.2,.2),startLights:[light(-.8,1,7.3)],unlock:'New tool: add a second light. One bird becomes a flock of shadows.',description:'One set of wings, two birds in flight. Add a light, then match the pale wings and the darker overlap.',lesson:'Each light has equal strength. A second light makes pale single shadows and a darker double shadow. Match both tones.'},
+  {name:'The last light home',chapter:'IV / Two lights',shape:HARBOR,goal:83,keys:['yaw','pitch','roll','lightXY','lightZ','frame','multi'],solution:camera(-13,10,-8,1.02,-.08,.04),lights:[light(-2.4,2.5,8.5),light(2.5,2,9)],start:camera(11,-11,11,.88,.25,-.25),startLights:[light(-.4,.6,7.2)],unlock:'The final composition. Every tool, two lights, and a harbor to bring home.',description:'A little boat returns to its lighthouse. Bring perspective, depth, framing, and two pools of light into harmony.',lesson:'Start with one light and the overall camera angle. Add the second light, tune the overlap, then refine your framing.'}
+];
+const PALETTE = ['#d5a976','#a7bba8','#b9accc','#d0bca1','#8fb6c0','#d3a29b'];
+const PARAMS = {
+  yaw:{label:'Orbit',min:-45,max:45,step:.5,unit:'°'},
+  pitch:{label:'Tilt',min:-32,max:32,step:.5,unit:'°'},
+  roll:{label:'Roll',min:-35,max:35,step:.5,unit:'°'},
+  zoom:{label:'Zoom',min:.65,max:1.35,step:.005,unit:'×'},
+  panX:{label:'Frame left / right',min:-1.2,max:1.2,step:.01,unit:''},
+  panY:{label:'Frame up / down',min:-1.2,max:1.2,step:.01,unit:''},
+  x:{label:'Light left / right',min:-4,max:4,step:.025,unit:''},
+  y:{label:'Light height',min:-1,max:4.5,step:.025,unit:''},
+  z:{label:'Light distance',min:6.3,max:11,step:.025,unit:''}
+};
+const STORE = 'shadow-studio-progress-v1';
+let storageOK = true, saved = {unlocked:0,stars:Array(8).fill(0),best:Array(8).fill(0),last:0};
+try {
+  const raw = JSON.parse(localStorage.getItem(STORE));
+  if(raw && typeof raw === 'object') {
+    saved.unlocked = clamp(Math.floor(Number(raw.unlocked)||0),0,7);
+    saved.last = clamp(Math.floor(Number(raw.last)||0),0,saved.unlocked);
+    for (const key of ['stars','best']) if(Array.isArray(raw[key])) saved[key]=Array.from({length:8},(_,i)=>clamp(Number(raw[key][i])||0,0,key==='stars'?3:100));
+  }
+} catch(e) { storageOK=false; }
+let levelIndex=saved.last, state, objects=[], targetPixels, match=0, selectedLight=0, hints=0, assisted=0, sound=false, audio, pending=false, stageYaw=26,stagePitch=17, dragging=null, sessionBest=0;
+const maskSize=160;
+const mask=document.createElement('canvas');mask.width=mask.height=maskSize;
+const reference=document.createElement('canvas');reference.width=reference.height=maskSize;
+const shadowLayer=document.createElement('canvas'), shadowCtx=shadowLayer.getContext('2d');
+const liveCtx=$('live').getContext('2d'), targetCtx=$('target').getContext('2d'), studioCtx=$('studio').getContext('2d');
+const maskCtx=mask.getContext('2d',{willReadFrequently:true}), refCtx=reference.getContext('2d',{willReadFrequently:true});
+function save(){
+  try {localStorage.setItem(STORE,JSON.stringify(saved));} catch(e){storageOK=false;}
+  $('storage-note').style.display=storageOK?'none':'block';
+}
+function basis(pos,aim,roll=0){
+  const forward=norm(sub(aim,pos)),right=norm(cross(forward,[0,1,0])),up=cross(right,forward);
+  const c=Math.cos(rad(roll)),s=Math.sin(rad(roll));
+  return {pos,forward,right:add(mul(right,c),mul(up,s)),up:add(mul(up,c),mul(right,-s))};
+}
+function cameraBasis(cam) {
+  const yaw=rad(cam.yaw),pitch=rad(cam.pitch);
+  const aim=[cam.panX,cam.panY,0];
+  return basis(add(aim,[12*Math.sin(yaw)*Math.cos(pitch),12*Math.sin(pitch),12*Math.cos(yaw)*Math.cos(pitch)]),aim,cam.roll);
+}
+function project(p,b,w,h,f){
+  const d=sub(p,b.pos),z=dot(d,b.forward);
+  return z>.08?[w/2+dot(d,b.right)*f/z,h/2-dot(d,b.up)*f/z,z]:null;
+}
+function cast(p,l){
+  const t=l.z/(l.z-p[2]);
+  return [l.x+(p[0]-l.x)*t,l.y+(p[1]-l.y)*t,0];
+}
+function buildObjects(level){
+  const l=level.lights[0];
+  return level.shape.map((shape,i)=>{
+    const z=level.keys.includes('multi')?2+(i%3)*.07:.9+(i*1.173%2.25),thick=.16+(i%3)*.035;
+    const layer=d=>shape.map(([x,y])=>[l.x+(x-l.x)*(l.z-d)/l.z,l.y+(y-l.y)*(l.z-d)/l.z,d]);
+    const vertices=[...layer(z),...layer(z+thick)],n=shape.length;
+    const faces=[Array.from({length:n},(_,j)=>j),Array.from({length:n},(_,j)=>n+j)];
+    for(let j=0;j<n;j++)faces.push([j,(j+1)%n,(j+1)%n+n,j+n]);
+    return {vertices,faces,color:PALETTE[i%PALETTE.length]};
+  });
+}
+function path(ctx,points){
+  if(points.length<3||points.some(p=>!p))return false;
+  ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);
+  for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);
+  ctx.closePath();return true;
+}
+function shadowPolygons(l){
+  return objects.flatMap(o=>o.faces.map(face=>{
+    const points=face.map(i=>cast(o.vertices[i],l));
+    const area=points.reduce((s,p,i)=>{const q=points[(i+1)%points.length];return s+p[0]*q[1]-q[0]*p[1];},0);
+    return area<0?points.reverse():points;
+  }));
+}
+function paintShadows(ctx,lights,b,w,h,f,ink,opacity=1){
+  if(shadowLayer.width!==w||shadowLayer.height!==h){shadowLayer.width=w;shadowLayer.height=h;}
+  shadowCtx.clearRect(0,0,w,h);shadowCtx.globalCompositeOperation='lighter';
+  shadowCtx.fillStyle=ink;shadowCtx.globalAlpha=opacity/lights.length;
+  // Add occlusion per light: two blocked half-strength lights make a full shadow.
+  for(const l of lights){
+    shadowCtx.beginPath();
+    for(const shape of shadowPolygons(l)){
+      const points=shape.map(p=>project(p,b,w,h,f));
+      if(points.some(p=>!p))continue;
+      shadowCtx.moveTo(points[0][0],points[0][1]);
+      for(let i=1;i<points.length;i++)shadowCtx.lineTo(points[i][0],points[i][1]);
+      shadowCtx.closePath();
+    }
+    shadowCtx.fill();
+  }
+  shadowCtx.globalAlpha=1;shadowCtx.globalCompositeOperation='source-over';ctx.drawImage(shadowLayer,0,0);
+}
+function drawShadow(ctx,cam,lights,n,bg='#ffffff',ink='#000000'){
+  ctx.clearRect(0,0,n,n);ctx.fillStyle=bg;ctx.fillRect(0,0,n,n);
+  const b=cameraBasis(cam);
+  paintShadows(ctx,lights,b,n,n,n*1.7*cam.zoom,ink);
+}
+function renderTarget(){
+  const l=LEVELS[levelIndex];
+  drawShadow(targetCtx,l.solution,l.lights,480,'#eaece2','#283630');
+  drawShadow(refCtx,l.solution,l.lights,maskSize);
+  targetPixels=refCtx.getImageData(0,0,maskSize,maskSize).data;
+  $('target').setAttribute('aria-label','Target silhouette: '+l.name+(l.lights.length>1?'. Two partly transparent shadows with a darker overlap.':'. A single dark silhouette.'));
+}
+function render(){
+  pending=false;
+  const l=LEVELS[levelIndex];
+  drawShadow(liveCtx,state.cam,state.lights,480,'#faf9f5','#29302d');
+  drawShadow(maskCtx,state.cam,state.lights,maskSize);
+  const pixels=maskCtx.getImageData(0,0,maskSize,maskSize).data;
+  let intersection=0,union=0;
+  for(let i=0;i<pixels.length;i+=4){const a=255-pixels[i],b=255-targetPixels[i];intersection+=Math.min(a,b);union+=Math.max(a,b);}
+  match=union?100*intersection/union:0;
+  if(state.lights.length!==l.lights.length) match=Math.min(match,l.goal-1);
+  sessionBest=Math.max(sessionBest,match);
+  if($('overlay').checked){
+    const b=cameraBasis(l.solution);
+    liveCtx.save();liveCtx.strokeStyle='#b17754';liveCtx.lineWidth=2;liveCtx.setLineDash([6,5]);
+    for(const lamp of l.lights)for(const shape of shadowPolygons(lamp))if(path(liveCtx,shape.map(p=>project(p,b,480,480,480*1.7*l.solution.zoom))))liveCtx.stroke();
+    liveCtx.restore();
+  }
+  const displayed=Math.floor(match);
+  $('score').textContent=displayed;$('score-fill').style.width=match+'%';
+  $('seal').disabled=displayed<l.goal;
+  $('warmth').textContent=displayed>=l.goal?'Ready to seal':displayed>=l.goal-8?'A few small adjustments':displayed>=60?'The shape is emerging':'Find your angle';
+  $('best-label').textContent='Best: '+Math.floor(Math.max(sessionBest,saved.best[levelIndex]))+'%';
+  $('live').setAttribute('aria-label','Your live shadow. '+displayed+' percent match. Goal '+l.goal+' percent. Adjust camera and light sliders.');
+  renderStudio();
+}
+function schedule(){if(!pending){pending=true;requestAnimationFrame(render);}}
+function studioLine(ctx,a,b,c,basis,w,h,f,dash=[]){
+  const p=project(a,basis,w,h,f),q=project(b,basis,w,h,f);if(!p||!q)return;
+  ctx.strokeStyle=c;ctx.lineWidth=1;ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();ctx.setLineDash([]);
+}
+function shade(hex,k){
+  const rgb=hex.match(/\w\w/g).map(v=>clamp(Math.round(parseInt(v,16)*k),0,255));return `rgb(${rgb.join(',')})`;
+}
+function renderStudio(){
+  const c=$('studio'),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(c.clientWidth*dpr),h=Math.round(c.clientHeight*dpr);
+  if(!w||!h)return;if(c.width!==w||c.height!==h){c.width=w;c.height=h;}
+  const ctx=studioCtx,f=Math.min(h*2.15,w*.95);
+  const yaw=rad(stageYaw),pitch=rad(stagePitch);
+  const b=basis([22*Math.sin(yaw)*Math.cos(pitch),22*Math.sin(pitch),22*Math.cos(yaw)*Math.cos(pitch)],[0,0,3]);
+  const gradient=ctx.createLinearGradient(0,0,w,h);gradient.addColorStop(0,'#1c2537');gradient.addColorStop(1,'#111723');ctx.fillStyle=gradient;ctx.fillRect(0,0,w,h);
+  const wall=[[-4.5,-3.3,0],[4.5,-3.3,0],[4.5,3.6,0],[-4.5,3.6,0]];
+  if(path(ctx,wall.map(p=>project(p,b,w,h,f)))){
+    const g=ctx.createLinearGradient(w*.25,0,w*.7,h);g.addColorStop(0,'#bfc4b8');g.addColorStop(1,'#8e9b91');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#d2d7c044';ctx.stroke();
+  }
+  ctx.save();
+  if(path(ctx,wall.map(p=>project(p,b,w,h,f))))ctx.clip();
+  for(let x=-4;x<=4;x++)studioLine(ctx,[x,-3.3,.001],[x,3.6,.001],'#64776b22',b,w,h,f);
+  for(let y=-3;y<=3;y++)studioLine(ctx,[-4.5,y,.001],[4.5,y,.001],'#64776b22',b,w,h,f);
+  paintShadows(ctx,state.lights,b,w,h,f,'#192327',.8);
+  ctx.restore();
+  const faces=[];
+  for(const o of objects)for(const face of o.faces){
+    const verts=face.map(i=>o.vertices[i]),mid=mul(verts.reduce(add,[0,0,0]),1/verts.length);
+    const normal=norm(cross(sub(verts[1],verts[0]),sub(verts[2],verts[0])));
+    faces.push({verts,depth:dot(sub(mid,b.pos),b.forward),color:shade(o.color,.6+.42*Math.abs(dot(normal,norm([-.3,1,1]))))});
+  }
+  faces.sort((a,b)=>b.depth-a.depth);
+  for(const face of faces)if(path(ctx,face.verts.map(p=>project(p,b,w,h,f)))){
+    ctx.fillStyle=face.color;ctx.fill();ctx.strokeStyle='#141c2825';ctx.lineWidth=.65*dpr;ctx.stroke();
+  }
+  for(let i=0;i<state.lights.length;i++){
+    const l=state.lights[i],p=[l.x,l.y,l.z],q=project(p,b,w,h,f);
+    if(!q)continue;
+    const centroid=mul(objects[0].vertices.reduce(add,[0,0,0]),1/objects[0].vertices.length);
+    studioLine(ctx,p,cast(centroid,l),'#e9bd7a46',b,w,h,f,[3*dpr,4*dpr]);
+    const glow=ctx.createRadialGradient(q[0],q[1],0,q[0],q[1],19*dpr);glow.addColorStop(0,'#f8d48ba0');glow.addColorStop(1,'#f8d48b00');ctx.fillStyle=glow;ctx.fillRect(q[0]-19*dpr,q[1]-19*dpr,38*dpr,38*dpr);
+    ctx.fillStyle='#ffe0a2';ctx.beginPath();ctx.arc(q[0],q[1],4*dpr,0,PI*2);ctx.fill();
+    ctx.strokeStyle='#f3cb86';ctx.lineWidth=dpr;ctx.beginPath();ctx.arc(q[0],q[1],8*dpr,0,PI*2);ctx.stroke();
+    ctx.font=`${9*dpr}px system-ui`;ctx.fillStyle='#e8ca99';ctx.fillText('L'+(i+1),q[0]+12*dpr,q[1]+3*dpr);
+  }
+  const cb=cameraBasis(state.cam),cp=project(cb.pos,b,w,h,f);
+  if(cp){
+    ctx.fillStyle='#a5d6c6';ctx.fillRect(cp[0]-5*dpr,cp[1]-4*dpr,10*dpr,8*dpr);
+    ctx.font=`${8*dpr}px system-ui`;ctx.fillText('CAM',cp[0]+9*dpr,cp[1]+3*dpr);
+    studioLine(ctx,cb.pos,[state.cam.panX,state.cam.panY,0],'#9cd8c53a',b,w,h,f,[3*dpr,5*dpr]);
+  }
+}
+function enabledCameraKeys(){
+  const keys=LEVELS[levelIndex].keys;
+  return ['yaw',...(keys.includes('pitch')?['pitch']:[]),...(keys.includes('roll')?['roll']:[]),...(keys.includes('frame')?['zoom','panX','panY']:[])];
+}
+function enabledLightKeys(){
+  const keys=LEVELS[levelIndex].keys;
+  return [...(keys.includes('lightXY')?['x','y']:[]),...(keys.includes('lightZ')?['z']:[])];
+}
+function displayValue(key,value){
+  return (key==='zoom'?value.toFixed(2):['yaw','pitch','roll'].includes(key)?value.toFixed(1):value.toFixed(2))+PARAMS[key].unit;
+}
+function slider(key,type){
+  const config=PARAMS[key],value=type==='cam'?state.cam[key]:state.lights[selectedLight][key],id=type+'-'+key;
+  return `<div class="slider-row"><label for="${id}">${config.label}<output id="${id}-out" for="${id}">${displayValue(key,value)}</output></label><input id="${id}" data-type="${type}" data-key="${key}" type="range" min="${config.min}" max="${config.max}" step="${config.step}" value="${value}" aria-valuetext="${displayValue(key,value)}"></div>`;
+}
+function renderControls(){
+  const l=LEVELS[levelIndex],camKeys=enabledCameraKeys(),lightKeys=enabledLightKeys();
+  let html='<div class="control-group"><div class="group-title">Camera<span>Change your point of view</span></div>'+camKeys.map(k=>slider(k,'cam')).join('')+'</div>';
+  if(lightKeys.length){
+    html+='<div class="control-group"><div class="group-title">Lighting<span>Shape the cast shadows</span></div>';
+    if(l.keys.includes('multi')){
+      html+='<div class="light-selector">'+state.lights.map((_,i)=>`<button data-light="${i}" class="${i===selectedLight?'selected':''}" aria-pressed="${i===selectedLight}">Light ${i+1}</button>`).join('');
+      if(state.lights.length<2)html+='<button class="add" id="add-light">+ Add light</button>';
+      html+='</div>';
+    }
+    html+=lightKeys.map(k=>slider(k,'light')).join('');
+    if(state.lights.length>1)html+='<button class="remove-light" id="remove-light">Remove selected light</button>';
+    html+='</div>';
+  }else html+='<div class="locked"><span>Lighting tools</span><span>Unlock in puzzle 4</span></div>';
+  if(!l.keys.includes('frame'))html+='<div class="locked"><span>Camera framing</span><span>Unlock in puzzle 6</span></div>';
+  $('controls').innerHTML=html;
+}
+function syncSliders(){
+  $('controls').querySelectorAll('input[type=range]').forEach(input=>{
+    const k=input.dataset.key,v=input.dataset.type==='cam'?state.cam[k]:state.lights[selectedLight][k];
+    input.value=v;$(input.id+'-out').value=displayValue(k,v);input.setAttribute('aria-valuetext',displayValue(k,v));
+  });
+}
+function renderJourney(){
+  $('journey').innerHTML=LEVELS.map((l,i)=>`<button class="step ${i===levelIndex?'active':saved.stars[i]?'complete':''}" data-level="${i}" title="${i+1}. ${l.name}${i>saved.unlocked?' (locked)':''}" aria-label="Puzzle ${i+1}: ${l.name}${saved.stars[i]?', completed':''}" ${i>saved.unlocked?'disabled':''} ${i===levelIndex?'aria-current="step"':''}></button>`).join('');
+}
+function loadLevel(i){
+  levelIndex=clamp(i,0,saved.unlocked);const l=LEVELS[levelIndex];
+  state={cam:{...l.start},lights:l.startLights.map(v=>({...v}))};
+  objects=buildObjects(l);selectedLight=0;hints=0;assisted=0;sessionBest=0;stageYaw=26;stagePitch=17;
+  $('overlay').checked=false;$('hint-note').hidden=true;$('hint').textContent='A little hint';$('status').textContent='';
+  $('chapter').textContent='Chapter '+l.chapter;$('level-number').textContent=String(levelIndex+1).padStart(2,'0')+' / 08';
+  $('level-title').textContent=l.name;$('target-name').textContent=l.name;$('description').textContent=l.description;
+  $('unlock').textContent=l.unlock;$('lesson').textContent=l.lesson;$('goal-label').textContent='Goal: '+l.goal+'%';
+  $('target-footer').textContent=l.lights.length===2?'Two lights. Two shadows. Match the darkness, too.':'Same pieces. Another perspective.';
+  $('live-note').textContent=l.keys.includes('lightXY')?'Move the camera. Shape the light. Find the match.':'Move the camera. Watch the silhouette change.';
+  renderControls();renderJourney();renderTarget();render();saved.last=levelIndex;save();
+}
+function showLevels(){
+  $('level-list').innerHTML=LEVELS.map((l,i)=>`<button class="level-tile ${i===levelIndex?'current':''}" data-level="${i}" ${i>saved.unlocked?'disabled':''}><small>${String(i+1).padStart(2,'0')} / ${i>saved.unlocked?'Locked':saved.stars[i]?'★'.repeat(saved.stars[i]):'Ready to discover'}</small><strong>${l.name}</strong><small>${l.chapter.split(' / ')[1]}</small></button>`).join('');
+  $('levels-dialog').showModal();
+}
+function candidates(){
+  const l=LEVELS[levelIndex],all=[];
+  for(const k of enabledCameraKeys())all.push({key:k,type:'cam',target:l.solution[k],current:state.cam[k],weight:1});
+  if(l.keys.includes('multi')&&state.lights.length<2)return [{type:'add',distance:2}];
+  let targets=l.lights;
+  // Light identities do not affect the physics: compare the better assignment.
+  if(state.lights.length===2){
+    const cost=(a,b)=>state.lights.reduce((s,v,i)=>s+['x','y','z'].reduce((t,k)=>t+Math.abs(v[k]-[a,b][i][k])/(PARAMS[k].max-PARAMS[k].min),0),0);
+    if(cost(targets[1],targets[0])<cost(targets[0],targets[1]))targets=[targets[1],targets[0]];
+  }
+  for(let i=0;i<state.lights.length;i++)for(const k of enabledLightKeys())all.push({key:k,type:'light',index:i,target:targets[i][k],current:state.lights[i][k],weight:1.3});
+  return all.map(v=>({...v,distance:Math.abs(v.target-v.current)/(PARAMS[v.key].max-PARAMS[v.key].min)*v.weight})).sort((a,b)=>b.distance-a.distance);
+}
+function giveHint(){
+  const best=candidates()[0];hints++;assisted=Math.max(assisted,hints>1?2:1);$('hint-note').hidden=false;
+  if(best.type==='add'){
+    $('hint-note').textContent='The target has two pale shadows and a darker overlap. Press "+ Add light" in the Lighting section, then tune the two sources separately.';
+    hints=1;
+  }else if(hints===1){
+    const direction=best.target>best.current?'increase':'decrease';
+    $('hint-note').textContent=(LEVELS[levelIndex].hint?LEVELS[levelIndex].hint+' ':'')+'Try a small '+direction+' in '+PARAMS[best.key].label.toLowerCase()+(best.type==='light'?' for Light '+(best.index+1):'')+'.';
+  }else{
+    const cfg=PARAMS[best.key],next=Math.round((best.current+(best.target-best.current)*.48)/cfg.step)*cfg.step;
+    if(best.type==='cam')state.cam[best.key]=clamp(next,cfg.min,cfg.max);
+    else {selectedLight=best.index;state.lights[best.index][best.key]=clamp(next,cfg.min,cfg.max);}
+    renderControls();schedule();
+    $('hint-note').textContent='A gentle nudge to '+PARAMS[best.key].label.toLowerCase()+'. Compare the new silhouette, then refine the other controls. Nudged solves earn up to one star.';
+  }
+  $('hint').textContent='Nudge me closer';$('status').textContent=assisted>1?'Nudged solve: up to one star.':'Assisted solve: up to two stars.';
+}
+function seal(){
+  render();
+  const l=LEVELS[levelIndex],score=Math.floor(match);if(score<l.goal)return;
+  let stars=score>=l.goal+9?3:score>=l.goal+4?2:1;stars=Math.min(stars,assisted>1?1:assisted?2:3);
+  saved.stars[levelIndex]=Math.max(saved.stars[levelIndex],stars);saved.best[levelIndex]=Math.max(saved.best[levelIndex],score);saved.unlocked=Math.max(saved.unlocked,Math.min(7,levelIndex+1));save();renderJourney();
+  $('success-title').textContent=l.name+'.';$('success-stars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);$('success-stars').setAttribute('aria-label',stars+' out of 3 stars');
+  const complete=saved.stars.every(v=>v>0);
+  $('success-eyebrow').textContent=complete?'Your collection is complete':'Silhouette discovered';
+  $('success-copy').textContent=score+'% match. '+(complete?'Eight little discoveries, all made of light. Revisit the collection to chase three stars.':levelIndex===7?'The harbor is home. Visit the collection to finish any earlier puzzles or improve your stars.':LEVELS[levelIndex+1].unlock)+(assisted?' This was an assisted solve.':'');
+  $('next').textContent=levelIndex===7?'See the collection':'Next discovery →';$('success-dialog').showModal();chime();
+}
+function chime(){
+  if(!sound)return;
+  try {
+    audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume();
+    [523.25,659.25,783.99].forEach((freq,i)=>{
+      const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+i*.14;
+      o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.08,t+.025);g.gain.exponentialRampToValueAtTime(.001,t+.6);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+.7);
+    });
+  }catch(e){$('sound-button').textContent='Sound unavailable';}
+}
+$('controls').addEventListener('input',e=>{
+  const input=e.target;if(!input.matches('input[type=range]'))return;
+  const {key,type}=input.dataset,value=Number(input.value);
+  if(type==='cam')state.cam[key]=value;else state.lights[selectedLight][key]=value;
+  $(input.id+'-out').value=displayValue(key,value);input.setAttribute('aria-valuetext',displayValue(key,value));schedule();
+});
+$('controls').addEventListener('click',e=>{
+  const button=e.target.closest('button');if(!button)return;
+  if(button.dataset.light!==undefined){selectedLight=Number(button.dataset.light);renderControls();return;}
+  if(button.id==='add-light'&&LEVELS[levelIndex].keys.includes('multi')&&state.lights.length<2){
+    const first=state.lights[0];state.lights.push(light(clamp(first.x+2,-4,4),clamp(first.y-.5,-1,4.5),first.z));selectedLight=1;
+    $('status').textContent='Second light added. Select Light 1 or Light 2 to adjust each source.';
+  }
+  if(button.id==='remove-light'&&state.lights.length>1){state.lights.splice(selectedLight,1);selectedLight=0;$('status').textContent='Light removed. The target still needs two lights.';}
+  renderControls();schedule();
+});
+$('hint').addEventListener('click',giveHint);
+$('reset').addEventListener('click',()=>{
+  const previousAssisted=assisted;loadLevel(levelIndex);
+  // Resetting transforms must not erase assistance used on this attempt.
+  assisted=previousAssisted;$('status').textContent='Scene reset.'+(assisted?' Assistance still counts; start a fresh attempt from the collection for unassisted stars.':'');
+});
+$('overlay').addEventListener('change',()=>{
+  if($('overlay').checked){assisted=Math.max(assisted,1);$('status').textContent='Terracotta outline: the target. Traced solves earn up to two stars.';}
+  schedule();
+});
+$('seal').addEventListener('click',seal);
+$('levels-button').addEventListener('click',showLevels);
+$('help-button').addEventListener('click',()=>$('help-dialog').showModal());
+$('sound-button').addEventListener('click',()=>{
+  sound=!sound;$('sound-button').textContent=sound?'Sound on':'Sound off';$('sound-button').setAttribute('aria-pressed',String(sound));$('sound-button').setAttribute('aria-label',sound?'Disable sound':'Enable sound');if(sound)chime();
+});
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
+for(const id of ['journey','level-list'])$(id).addEventListener('click',e=>{
+  const b=e.target.closest('[data-level]');if(!b||b.disabled)return;
+  if($('levels-dialog').open)$('levels-dialog').close();loadLevel(Number(b.dataset.level));
+});
+$('keep-playing').addEventListener('click',()=>$('success-dialog').close());
+$('next').addEventListener('click',()=>{
+  $('success-dialog').close();if(levelIndex===7)showLevels();else {loadLevel(levelIndex+1);window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+});
+$('live').addEventListener('keydown',e=>{
+  const key=['ArrowLeft','ArrowRight'].includes(e.key)?'yaw':['ArrowUp','ArrowDown'].includes(e.key)?'pitch':null;
+  if(!key||!enabledCameraKeys().includes(key))return;e.preventDefault();
+  const dir=['ArrowRight','ArrowUp'].includes(e.key)?1:-1;state.cam[key]=clamp(state.cam[key]+dir*.5,PARAMS[key].min,PARAMS[key].max);syncSliders();schedule();
+});
+$('studio').addEventListener('pointerdown',e=>{dragging={x:e.clientX,y:e.clientY,yaw:stageYaw,pitch:stagePitch};$('studio').setPointerCapture(e.pointerId);});
+$('studio').addEventListener('pointermove',e=>{
+  if(!dragging)return;stageYaw=clamp(dragging.yaw+(e.clientX-dragging.x)*.35,-64,64);stagePitch=clamp(dragging.pitch+(e.clientY-dragging.y)*.25,-15,48);renderStudio();
+});
+for(const event of ['pointerup','pointercancel','lostpointercapture'])$('studio').addEventListener(event,()=>dragging=null);
+$('studio').addEventListener('keydown',e=>{
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();
+  stageYaw=clamp(stageYaw+(e.key==='ArrowRight'?3:e.key==='ArrowLeft'?-3:0),-64,64);
+  stagePitch=clamp(stagePitch+(e.key==='ArrowUp'?3:e.key==='ArrowDown'?-3:0),-15,48);renderStudio();
+});
+window.addEventListener('resize',()=>renderStudio());
+loadLevel(levelIndex);
+</script>
+</body>
+</html>
