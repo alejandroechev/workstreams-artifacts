@@ -28,13 +28,13 @@
 <div class="list-top"><span id="list-title">THE WHOLE NETWORK</span><button id="show-all" class="text-button">Show all lines</button></div>
 <div id="category-bar" class="category-bar" hidden><div class="category-controls"><label for="category-filter">Category</label><select id="category-filter"><option value="all">All categories</option></select></div><div id="category-key" class="category-key" aria-label="Place category colors"></div><div class="category-summary"><span id="place-results" aria-live="polite"></span><button id="fit-places" class="text-button">Fit places</button></div></div>
 <div class="scroll" id="list-scroll"><div id="line-list" role="tabpanel" aria-labelledby="lines-tab"></div><div id="station-list" role="tabpanel" aria-labelledby="stations-tab" hidden></div><div id="place-list" role="tabpanel" aria-labelledby="places-tab" hidden></div></div>
-<footer class="source"><a href="https://www.crtm.es/" target="_blank" rel="noopener">Powered by CRTM</a> &middot; Official open data, adapted.<br><span id="source-date"></span><span class="desktop-only"><br>Static Metro network, not live service information. Simplified background is approximate; street maps are from OpenStreetMap.<br><a href="https://datos.crtm.es/maps/0a6c45e7bdd94679b67a2ae662c8838b/about" target="_blank" rel="noopener">Metro data</a> &middot; <a href="https://datos.crtm.es/maps/53c45916691a4256bf0f6f69fb0e182c/about" target="_blank" rel="noopener">Light rail data</a> &middot; <a href="https://www.crtm.es/licencia-de-uso/" target="_blank" rel="noopener">Data license</a><br>Independent explorer. Not endorsed by CRTM.</span></footer>
+<footer class="source"><a href="https://www.crtm.es/" target="_blank" rel="noopener">Powered by CRTM</a> &middot; Official open data, adapted.<br><span id="source-date"></span><span class="desktop-only"><br>Static Metro network, not live service information. Street maps are from OpenStreetMap.<br><a href="https://datos.crtm.es/maps/0a6c45e7bdd94679b67a2ae662c8838b/about" target="_blank" rel="noopener">Metro data</a> &middot; <a href="https://datos.crtm.es/maps/53c45916691a4256bf0f6f69fb0e182c/about" target="_blank" rel="noopener">Light rail data</a> &middot; <a href="https://www.crtm.es/licencia-de-uso/" target="_blank" rel="noopener">Data license</a><br>Independent explorer. Not endorsed by CRTM.</span></footer>
 </aside>
 <section class="map" aria-label="Interactive geographic map of Madrid">
-<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="context"></g><g id="osm-tiles" visibility="hidden"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g></svg>
+<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="osm-tiles"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g></svg>
 <div class="map-title"><h2>Madrid</h2><p>GEOGRAPHIC VIEW &nbsp;/&nbsp; METRO + LIGHT RAIL</p></div>
 <div id="map-status" class="map-status" aria-live="polite"></div>
-<div class="basemap-controls"><label for="basemap">Map</label><select id="basemap"><option value="auto">Auto: streets</option><option value="simple">Simplified</option></select><span id="basemap-status" role="status">Simplified map</span><button id="retry-map" class="text-button" hidden>Retry streets</button></div>
+<div class="basemap-controls"><span id="basemap-status" role="status">Loading OpenStreetMap…</span><button id="retry-map" class="text-button" hidden>Retry streets</button></div>
 <div class="map-attribution">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · <a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener">Map issue</a></div>
 <nav class="map-tools" aria-label="Map controls"><button class="tool" id="zoom-in" aria-label="Zoom in">+</button><button class="tool" id="zoom-out" aria-label="Zoom out">&minus;</button><button class="tool" id="fit" aria-label="Fit the whole network"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button><button class="tool" id="center" aria-label="Zoom to central Madrid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="6"/><path d="M12 2v5m0 10v5M2 12h5m10 0h5"/></svg></button><button class="tool" id="label-toggle" aria-label="Toggle station names" aria-pressed="true" style="font-size:14px;font-weight:600">Aa</button></nav>
 <section id="detail" class="detail" aria-label="Station details" hidden><button id="close-detail" class="close" aria-label="Close station details">&times;</button><p id="detail-kicker" class="kicker">YOU ARE EXPLORING</p><h3 id="detail-name"></h3><div id="detail-lines" class="badges"></div><p id="detail-meta" class="station-meta"></p><p id="detail-note" class="visit-note" hidden></p><div id="detail-nearby"></div><div class="place-actions"><a id="detail-link" class="map-link" target="_blank" rel="noopener">View location in Google Maps &nearr;</a><a id="detail-website" class="map-link" target="_blank" rel="noopener" hidden>Official website &nearr;</a></div></section>
@@ -153,22 +153,6 @@ function fitStations(ss){
  const cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
  view={x:cx-w/2,y:cy-h/2,w,h};scheduleDraw();
 }
-function drawContext(){
- const layer=$('context');
- const path=(coords,attrs)=>layer.append(el('path',{d:coords.map((p,i)=>(i?'L':'M')+project(p).join(',')).join(' '),...attrs}));
- for(let lat=39.65;lat<=41.2;lat+=.1)path([[-4.6,lat],[-3.1,lat]],{stroke:'#e1e3d7','stroke-width':1,'vector-effect':'non-scaling-stroke'});
- for(let lon=-4.6;lon<=-3.1;lon+=.1)path([[lon,39.65],[lon,41.2]],{stroke:'#e1e3d7','stroke-width':1,'vector-effect':'non-scaling-stroke'});
- const parks=[
-  [[-3.769,40.445],[-3.747,40.444],[-3.729,40.432],[-3.724,40.412],[-3.745,40.404],[-3.774,40.414],[-3.782,40.436],[-3.769,40.445]],
-  [[-3.692,40.421],[-3.679,40.421],[-3.678,40.407],[-3.688,40.407],[-3.692,40.421]],
-  [[-3.738,40.471],[-3.717,40.476],[-3.708,40.469],[-3.716,40.459],[-3.729,40.461],[-3.738,40.471]],
-  [[-3.63,40.47],[-3.614,40.473],[-3.606,40.458],[-3.622,40.455],[-3.63,40.47]]
- ];
- for(const p of parks)path(p,{fill:'#dce4cf',stroke:'#d2dbc6','stroke-width':1});
- path([[-3.755,40.51],[-3.751,40.492],[-3.741,40.478],[-3.745,40.46],[-3.738,40.451],[-3.727,40.443],[-3.728,40.43],[-3.725,40.418],[-3.72,40.406],[-3.704,40.393],[-3.685,40.379],[-3.669,40.365],[-3.657,40.344],[-3.642,40.326]],{stroke:'#c3d8da','stroke-width':9,'vector-effect':'non-scaling-stroke',fill:'none','stroke-linejoin':'round'});
- const places=[['CASA DE CAMPO',-3.758,40.425],['RETIRO',-3.685,40.414],['MADRID',-3.702,40.427],['ALCOBENDAS',-3.643,40.553],['SAN SEBASTIÁN DE LOS REYES',-3.624,40.572],['POZUELO',-3.817,40.465],['BOADILLA',-3.897,40.415],['ALCORCÓN',-3.839,40.366],['MÓSTOLES',-3.867,40.313],['LEGANÉS',-3.755,40.328],['GETAFE',-3.721,40.298],['FUENLABRADA',-3.807,40.272],['RIVAS',-3.521,40.373],['ARGANDA',-3.44,40.297],['PARLA',-3.768,40.221],['AIRPORT',-3.556,40.488]];
- for(const [name,lon,lat]of places){const [x,y]=project([lon,lat]);layer.append(el('text',{x,y,'text-anchor':'middle',class:'context-label','font-size':name==='MADRID'?440:210},name))}
-}
 const trackNodes=[];
 for(const t of DATA.tracks){for(const points of t.paths){const node=el('path',{d:points.map((p,i)=>(i?'L':'M')+project(p).join(',')).join(' '),stroke:byLine.get(t.line).color,class:'track','vector-effect':'non-scaling-stroke'});$('tracks').append(node);trackNodes.push({node,line:t.line})}}
 const stationNodes=[];
@@ -176,14 +160,12 @@ for(const s of stations){const node=el('circle',{cx:s.p[0],cy:s.p[1],class:'stat
 const placeNodes=places.map(p=>{const node=el('g',{class:'place-pin','data-place':p.id,'data-category':p.category,role:'button',tabindex:0,'aria-label':'Place: '+p.name});node.style.setProperty('--place-color',CATEGORIES[p.category].color);node.append(el('circle',{r:12}),el('text',{'text-anchor':'middle',y:3.5},p.number),el('title',{},p.name+' · '+CATEGORIES[p.category].name));node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();selectPlace(p)}};$('place-pins').append(node);return {p,node}});
 const placesToggle=html('button','tool','★');placesToggle.id='places-toggle';placesToggle.setAttribute('aria-label','Toggle points of interest');placesToggle.setAttribute('aria-pressed','true');placesToggle.onclick=()=>{showPlaces=!showPlaces;placesToggle.setAttribute('aria-pressed',String(showPlaces));if(!showPlaces&&selectedPlace)$('close-detail').click();draw()};document.querySelector('.map-tools').append(placesToggle);
 const tileCache=new Map();
+let currentTileKeys=new Set();
 let tileKey='',tileGeneration=0,tileTimer=0,retryTimer=0;
 function basemapState(state,message){
- const streets=state==='streets';
- $('osm-tiles').setAttribute('visibility',streets?'visible':'hidden');
- $('context').setAttribute('visibility',streets?'hidden':'visible');
  document.querySelector('.map').dataset.basemap=state;
  $('basemap-status').textContent=message;
- $('retry-map').hidden=state!=='fallback';
+ $('retry-map').hidden=state!=='error';
 }
 function viewportTiles(){
  const unit=view.w/Math.max(svg.clientWidth,1);
@@ -201,11 +183,11 @@ function viewportTiles(){
 }
 function loadTile(spec){
  if(tileCache.has(spec.key))return tileCache.get(spec.key).promise;
- const node=el('image',{x:spec.x,y:spec.y,width:spec.size,height:spec.size,preserveAspectRatio:'none','data-tile':spec.key});
+ const node=el('image',{x:spec.x,y:spec.y,width:spec.size,height:spec.size,preserveAspectRatio:'none','data-tile':spec.key,visibility:'hidden'});
  const entry={node,state:'loading',promise:null};
  entry.promise=new Promise(resolve=>{
   let settled=false;
-  const finish=state=>{if(settled)return;settled=true;clearTimeout(timer);node.onload=null;node.onerror=null;entry.state=state;if(state!=='loaded')node.removeAttribute('href');resolve(entry)};
+  const finish=state=>{if(settled)return;settled=true;clearTimeout(timer);node.onload=null;node.onerror=null;entry.state=state;if(state==='loaded'){node.setAttribute('visibility','visible');node.style.display=currentTileKeys.has(spec.key)?'':'none'}else node.removeAttribute('href');resolve(entry)};
   const timer=setTimeout(()=>finish('failed'),8000);
   node.onload=()=>finish('loaded');node.onerror=()=>finish('failed');
   $('osm-tiles').append(node);
@@ -215,27 +197,35 @@ function loadTile(spec){
  return entry.promise;
 }
 function queueBasemap(){
- const mode=$('basemap').value;
- const unavailable=mode==='simple'?'simple':!navigator.onLine?'offline':location.protocol==='file:'?'local':null;
+ const unavailable=!navigator.onLine?'offline':location.protocol==='file:'?'local':null;
  if(unavailable){
-  if(tileKey!==unavailable){tileGeneration++;tileKey=unavailable;clearTimeout(tileTimer);clearTimeout(retryTimer)}
-  basemapState(unavailable,unavailable==='offline'?'Offline · simplified':unavailable==='local'?'Local file · simplified':'Simplified map');
+  if(tileKey!==unavailable){tileGeneration++;tileKey=unavailable;currentTileKeys=new Set();clearTimeout(tileTimer);clearTimeout(retryTimer)}
+  basemapState(unavailable,unavailable==='offline'?'Offline · new street tiles unavailable':'Open the published page for street maps');
   return;
  }
  const specs=viewportTiles(),key=specs.map(s=>s.key).join('|');
  if(key===tileKey)return;
  tileKey=key;const generation=++tileGeneration;clearTimeout(tileTimer);clearTimeout(retryTimer);
- basemapState('loading','Loading streets · fallback ready');
+ currentTileKeys=new Set(specs.map(s=>s.key));
+ basemapState('loading','Loading OpenStreetMap…');
  // Fetch only the settled, visible viewport; the browser honors normal tile cache headers.
  tileTimer=setTimeout(async()=>{
   const needed=new Set(specs.map(s=>s.key));
-  for(const [key,entry]of tileCache){entry.node.style.display=needed.has(key)?'':'none';if(tileCache.size>160&&!needed.has(key)&&entry.state!=='loading'){entry.node.remove();tileCache.delete(key)}}
-  for(const s of specs)if(tileCache.has(s.key))tileCache.get(s.key).node.style.display='';
+  // Retain overlapping street tiles until replacements load, including across zoom levels.
+  for(const [key,entry]of tileCache){
+   const node=entry.node,x=+node.getAttribute('x'),y=+node.getAttribute('y'),size=+node.getAttribute('width');
+   if(!needed.has(key)&&(x>=view.x+view.w||x+size<=view.x||y>=view.y+view.h||y+size<=view.y))node.style.display='none';
+   if(tileCache.size>160&&!needed.has(key)&&node.style.display==='none'&&entry.state!=='loading'){node.remove();tileCache.delete(key)}
+  }
+  for(const s of specs)if(tileCache.has(s.key)){const entry=tileCache.get(s.key);entry.node.style.display='';$('osm-tiles').append(entry.node)}
   const result=await Promise.all(specs.map(loadTile));
   if(generation!==tileGeneration)return;
-  if(result.length&&result.every(entry=>entry.state==='loaded'))basemapState('streets','OpenStreetMap streets');
+  if(result.length&&result.every(entry=>entry.state==='loaded')){
+   for(const [key,entry]of tileCache)if(!needed.has(key))entry.node.style.display='none';
+   basemapState('streets','OpenStreetMap streets');
+  }
   else{
-   basemapState('fallback','Streets unavailable · simplified');
+   basemapState('error','Some street tiles unavailable');
    if(!document.hidden)retryTimer=setTimeout(retryStreets,30000);
   }
  },180);
@@ -245,16 +235,14 @@ function retryStreets(){
  for(const [key,entry]of tileCache)if(entry.state==='failed'){entry.node.remove();tileCache.delete(key)}
  tileKey='';queueBasemap();
 }
-$('basemap').onchange=()=>{tileKey='';queueBasemap()};
 $('retry-map').onclick=retryStreets;
 window.addEventListener('offline',queueBasemap);
 window.addEventListener('online',retryStreets);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(retryTimer);else if(document.querySelector('.map').dataset.basemap==='fallback')retryStreets()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(retryTimer);else if(document.querySelector('.map').dataset.basemap==='error')retryStreets()});
 function scheduleDraw(){if(!renderFrame)renderFrame=requestAnimationFrame(()=>{renderFrame=0;draw()})}
 function draw(){
  svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
  const rect=svg.getBoundingClientRect(),unit=view.w/Math.max(1,rect.width);
- for(const node of $('context').querySelectorAll('text')){node.setAttribute('font-size',unit*(node.textContent==='MADRID'?13:8));node.style.letterSpacing=unit*.7+'px'}
  for(const {node,line}of trackNodes){node.style.display=visible.has(line)?'':'none';node.setAttribute('stroke-width',activeLine?4.5:3.1)}
  const shown=stations.filter(s=>s.lines.some(l=>visible.has(l)));
  for(const {s,node}of stationNodes){const on=s.lines.some(l=>visible.has(l));node.style.display=on?'':'none';const transfer=s.lines.length>1;node.setAttribute('r',unit*(s.id===selected?.id?7:transfer?4:2.5));node.setAttribute('stroke-width',s.id===selected?.id?2.5:transfer?1.7:1.1);node.setAttribute('stroke',s.id===selected?.id?'#b92836':'#4e5749')}
@@ -318,9 +306,9 @@ $('line-count').textContent=lines.length;$('station-count').textContent=stations
 $('place-count').textContent=places.length;
 const placeLegend=html('span');placeLegend.append(html('i','place-number','★'),document.createTextNode('Place'));document.querySelector('.legend').append(placeLegend);
 const credit=html('a','','Place coordinates: OpenStreetMap contributors & Esri');credit.href='https://www.openstreetmap.org/copyright';credit.target='_blank';credit.rel='noopener';document.querySelector('.source .desktop-only').append(document.createElement('br'),credit);
-document.querySelector('.source .desktop-only').append(document.createElement('br'),document.createTextNode('Online street tiles; automatic simplified fallback. The loaded page works offline; opening the website still requires a connection. Places checked 4 Nov 2026.'));
+document.querySelector('.source .desktop-only').append(document.createElement('br'),document.createTextNode('An internet connection is required to load street tiles. Loaded streets remain visible while new tiles arrive. Places checked 4 Nov 2026.'));
 $('source-date').textContent='Static network · Updated '+DATA.updated+' · Retrieved '+DATA.retrieved;
-drawContext();renderList();fitStations(stations);
+renderList();fitStations(stations);
 let previousSize=null;new ResizeObserver(()=>{const r=svg.getBoundingClientRect();if(previousSize){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=view.h*r.width/r.height;view.x=cx-view.w/2;view.y=cy-view.h/2;scheduleDraw()}previousSize={w:r.width,h:r.height}}).observe(svg);
 </script>
 </body>
