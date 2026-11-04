@@ -11,6 +11,8 @@
 @media(min-width:1500px){.layout{grid-template-columns:365px 1fr}}
 @media(max-width:700px){header{height:68px;padding:0 17px}.logo{width:34px;height:34px;font-size:19px;border-radius:9px}.brand{gap:11px}h1{font-size:20px}.eyebrow{font-size:8px;letter-spacing:1.3px}.header-note{display:none}.layout{height:calc(100dvh - 68px);min-height:650px;display:flex;flex-direction:column}aside{border-right:0;border-bottom:1px solid var(--line);flex-shrink:0;height:245px}.intro{display:none}.search-wrap{margin:13px 16px 5px}.tabs{margin:0 16px}.tab{padding:8px 0;font-size:12px}.list-top{padding:8px 16px;font-size:10px}.scroll{padding:0 8px 8px}#line-list{display:flex;overflow:auto;gap:6px;padding-bottom:8px}.line-row{flex-shrink:0;width:145px;align-items:center;padding:3px;margin:0;border:1px solid var(--line)}.line-main{padding:6px;gap:8px;align-items:flex-start}.line-main strong{font-size:11px}.line-main small{font-size:9px;line-height:1.3}.line-main .badge{min-width:26px;height:25px;font-size:10px}.visibility{padding:5px;font-size:12px}.group-label{display:none}.source{padding:8px 16px;font-size:9px;line-height:1.5}.source .desktop-only{display:none}.map{flex:1;min-height:350px}.map-title{top:15px;left:17px}.map-title h2{font-size:31px}.map-title p{font-size:9px}.map-status{top:17px;right:14px;font-size:9px;padding:8px;max-width:45%}.map-tools{right:13px;bottom:60px;gap:5px}.tool{width:35px;height:35px}.map-foot{left:13px;right:13px;bottom:12px;font-size:8px}.legend{gap:8px;padding:7px}.detail{left:13px;bottom:55px;padding:16px;max-width:calc(100% - 64px)}.detail h3{font-size:20px}.station-row{font-size:12px;padding:9px}.line-detail{padding:8px}.line-detail h3{font-size:13px}.line-detail p{font-size:10px}.line-detail button{margin-top:3px}}
 @media(prefers-reduced-motion:no-preference){button{transition:background .15s,opacity .15s}}
+.place-pin{cursor:pointer}.place-pin circle{fill:#674c89;stroke:#fff;stroke-width:2}.place-pin text{fill:white;font:700 10px system-ui;pointer-events:none}.place-pin.selected circle{fill:#b92836}.place-number{display:inline-grid;place-items:center;min-width:25px;height:25px;background:#674c89;color:white;border-radius:50%;font-size:11px;font-weight:700}.place-copy{flex:1;min-width:0}.place-copy strong{display:block;font-size:12px}.place-copy small{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}.place-row{gap:11px;align-items:flex-start}.place-name{fill:#674c89;font-weight:650}.nearby-title{font-size:10px;letter-spacing:1px;color:var(--muted);margin:14px 0 3px}.nearby-note{font-size:10px;color:var(--muted);line-height:1.5;margin:6px 0 12px}.nearby-station{font-size:11px;padding:8px 0}.detail{max-height:calc(100% - 95px);overflow:auto}.place-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}.legend .place-number{min-width:12px;width:12px;height:12px;font-size:8px}.place-intro{font-size:11px;line-height:1.5;color:var(--muted);padding:4px 12px 9px;margin:0}@media(max-width:700px){.place-row{padding:9px}.place-copy small{font-size:9px}.place-actions{gap:9px}.nearby-title{margin-top:9px}}
+@media(max-width:700px){.legend span:nth-child(3){display:none}.legend span{white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -18,18 +20,18 @@
 <main class="layout">
 <aside aria-label="Explore lines and stations">
 <div class="intro"><h2>Your way around Madrid.</h2><p>Every line. Every stop. One map.</p></div>
-<div class="search-wrap"><label for="search" class="sr-only">Search stations</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="search" type="search" placeholder="Find a station, e.g. Sol" autocomplete="off"><button id="clear-search" aria-label="Clear station search" hidden>&times;</button></div>
-<div class="tabs" role="tablist" aria-label="Explore network"><button class="tab" id="lines-tab" role="tab" aria-selected="true" aria-controls="line-list">Lines <span id="line-count"></span></button><button class="tab" id="stations-tab" role="tab" aria-selected="false" aria-controls="station-list" tabindex="-1">Stations <span id="station-count"></span></button></div>
+<div class="search-wrap"><label for="search" class="sr-only">Search stations and places</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="search" type="search" placeholder="Find a station or place" autocomplete="off"><button id="clear-search" aria-label="Clear station search" hidden>&times;</button></div>
+<div class="tabs" role="tablist" aria-label="Explore network"><button class="tab" id="lines-tab" role="tab" aria-selected="true" aria-controls="line-list">Lines <span id="line-count"></span></button><button class="tab" id="stations-tab" role="tab" aria-selected="false" aria-controls="station-list" tabindex="-1">Stations <span id="station-count"></span></button><button class="tab" id="places-tab" role="tab" aria-selected="false" aria-controls="place-list" tabindex="-1">Places <span id="place-count"></span></button></div>
 <div class="list-top"><span id="list-title">THE WHOLE NETWORK</span><button id="show-all" class="text-button">Show all lines</button></div>
-<div class="scroll" id="list-scroll"><div id="line-list" role="tabpanel" aria-labelledby="lines-tab"></div><div id="station-list" role="tabpanel" aria-labelledby="stations-tab" hidden></div></div>
+<div class="scroll" id="list-scroll"><div id="line-list" role="tabpanel" aria-labelledby="lines-tab"></div><div id="station-list" role="tabpanel" aria-labelledby="stations-tab" hidden></div><div id="place-list" role="tabpanel" aria-labelledby="places-tab" hidden></div></div>
 <footer class="source"><a href="https://www.crtm.es/" target="_blank" rel="noopener">Powered by CRTM</a> &middot; Official open data, adapted.<br><span id="source-date"></span><span class="desktop-only"><br>Static network, not live service information. Geographic track layout; city context is simplified.<br><a href="https://datos.crtm.es/maps/0a6c45e7bdd94679b67a2ae662c8838b/about" target="_blank" rel="noopener">Metro data</a> &middot; <a href="https://datos.crtm.es/maps/53c45916691a4256bf0f6f69fb0e182c/about" target="_blank" rel="noopener">Light rail data</a> &middot; <a href="https://www.crtm.es/licencia-de-uso/" target="_blank" rel="noopener">Data license</a><br>Independent explorer. Not endorsed by CRTM.</span></footer>
 </aside>
 <section class="map" aria-label="Interactive geographic map of Madrid">
-<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="context"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g></svg>
+<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="context"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g></svg>
 <div class="map-title"><h2>Madrid</h2><p>GEOGRAPHIC VIEW &nbsp;/&nbsp; METRO + LIGHT RAIL</p></div>
 <div id="map-status" class="map-status" aria-live="polite"></div>
 <nav class="map-tools" aria-label="Map controls"><button class="tool" id="zoom-in" aria-label="Zoom in">+</button><button class="tool" id="zoom-out" aria-label="Zoom out">&minus;</button><button class="tool" id="fit" aria-label="Fit the whole network"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button><button class="tool" id="center" aria-label="Zoom to central Madrid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="6"/><path d="M12 2v5m0 10v5M2 12h5m10 0h5"/></svg></button><button class="tool" id="label-toggle" aria-label="Toggle station names" aria-pressed="true" style="font-size:14px;font-weight:600">Aa</button></nav>
-<section id="detail" class="detail" aria-label="Station details" hidden><button id="close-detail" class="close" aria-label="Close station details">&times;</button><p class="kicker">YOU ARE EXPLORING</p><h3 id="detail-name"></h3><div id="detail-lines" class="badges"></div><p id="detail-meta" class="station-meta"></p><a id="detail-link" class="map-link" target="_blank" rel="noopener">View location in Google Maps &nearr;</a></section>
+<section id="detail" class="detail" aria-label="Station details" hidden><button id="close-detail" class="close" aria-label="Close station details">&times;</button><p id="detail-kicker" class="kicker">YOU ARE EXPLORING</p><h3 id="detail-name"></h3><div id="detail-lines" class="badges"></div><p id="detail-meta" class="station-meta"></p><div id="detail-nearby"></div><div class="place-actions"><a id="detail-link" class="map-link" target="_blank" rel="noopener">View location in Google Maps &nearr;</a><a id="detail-website" class="map-link" target="_blank" rel="noopener" hidden>Official website &nearr;</a></div></section>
 <div class="map-foot"><div class="legend"><span><i class="station-symbol"></i>Station</span><span><i class="station-symbol transfer"></i>Interchange</span><span>Drag &middot; zoom &middot; explore</span></div><div class="scale"><span id="scale-text"></span><i></i></div></div>
 </section>
 </main>
@@ -37,21 +39,36 @@
 <script>
 'use strict';
 const DATA=JSON.parse(document.getElementById('network-data').textContent);
+const PLACE_DATA=[
+ {id:'atletico',name:'Atlético Madrid stadium',category:'Stadium',address:'Riyadh Air Metropolitano · Avenida de Luis Aragonés, 4',coord:[-3.599699,40.436010],website:'https://www.atleticodemadrid.com/'},
+ {id:'retiro',name:'Parque Retiro',category:'Park',address:'Parque del Buen Retiro, Madrid · pin at the park centre',coord:[-3.683285,40.414946],website:'https://www.esmadrid.com/informacion-turistica/parque-del-retiro'},
+ {id:'senses',name:'Museum of Senses',category:'Museum',address:'Calle de la Virgen de los Peligros, 5',coord:[-3.699668,40.418636],website:'https://museumofsenses.es/'},
+ {id:'faunia',name:'Faunia',category:'Wildlife park',address:'Avenida de las Comunidades, 28 · park location',coord:[-3.612606,40.392296],website:'https://www.faunia.es/'},
+ {id:'muncyt',name:'MUNCYT',category:'Science museum · Alcobendas',address:'Calle del Pintor Velázquez, 5, Alcobendas',coord:[-3.641368,40.537724],website:'https://muncyt.es/visita-el-museo/alcobendas'},
+ {id:'ferrocarril',name:'Museo Ferrocarril',category:'Railway museum',address:'Museo del Ferrocarril de Madrid · Paseo de las Delicias, 61',coord:[-3.692150,40.399320],website:'https://www.museodelferrocarril.org/'},
+ {id:'fefi',name:'Casa Fefi',category:'Venue',address:'Calle Mariblanca, 10, Usera',coord:[-3.705279,40.391658]},
+ {id:'agu',name:'Cada Agu',category:'Venue',address:'Calle de Churruca, 21',coord:[-3.701260,40.428207]},
+ {id:'sol',name:'Puerta del Sol',category:'Square',address:'Puerta del Sol, Madrid',coord:[-3.703502,40.417015],website:'https://www.esmadrid.com/informacion-turistica/puerta-del-sol'},
+ {id:'prado',name:'Museo del Prado',category:'Art museum',address:'Calle de Ruiz de Alarcón, 23',coord:[-3.692468,40.413777],website:'https://www.museodelprado.es/'}
+];
 const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';
 const el=(tag,attrs={},text)=>{const node=document.createElementNS(NS,tag);for(const [key,value]of Object.entries(attrs))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;return node};
 const html=(tag,cls,text)=>{const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node};
 const project=([lon,lat])=>[(lon+4)*85000, (40.65-lat)*111000];
 const stations=DATA.stations.map(s=>({...s,p:project(s.coord)}));
+const places=PLACE_DATA.map((p,i)=>({...p,number:i+1,p:project(p.coord)}));
+const tabNames=['lines','stations','places'];
+let selectedPlace=null,showPlaces=true;
 const byId=new Map(stations.map(s=>[s.id,s]));
 const lines=DATA.lines,byLine=new Map(lines.map(l=>[l.id,l]));
 let visible=new Set(lines.map(l=>l.id)),activeLine=null,selected=null,tab='lines',names=true,view={x:0,y:0,w:1,h:1},renderFrame=0;
 const svg=$('map'),normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function badge(id,button=false){const l=byLine.get(id),b=html(button?'button':'span','badge',id);b.style.setProperty('--c',l.color);if(['3','4','ML4'].includes(id))b.style.color='#292b23';if(button){b.title='Explore '+l.name;b.setAttribute('aria-label','Explore '+l.name);b.addEventListener('click',()=>selectLine(id))}return b}
-function showTab(next){tab=next;for(const t of ['lines','stations']){$(t+'-tab').setAttribute('aria-selected',String(t===next));$(t+'-tab').tabIndex=t===next?0:-1} $('line-list').hidden=next!=='lines';$('station-list').hidden=next!=='stations';$('line-list').style.display=next==='lines'?'':'none';renderList()}
+function showTab(next){tab=next;for(const t of tabNames){$(t+'-tab').setAttribute('aria-selected',String(t===next));$(t+'-tab').tabIndex=t===next?0:-1;$(t==='places'?'place-list':t==='lines'?'line-list':'station-list').hidden=t!==next} $('line-list').style.display=next==='lines'?'':'none';renderList()}
 function selectLine(id){activeLine=id;visible=new Set([id]);$('search').value='';$('clear-search').hidden=true;showTab('stations');fitStations(stations.filter(s=>s.lines.includes(id)));draw();renderList()}
 function allLines(){visible=new Set(lines.map(l=>l.id));activeLine=null;$('search').value='';$('clear-search').hidden=true;showTab('lines');fitStations(stations);draw()}
 function renderList(){
- $('list-title').textContent=activeLine?byLine.get(activeLine).name.toUpperCase():tab==='lines'?'THE WHOLE NETWORK':'STATION DIRECTORY';
+ $('list-title').textContent=tab==='places'?'YOUR POINTS OF INTEREST':activeLine?byLine.get(activeLine).name.toUpperCase():tab==='lines'?'THE WHOLE NETWORK':'STATION DIRECTORY';
  $('line-list').replaceChildren();let group='';
  for(const line of lines){
   const g=line.id.startsWith('ML')?'Metro Ligero & tram':'Metro';
@@ -69,6 +86,25 @@ function renderList(){
  const result=stations.filter(s=>(!activeLine||s.lines.includes(activeLine))&&normalize(s.name).includes(query)).sort((a,b)=>a.name.localeCompare(b.name,'es'));
  if(!result.length)$('station-list').append(html('p','empty','No stations found. Try a different name or show all lines.'));
  for(const s of result){const row=html('button','station-row');row.append(html('span','',s.name));const bs=html('span','mini-badges');for(const l of s.lines)bs.append(badge(l));row.append(bs);row.onclick=()=>selectStation(s);$('station-list').append(row)}
+ $('place-list').replaceChildren(html('p','place-intro','Select a place to find it on the map and see nearby Metro stations.'));
+ const matches=places.filter(p=>normalize(p.name+' '+p.category+' '+p.address).includes(query));
+ if(!matches.length)$('place-list').append(html('p','empty','No places found. Try a name or address.'));
+ for(const p of matches){const row=html('button','station-row place-row');row.append(html('span','place-number',p.number));const copy=html('span','place-copy');copy.append(html('strong','',p.name),html('small','',p.category+' · '+p.address));row.append(copy);row.onclick=()=>selectPlace(p);$('place-list').append(row)}
+}
+function distance(a,b){const rad=Math.PI/180,dlat=(b[1]-a[1])*rad,dlon=(b[0]-a[0])*rad,h=Math.sin(dlat/2)**2+Math.cos(a[1]*rad)*Math.cos(b[1]*rad)*Math.sin(dlon/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))}
+function selectPlace(p){
+ selected=null;selectedPlace=p;showPlaces=true;$('places-toggle').setAttribute('aria-pressed','true');
+ const nearby=stations.map(s=>({s,d:distance(p.coord,s.coord)})).sort((a,b)=>a.d-b.d).slice(0,2);
+ for(const {s}of nearby)for(const l of s.lines)visible.add(l);
+ $('detail').setAttribute('aria-label','Place details');$('close-detail').setAttribute('aria-label','Close place details');
+ $('detail-kicker').textContent=p.category.toUpperCase();$('detail-name').textContent=p.name;$('detail-lines').replaceChildren();$('detail-meta').textContent=p.address;
+ $('detail-nearby').replaceChildren(html('p','nearby-title','NEARBY METRO'));
+ for(const {s,d}of nearby){const row=html('button','station-row nearby-station');row.append(html('span','',s.name+' · '+Math.round(d)+' m'));const badges=html('span','mini-badges');for(const l of s.lines)badges.append(badge(l));row.append(badges);row.onclick=()=>selectStation(s);$('detail-nearby').append(row)}
+ $('detail-nearby').append(html('p','nearby-note','Distances are straight-line estimates, not walking routes. Park pins may be away from an entrance.'));
+ $('detail-link').href=`https://www.google.com/maps/search/?api=1&query=${p.coord[1]},${p.coord[0]}`;
+ $('detail-website').hidden=!p.website;if(p.website)$('detail-website').href=p.website;
+ $('detail').hidden=false;$('detail').scrollTop=0;
+ const r=svg.getBoundingClientRect(),h=4500,w=h*r.width/r.height;view={x:p.p[0]-w/2,y:p.p[1]-h*(r.width<700?.18:.32),w,h};renderList();draw();
 }
 function fitStations(ss){
  if(!ss.length)return;const r=svg.getBoundingClientRect(),ratio=r.width/r.height;
@@ -97,6 +133,8 @@ const trackNodes=[];
 for(const t of DATA.tracks){for(const points of t.paths){const node=el('path',{d:points.map((p,i)=>(i?'L':'M')+project(p).join(',')).join(' '),stroke:byLine.get(t.line).color,class:'track','vector-effect':'non-scaling-stroke'});$('tracks').append(node);trackNodes.push({node,line:t.line})}}
 const stationNodes=[];
 for(const s of stations){const node=el('circle',{cx:s.p[0],cy:s.p[1],class:'station-dot',fill:'#faf9f5',stroke:'#4e5749','vector-effect':'non-scaling-stroke',tabindex:0,role:'button','aria-label':s.name+', '+s.lines.map(l=>byLine.get(l).name).join(',')});node.append(el('title',{},s.name));node.onclick=()=>{if(!dragMoved)selectStation(s)};node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();selectStation(s)}};$('station-dots').append(node);stationNodes.push({s,node})}
+const placeNodes=places.map(p=>{const node=el('g',{class:'place-pin','data-place':p.id,role:'button',tabindex:0,'aria-label':'Place: '+p.name});node.append(el('circle',{r:12}),el('text',{'text-anchor':'middle',y:3.5},p.number),el('title',{},p.name));node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();selectPlace(p)}};$('place-pins').append(node);return {p,node}});
+const placesToggle=html('button','tool','★');placesToggle.id='places-toggle';placesToggle.setAttribute('aria-label','Toggle points of interest');placesToggle.setAttribute('aria-pressed','true');placesToggle.onclick=()=>{showPlaces=!showPlaces;placesToggle.setAttribute('aria-pressed',String(showPlaces));if(!showPlaces&&selectedPlace)$('close-detail').click();draw()};document.querySelector('.map-tools').append(placesToggle);
 function scheduleDraw(){if(!renderFrame)renderFrame=requestAnimationFrame(()=>{renderFrame=0;draw()})}
 function draw(){
  svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
@@ -106,8 +144,15 @@ function draw(){
  const shown=stations.filter(s=>s.lines.some(l=>visible.has(l)));
  for(const {s,node}of stationNodes){const on=s.lines.some(l=>visible.has(l));node.style.display=on?'':'none';const transfer=s.lines.length>1;node.setAttribute('r',unit*(s.id===selected?.id?7:transfer?4:2.5));node.setAttribute('stroke-width',s.id===selected?.id?2.5:transfer?1.7:1.1);node.setAttribute('stroke',s.id===selected?.id?'#b92836':'#4e5749')}
  $('labels').replaceChildren();
+ $('place-labels').replaceChildren();$('place-pins').style.display=showPlaces?'':'none';
+ const placeBoxes=[];
+ for(const {p,node}of placeNodes){node.setAttribute('transform',`translate(${p.p[0]} ${p.p[1]}) scale(${unit})`);node.classList.toggle('selected',p.id===selectedPlace?.id);if(!showPlaces||!names||unit>18&&p.id!==selectedPlace?.id)continue;
+  const box={x:(p.p[0]-view.x)/unit+15,y:(p.p[1]-view.y)/unit-12,w:p.name.length*6,h:16};
+  if(p.id!==selectedPlace?.id&&placeBoxes.some(b=>box.x<b.x+b.w&&box.x+box.w>b.x&&box.y<b.y+b.h&&box.y+box.h>b.y))continue;
+  placeBoxes.push(box);$('place-labels').append(el('text',{x:p.p[0]+unit*15,y:p.p[1]-unit*3,'font-size':unit*11,'stroke-width':unit*3,class:'station-label place-name'},p.name));
+ }
  if(names){
-  const placed=[];
+  const placed=[...placeBoxes];
   const candidates=shown.filter(s=>s.p[0]>view.x&&s.p[0]<view.x+view.w&&s.p[1]>view.y&&s.p[1]<view.y+view.h).sort((a,b)=>(b.id===selected?.id)-(a.id===selected?.id)||b.lines.length-a.lines.length||a.name.localeCompare(b.name));
   for(const s of candidates){if(!activeLine&&unit>34&&s.lines.length<2&&s.id!==selected?.id)continue;const x=(s.p[0]-view.x)/unit+8,y=(s.p[1]-view.y)/unit,w=s.name.length*5.7,h=13;
    const box={x,y:y-10,w,h};if(s.id!==selected?.id&&placed.some(p=>box.x<p.x+p.w+6&&box.x+box.w+6>p.x&&box.y<p.y+p.h+3&&box.y+box.h+3>p.y))continue;
@@ -118,6 +163,7 @@ function draw(){
  $('scale-text').textContent=(75*unit/1000).toFixed(75*unit<1000?1:0)+' km';
 }
 function selectStation(s){
+ selectedPlace=null;$('detail').setAttribute('aria-label','Station details');$('close-detail').setAttribute('aria-label','Close station details');$('detail-kicker').textContent='YOU ARE EXPLORING';$('detail-nearby').replaceChildren();$('detail-website').hidden=true;
  selected=s;for(const l of s.lines)visible.add(l);
  $('detail-name').textContent=s.name;$('detail-lines').replaceChildren(...s.lines.map(l=>badge(l,true)));
  $('detail-meta').textContent=`${s.lines.length>1?'Interchange · ':''}Fare zone ${s.zone||'not listed'} · ${s.kind==='metro'?'Metro':'Light rail / tram'}\n${s.coord[1].toFixed(5)}° N, ${Math.abs(s.coord[0]).toFixed(5)}° W`;
@@ -127,24 +173,27 @@ function selectStation(s){
  view={x:s.p[0]-w/2,y:s.p[1]-h*.42,w,h};draw();
 }
 function zoom(factor,px=.5,py=.5){const next=Math.min(150000,Math.max(650,view.w*factor)),f=next/view.w;view={x:view.x+view.w*px*(1-f),y:view.y+view.h*py*(1-f),w:next,h:view.h*f};scheduleDraw()}
-let dragMoved=false,dragDistance=0,lastGesture=null,pressedStation=null;const pointers=new Map();
+let dragMoved=false,dragDistance=0,lastGesture=null,pressedStation=null,pressedPlace=null;const pointers=new Map();
 function gesture(){const ps=[...pointers.values()];return {x:ps.reduce((n,p)=>n+p.x,0)/ps.length,y:ps.reduce((n,p)=>n+p.y,0)/ps.length,d:ps.length>1?Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y):0}}
-svg.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragMoved=pointers.size>0;dragDistance=0;pressedStation=stationNodes.find(n=>n.node===e.target)?.s||null;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});lastGesture=gesture();svg.classList.add('dragging');svg.setPointerCapture(e.pointerId)});
+svg.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragMoved=pointers.size>0;dragDistance=0;pressedStation=stationNodes.find(n=>n.node===e.target)?.s||null;pressedPlace=places.find(p=>p.id===e.target.closest('[data-place]')?.getAttribute('data-place'))||null;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});lastGesture=gesture();svg.classList.add('dragging');svg.setPointerCapture(e.pointerId)});
 svg.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const g=gesture(),r=svg.getBoundingClientRect(),dx=g.x-lastGesture.x,dy=g.y-lastGesture.y;dragDistance+=Math.hypot(dx,dy);if(dragDistance>5)dragMoved=true;if(g.d&&lastGesture.d){zoom(lastGesture.d/g.d,(g.x-r.left)/r.width,(g.y-r.top)/r.height);dragMoved=true}view.x-=dx*view.w/r.width;view.y-=dy*view.h/r.height;lastGesture=g;scheduleDraw()});
-function endPointer(e){pointers.delete(e.pointerId);lastGesture=pointers.size?gesture():null;if(!pointers.size){svg.classList.remove('dragging');if(e.type==='pointerup'&&!dragMoved&&pressedStation)selectStation(pressedStation);pressedStation=null}}
+function endPointer(e){pointers.delete(e.pointerId);lastGesture=pointers.size?gesture():null;if(!pointers.size){svg.classList.remove('dragging');if(e.type==='pointerup'&&!dragMoved){if(pressedStation)selectStation(pressedStation);if(pressedPlace)selectPlace(pressedPlace)}pressedStation=null;pressedPlace=null}}
 svg.addEventListener('pointerup',endPointer);svg.addEventListener('pointercancel',endPointer);
 svg.addEventListener('wheel',e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoom(Math.exp(Math.max(-1,Math.min(1,e.deltaY*.002))),(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)},{passive:false});
 svg.addEventListener('keydown',e=>{if(e.target!==svg)return;const moves={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,-.1],ArrowDown:[0,.1]};if(moves[e.key]){e.preventDefault();view.x+=moves[e.key][0]*view.w;view.y+=moves[e.key][1]*view.h;scheduleDraw()}else if(['+','=','-'].includes(e.key)){e.preventDefault();zoom(e.key==='-'?1.35:1/1.35)}});
 $('zoom-in').onclick=()=>zoom(1/1.4);$('zoom-out').onclick=()=>zoom(1.4);$('fit').onclick=()=>fitStations(stations.filter(s=>s.lines.some(l=>visible.has(l))));$('center').onclick=()=>{const p=project([-3.701,40.426]),r=svg.getBoundingClientRect(),h=8000;view={x:p[0]-h*r.width/r.height/2,y:p[1]-h/2,w:h*r.width/r.height,h};draw()};
 $('label-toggle').onclick=()=>{names=!names;$('label-toggle').setAttribute('aria-pressed',String(names));draw()};
-$('close-detail').onclick=()=>{selected=null;$('detail').hidden=true;draw()};
+$('close-detail').onclick=()=>{selected=null;selectedPlace=null;$('detail').hidden=true;draw()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('close-detail').click();$('search').blur()}});
 $('show-all').onclick=allLines;
-$('search').addEventListener('input',()=>{activeLine=null;$('clear-search').hidden=!$('search').value;showTab('stations')});
-$('search').addEventListener('keydown',e=>{if(e.key==='Enter'){$('station-list').querySelector('.station-row')?.click()}});
+$('search').addEventListener('input',()=>{activeLine=null;$('clear-search').hidden=!$('search').value;const query=normalize($('search').value.trim());showTab(tab==='places'||query&&!stations.some(s=>normalize(s.name).includes(query))&&places.some(p=>normalize(p.name+' '+p.address).includes(query))?'places':'stations')});
+$('search').addEventListener('keydown',e=>{if(e.key==='Enter'){$(tab==='places'?'place-list':'station-list').querySelector('.station-row')?.click()}});
 $('clear-search').onclick=()=>{$('search').value='';$('clear-search').hidden=true;renderList();$('search').focus()};
-for(const t of ['lines','stations']){$(t+'-tab').onclick=()=>showTab(t);$(t+'-tab').onkeydown=e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const other=t==='lines'?'stations':'lines';showTab(other);$(other+'-tab').focus()}}}
+for(const t of tabNames){$(t+'-tab').onclick=()=>showTab(t);$(t+'-tab').onkeydown=e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();const other=tabNames[(tabNames.indexOf(t)+(e.key==='ArrowRight'?1:2))%3];showTab(other);$(other+'-tab').focus()}}}
 $('line-count').textContent=lines.length;$('station-count').textContent=stations.length;
+$('place-count').textContent=places.length;
+const placeLegend=html('span');placeLegend.append(html('i','place-number','★'),document.createTextNode('Place'));document.querySelector('.legend').append(placeLegend);
+const credit=html('a','','Place coordinates: OpenStreetMap contributors & Esri');credit.href='https://www.openstreetmap.org/copyright';credit.target='_blank';credit.rel='noopener';document.querySelector('.source .desktop-only').append(document.createElement('br'),credit);
 $('source-date').textContent='Static network · Updated '+DATA.updated+' · Retrieved '+DATA.retrieved;
 drawContext();renderList();fitStations(stations);
 let previousSize=null;new ResizeObserver(()=>{const r=svg.getBoundingClientRect();if(previousSize){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=view.h*r.width/r.height;view.x=cx-view.w/2;view.y=cy-view.h/2;scheduleDraw()}previousSize={w:r.width,h:r.height}}).observe(svg);
