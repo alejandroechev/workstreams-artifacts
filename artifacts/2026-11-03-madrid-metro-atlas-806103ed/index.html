@@ -18,12 +18,19 @@
 @media(max-width:700px){.category-bar{padding:6px 16px}.category-key{display:none}.category-controls{gap:5px}.category-controls select{font-size:11px;padding:4px}.category-summary{margin-top:3px}.category-summary .text-button{font-size:10px}.category-controls label{font-size:10px}aside:has(.category-bar:not([hidden])){height:305px}.basemap-controls{top:68px;left:13px;gap:5px;padding:5px 7px;font-size:9px;max-width:calc(100% - 26px)}.basemap-controls select{font-size:10px;padding:4px;max-width:95px}#basemap-status{font-size:9px}.map-title{top:10px;left:12px;padding:2px 6px}.map-title p{font-size:8px}.map-attribution{font-size:9px}.map-foot{bottom:24px}.detail{bottom:62px;max-height:calc(100% - 198px);padding:13px}.detail h3{font-size:18px}.station-meta{font-size:11px;margin:10px 0}.nearby-note{font-size:9px;margin:5px 0 8px}.nearby-station{padding:6px 0}.map-tools{bottom:65px;gap:4px}.tool{width:32px;height:32px}.map-link{font-size:11px}.place-actions{gap:7px}}
 .tabs{gap:16px}.area-path{pointer-events:none;stroke-width:2;fill-opacity:.16;stroke-opacity:.9}.area-toolbar{display:flex;gap:14px;align-items:center;padding:8px 12px}.area-row{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--line)}.area-check{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0}.area-check input{width:18px;height:18px;padding:0;flex-shrink:0;accent-color:var(--area-color)}.area-swatch{display:inline-block;width:11px;height:11px;border:2px solid var(--area-color);background:var(--area-color);opacity:.8;flex-shrink:0}.area-check strong{display:block;font-size:13px;font-weight:600}.area-check small{display:block;font-size:10px;color:var(--muted);margin-top:3px}.area-notes{font-size:11px;color:var(--muted);line-height:1.6;margin:13px 12px}.area-notes a{color:inherit;text-underline-offset:2px}.area-status{font-size:10px;color:var(--muted);padding:3px 12px 8px}.area-color-title{font-size:10px;font-weight:650;letter-spacing:1px;text-transform:uppercase;padding:10px 12px 3px}.area-notes summary{cursor:pointer;color:var(--red)}@media(max-width:700px){.tabs{gap:18px}.tab{font-size:11px}.area-row{padding:9px}.area-check strong{font-size:12px}.area-notes{font-size:10px}aside:has(#areas-tab[aria-selected=true]){height:320px}}
 .area-path.approximate{stroke-dasharray:7 5;stroke-width:2.5;fill-opacity:.19}.area-source{display:inline-block;font-size:10px;color:var(--red);margin-top:5px;text-underline-offset:2px}.area-swatch.approximate{border-style:dashed;background:transparent;opacity:1}.area-method{font-size:10px;line-height:1.5;color:var(--muted);margin:8px 0 0}.area-row.approximate{flex-wrap:wrap}.area-row.approximate .area-method{flex-basis:100%}
+html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}body>header{position:fixed;z-index:3;top:max(14px,env(safe-area-inset-top));left:18px;height:auto;padding:12px 16px;border:1px solid #e1e3dc;border-radius:16px;box-shadow:0 3px 18px #172a1914;background:#fffffff2;pointer-events:none}.header-note,.intro,.map-title{display:none}.brand{gap:10px}.logo{width:32px;height:32px;font-size:19px;border-radius:9px}h1{font-size:20px}.eyebrow{font-size:8px;margin-top:3px}.layout{display:block;position:fixed;inset:0;height:100dvh;min-height:0}.map{position:absolute;inset:0;width:100%;height:100%;min-height:0}.map-status{top:18px;right:18px;max-width:40%;background:#fffffff0}.basemap-controls{top:86px;left:18px;max-width:calc(100% - 36px);background:#fffffff0}.map-attribution{bottom:calc(var(--sheet-height) + 6px);right:10px;border-radius:5px;font-size:9px;max-width:calc(100% - 20px)}.map-foot{bottom:calc(var(--sheet-height) + 30px);left:18px;right:18px}.legend{display:none}.scale{margin-left:auto;background:#fffffff0}
+#explore-sheet{position:fixed;z-index:4;bottom:0;left:0;right:0;height:var(--sheet-height);min-height:0;max-height:100dvh;display:flex;flex-direction:column;background:#fff;border:1px solid #dfe3dd;border-bottom:0;border-radius:24px 24px 0 0;box-shadow:0 -6px 36px #263b2426;overflow:hidden;padding-bottom:env(safe-area-inset-bottom)}.sheet-head{flex:none;padding:0 22px 10px;display:flex;align-items:center;gap:12px;position:relative;min-height:82px;padding-top:24px}.sheet-grip{position:absolute;top:0;left:0;width:100%;height:25px;border:0;background:transparent;touch-action:none;cursor:ns-resize;display:grid;place-items:center}.sheet-grip::before{content:"";height:4px;width:42px;border-radius:3px;background:#bac2b9}.sheet-grip:focus-visible{outline-offset:-4px}.sheet-heading{flex:1;min-width:0}.sheet-heading h2{font-size:17px;margin:0;font-weight:650;letter-spacing:-.4px}.sheet-heading p{font-size:11px;color:var(--muted);margin:3px 0 0}.sheet-action{width:38px;height:38px;display:grid;place-items:center;border:1px solid #e0e5de;background:#f6f8f4;border-radius:50%;font-size:18px}.sheet-action:disabled{opacity:.35;cursor:default}#sheet-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:0 max(22px,calc((100vw - 1060px)/2)) 24px}#sheet-body[hidden]{display:none}#explore-sheet .search-wrap{margin:2px 0 12px;max-width:640px}#explore-sheet input[type=search]{background:#f5f7f3;border-color:#e3e7e0;border-radius:24px;padding-top:13px;padding-bottom:13px}#explore-sheet .tabs{margin:0;gap:28px;flex-shrink:0}#explore-sheet .tab{font-size:13px;padding:12px 1px}#explore-sheet .list-top{padding:14px 0 10px}#explore-sheet .category-bar{padding:8px 0 12px}#explore-sheet .category-controls{max-width:420px}#explore-sheet .category-key{display:flex}#explore-sheet .scroll{overflow:visible;flex:none;padding:0;min-height:0}#explore-sheet #line-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:7px;overflow:visible;padding:0}#explore-sheet .line-row{width:auto;border:1px solid #e4e8df;border-radius:12px;margin:0;align-items:center}#explore-sheet .group-label{display:block;grid-column:1/-1;padding:12px 0 5px}#explore-sheet .line-main{padding:10px;gap:12px}#explore-sheet .line-main strong{font-size:13px}#explore-sheet .line-main small{font-size:11px}#explore-sheet .visibility{padding:14px}#explore-sheet .station-row{padding:13px 10px}#explore-sheet .source{margin-top:24px;padding:15px 0 0;border-top:1px solid var(--line);font-size:10px}#explore-sheet .source .desktop-only{display:inline}#explore-sheet .area-row{padding:12px 8px}#explore-sheet .area-toolbar{padding:6px 0 10px;flex-wrap:wrap}#explore-sheet .area-notes{margin:12px 0}#explore-sheet .area-color-title{padding-left:0}#explore-sheet .area-status{padding-left:0}#explore-sheet .map-tools{position:static;display:flex;flex-direction:row;flex-wrap:wrap;gap:7px;margin:12px 0 4px}#explore-sheet .tool{width:auto;min-width:42px;height:38px;display:flex;justify-content:center;gap:7px;padding:0 10px;border-radius:20px;font-size:17px;box-shadow:none}#explore-sheet .tool::after{content:attr(data-caption);font-size:11px;font-weight:500}#explore-sheet #detail{position:relative;inset:auto;max-height:none;overflow:visible;width:100%;max-width:640px;margin:0 0 18px;padding:18px 20px;background:#f6f8f3;border:1px solid #e0e6dc;border-radius:16px;box-shadow:none}#explore-sheet .detail h3{font-size:23px}#explore-sheet .detail .station-meta{font-size:12px}#explore-sheet .detail .nearby-note{font-size:11px}#explore-sheet .detail .map-link{font-size:12px}
+@media(min-width:900px){.sheet-head{padding-left:max(22px,calc((100vw - 1060px)/2));padding-right:max(22px,calc((100vw - 1060px)/2))}#station-list,#place-list{column-count:2;column-gap:24px}#station-list>* ,#place-list>*{break-inside:avoid}#area-list{max-width:780px}}
+@media(max-width:700px){body>header{left:10px;top:max(10px,env(safe-area-inset-top));padding:10px 12px}h1{font-size:17px}.logo{width:29px;height:29px;font-size:17px}.brand{gap:8px}.map-status{top:80px;right:10px;font-size:9px;max-width:52%;padding:7px}.basemap-controls{top:80px;left:10px;max-width:44%;font-size:9px;padding:7px}.map-attribution{font-size:8px;right:6px;max-width:calc(100% - 12px)}.map-foot{left:10px;right:10px}.scale{font-size:9px}#explore-sheet{border-radius:20px 20px 0 0}.sheet-head{padding-left:16px;padding-right:16px;gap:9px}.sheet-heading h2{font-size:16px}.sheet-heading p{font-size:10px}.sheet-action{width:34px;height:34px}#sheet-body{padding:0 16px 22px}#explore-sheet .tabs{gap:0;justify-content:space-between}#explore-sheet .tab{font-size:12px}#explore-sheet #line-list{grid-template-columns:1fr}#explore-sheet .category-key{gap:7px 10px}#explore-sheet .tool{height:36px;padding:0 9px}#explore-sheet .source{line-height:1.6}}
+@media(prefers-reduced-motion:no-preference){#explore-sheet{transition:height .2s ease}body.sheet-dragging #explore-sheet{transition:none}}
 </style>
 </head>
 <body>
 <header><div class="brand"><div class="logo" aria-hidden="true">M</div><div><h1>Madrid <span>Metro Atlas</span></h1><p class="eyebrow">A city, connected.</p></div></div><div class="header-note"><span class="dot"></span>Explore the network. Find your station.</div></header>
 <main class="layout">
-<aside aria-label="Explore lines and stations">
+<aside id="explore-sheet" aria-label="Map filters and options" data-snap="half">
+<div class="sheet-head"><button id="sheet-grip" class="sheet-grip" aria-label="Resize map options panel" aria-controls="sheet-body" aria-expanded="true" title="Drag up or down; use arrow keys to resize"></button><div class="sheet-heading"><h2>Explore Madrid</h2><p id="sheet-hint">Lines, stations, places &amp; areas</p></div><button id="sheet-expand" class="sheet-action" aria-label="Expand options panel" aria-controls="sheet-body" title="Expand">↑</button><button id="sheet-collapse" class="sheet-action" aria-label="Collapse options panel" aria-controls="sheet-body" title="Collapse">↓</button></div>
+<div id="sheet-body">
 <div class="intro"><h2>Your way around Madrid.</h2><p>Every line. Every stop. One map.</p></div>
 <div class="search-wrap"><label for="search" class="sr-only">Search stations and places</label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="search" type="search" placeholder="Find a station or place" autocomplete="off"><button id="clear-search" aria-label="Clear station search" hidden>&times;</button></div>
 <div class="tabs" role="tablist" aria-label="Explore network"><button class="tab" id="lines-tab" role="tab" aria-selected="true" aria-controls="line-list">Lines <span id="line-count"></span></button><button class="tab" id="stations-tab" role="tab" aria-selected="false" aria-controls="station-list" tabindex="-1">Stations <span id="station-count"></span></button><button class="tab" id="places-tab" role="tab" aria-selected="false" aria-controls="place-list" tabindex="-1">Places <span id="place-count"></span></button><button class="tab" id="areas-tab" role="tab" aria-selected="false" aria-controls="area-panel" tabindex="-1">Areas <span id="area-count"></span></button></div>
@@ -31,7 +38,7 @@
 <div id="category-bar" class="category-bar" hidden><div class="category-controls"><label for="category-filter">Category</label><select id="category-filter"><option value="all">All categories</option></select></div><div id="category-key" class="category-key" aria-label="Place category colors"></div><div class="category-summary"><span id="place-results" aria-live="polite"></span><button id="fit-places" class="text-button">Fit places</button></div></div>
 <div class="scroll" id="list-scroll"><div id="line-list" role="tabpanel" aria-labelledby="lines-tab"></div><div id="station-list" role="tabpanel" aria-labelledby="stations-tab" hidden></div><div id="place-list" role="tabpanel" aria-labelledby="places-tab" hidden></div><div id="area-panel" role="tabpanel" aria-labelledby="areas-tab" hidden><div class="area-toolbar"><button id="areas-show" class="text-button">Show all</button><button id="areas-hide" class="text-button">Hide all</button><button id="areas-fit" class="text-button">Fit visible areas</button></div><div id="area-status" class="area-status" aria-live="polite"></div><p class="area-notes">Solid outlines: official boundaries. Dashed outlines: approximate neighborhood areas, not official boundaries.</p><div id="area-list"></div><details class="area-notes"><summary>About the 3 approximate areas</summary><p>La Latina (green), Chueca (blue), and Lavapiés (red) are schematic interpretations of the linked guides, not published boundary datasets. They connect selected street locations with straight segments; edges are not street-accurate. La Latina shows a conservative historic core. Lavapiés overlaps Embajadores; hide the green Embajadores layer to isolate it.</p></details><p class="area-notes">Official areas: Chamberí and Salamanca are districts; the other seven are barrios. Castellana lies within Salamanca, so their blue fills overlap.<br><a href="https://datos.madrid.es/dataset/900012-0-limites-administrativos-mapas" target="_blank" rel="noopener">Official source: Ayuntamiento de Madrid</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a><br>Retrieved 7 Nov 2026. Official boundaries reprojected, not simplified. Approximate outlines authored 7 Nov 2026 using guide descriptions and Esri street geocoding.</p></div></div>
 <footer class="source"><a href="https://www.crtm.es/" target="_blank" rel="noopener">Powered by CRTM</a> &middot; Official open data, adapted.<br><span id="source-date"></span><span class="desktop-only"><br>Static Metro network, not live service information. Street maps are from OpenStreetMap.<br><a href="https://datos.crtm.es/maps/0a6c45e7bdd94679b67a2ae662c8838b/about" target="_blank" rel="noopener">Metro data</a> &middot; <a href="https://datos.crtm.es/maps/53c45916691a4256bf0f6f69fb0e182c/about" target="_blank" rel="noopener">Light rail data</a> &middot; <a href="https://www.crtm.es/licencia-de-uso/" target="_blank" rel="noopener">Data license</a><br>Independent explorer. Not endorsed by CRTM.</span></footer>
-</aside>
+</div></aside>
 <section class="map" aria-label="Interactive geographic map of Madrid">
 <svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="osm-tiles"></g><g id="area-polygons"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g></svg>
 <div class="map-title"><h2>Madrid</h2><p>GEOGRAPHIC VIEW &nbsp;/&nbsp; METRO + LIGHT RAIL</p></div>
@@ -113,8 +120,61 @@ const byId=new Map(stations.map(s=>[s.id,s]));
 const lines=DATA.lines,byLine=new Map(lines.map(l=>[l.id,l]));
 let visible=new Set(lines.map(l=>l.id)),activeLine=null,selected=null,tab='lines',names=true,view={x:0,y:0,w:1,h:1},renderFrame=0;
 const svg=$('map'),normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const sheet=$('explore-sheet'),sheetBody=$('sheet-body'),snapNames=['collapsed','half','expanded'];
+let sheetSnap='half',sheetHeight=0,sheetDrag=null,suppressGripClick=false;
+function snapHeight(snap){
+ const height=svg.getBoundingClientRect().height,safe=Number.parseFloat(getComputedStyle(sheet).paddingBottom)||0;
+ return snap==='collapsed'?82+safe:snap==='expanded'?Math.max(82+safe,height-76):Math.max(82+safe,Math.min(440,height*.48));
+}
+function setSheet(snap,{recenter=true}={}){
+ const old=sheetHeight;
+ sheetSnap=snap;sheetHeight=snapHeight(snap);
+ document.body.style.setProperty('--sheet-height',sheetHeight+'px');sheet.dataset.snap=snap;
+ sheetBody.hidden=snap==='collapsed';sheetBody.inert=snap==='collapsed';
+ $('sheet-grip').setAttribute('aria-expanded',String(snap!=='collapsed'));
+ $('sheet-expand').disabled=snap==='expanded';$('sheet-collapse').disabled=snap==='collapsed';
+ $('sheet-hint').textContent=snap==='collapsed'?'Swipe up for filters and options':'Lines, stations, places & areas';
+ if(snap==='collapsed'&&sheetBody.contains(document.activeElement))$('sheet-grip').focus({preventScroll:true});
+ if(recenter&&old&&view.h>1){view.y+=(sheetHeight-old)*view.h/svg.clientHeight/2;scheduleDraw()}
+}
+function mapWindow(){
+ const r=svg.getBoundingClientRect(),top=r.height<500?80:125;
+ return {width:r.width,height:r.height,top,usable:Math.max(100,r.height-sheetHeight-top-40)};
+}
+function focusMap(point,span){
+ setSheet('half',{recenter:false});
+ const r=mapWindow(),unit=span/r.usable;
+ view={x:point[0]-r.width*unit/2,y:point[1]-(r.top+r.usable/2)*unit,w:r.width*unit,h:r.height*unit};
+ draw();
+}
+$('sheet-expand').onclick=()=>setSheet(snapNames[Math.min(2,snapNames.indexOf(sheetSnap)+1)]);
+$('sheet-collapse').onclick=()=>setSheet(snapNames[Math.max(0,snapNames.indexOf(sheetSnap)-1)]);
+const grip=$('sheet-grip');
+grip.onclick=()=>{if(suppressGripClick){suppressGripClick=false;return}setSheet(sheetSnap==='collapsed'?'half':sheetSnap==='half'?'expanded':'half')};
+grip.onkeydown=e=>{
+ const index=snapNames.indexOf(sheetSnap);
+ if(['ArrowUp','ArrowDown','Home','End','Escape'].includes(e.key)){
+  e.preventDefault();setSheet(e.key==='Home'||e.key==='Escape'?'collapsed':e.key==='End'?'expanded':snapNames[Math.max(0,Math.min(2,index+(e.key==='ArrowUp'?1:-1)))]);
+ }
+};
+grip.onpointerdown=e=>{if(e.button!==0)return;sheetDrag={id:e.pointerId,y:e.clientY,height:sheetHeight,moved:false};grip.setPointerCapture(e.pointerId)};
+grip.onpointermove=e=>{
+ if(!sheetDrag||e.pointerId!==sheetDrag.id)return;
+ const delta=sheetDrag.y-e.clientY;if(Math.abs(delta)>5)sheetDrag.moved=true;
+ if(!sheetDrag.moved)return;
+ document.body.classList.add('sheet-dragging');sheetBody.hidden=false;sheetBody.inert=false;
+ const height=Math.max(snapHeight('collapsed'),Math.min(snapHeight('expanded'),sheetDrag.height+delta));
+ document.body.style.setProperty('--sheet-height',height+'px');
+};
+function finishSheetDrag(e){
+ if(!sheetDrag||e.pointerId!==sheetDrag.id)return;
+ const moved=sheetDrag.moved,height=Number.parseFloat(document.body.style.getPropertyValue('--sheet-height'));
+ sheetDrag=null;document.body.classList.remove('sheet-dragging');
+ if(moved){suppressGripClick=true;setSheet(e.type==='pointercancel'?sheetSnap:snapNames.reduce((best,s)=>Math.abs(snapHeight(s)-height)<Math.abs(snapHeight(best)-height)?s:best,'collapsed'));setTimeout(()=>{suppressGripClick=false},0)}
+}
+grip.onpointerup=finishSheetDrag;grip.onpointercancel=finishSheetDrag;
 function badge(id,button=false){const l=byLine.get(id),b=html(button?'button':'span','badge',id);b.style.setProperty('--c',l.color);if(['3','4','ML4'].includes(id))b.style.color='#292b23';if(button){b.title='Explore '+l.name;b.setAttribute('aria-label','Explore '+l.name);b.addEventListener('click',()=>selectLine(id))}return b}
-function showTab(next){tab=next;for(const t of tabNames){$(t+'-tab').setAttribute('aria-selected',String(t===next));$(t+'-tab').tabIndex=t===next?0:-1;$(tabPanels[t]).hidden=t!==next} $('line-list').style.display=next==='lines'?'':'none';$('category-bar').hidden=next!=='places';renderList()}
+function showTab(next){if(sheetSnap==='collapsed')setSheet('half');tab=next;for(const t of tabNames){$(t+'-tab').setAttribute('aria-selected',String(t===next));$(t+'-tab').tabIndex=t===next?0:-1;$(tabPanels[t]).hidden=t!==next} $('line-list').style.display=next==='lines'?'':'none';$('category-bar').hidden=next!=='places';renderList()}
 function selectLine(id){activeLine=id;visible=new Set([id]);$('search').value='';$('clear-search').hidden=true;showTab('stations');fitStations(stations.filter(s=>s.lines.includes(id)));draw();renderList()}
 function allLines(){visible=new Set(lines.map(l=>l.id));activeLine=null;$('search').value='';$('clear-search').hidden=true;showTab('lines');fitStations(stations);draw()}
 function renderList(){
@@ -158,14 +218,14 @@ function selectPlace(p){
  $('detail-link').href=`https://www.google.com/maps/search/?api=1&query=${p.coord[1]},${p.coord[0]}`;
  $('detail-website').hidden=!p.website;if(p.website)$('detail-website').href=p.website;
  $('detail').hidden=false;$('detail').scrollTop=0;
- const r=svg.getBoundingClientRect(),h=p.category==='cities'?12000:6000,w=h*r.width/r.height;view={x:p.p[0]-w/2,y:p.p[1]-h*(r.width<700?.31:.32),w,h};renderList();draw();
+ focusMap(p.p,p.category==='cities'?9000:3000);sheetBody.scrollTop=0;renderList();
 }
 function fitStations(ss){
- if(!ss.length)return;const r=svg.getBoundingClientRect(),ratio=r.width/r.height;
- const xs=ss.map(s=>s.p[0]),ys=ss.map(s=>s.p[1]);let w=Math.max(1200,Math.max(...xs)-Math.min(...xs))*(r.width<700?1.4:1.18),h=Math.max(1200,Math.max(...ys)-Math.min(...ys))*1.27;
- if(w/h<ratio)w=h*ratio;else h=w/ratio;
+ if(!ss.length)return;if(sheetSnap==='expanded')setSheet('half',{recenter:false});const r=mapWindow();
+ const xs=ss.map(s=>s.p[0]),ys=ss.map(s=>s.p[1]),extentW=Math.max(1200,Math.max(...xs)-Math.min(...xs))*1.15,extentH=Math.max(1200,Math.max(...ys)-Math.min(...ys))*1.15;
+ const unit=Math.max(extentW/Math.max(100,r.width-60),extentH/r.usable),w=unit*r.width,h=unit*r.height;
  const cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
- view={x:cx-w/2,y:cy-h/2,w,h};scheduleDraw();
+ view={x:cx-w/2,y:cy-unit*(r.top+r.usable/2),w,h};scheduleDraw();
 }
 const trackNodes=[];
 for(const t of DATA.tracks){for(const points of t.paths){const node=el('path',{d:points.map((p,i)=>(i?'L':'M')+project(p).join(',')).join(' '),stroke:byLine.get(t.line).color,class:'track','vector-effect':'non-scaling-stroke'});$('tracks').append(node);trackNodes.push({node,line:t.line})}}
@@ -290,8 +350,7 @@ function selectStation(s){
  $('detail-meta').textContent=`${s.lines.length>1?'Interchange · ':''}Fare zone ${s.zone||'not listed'} · ${s.kind==='metro'?'Metro':'Light rail / tram'}\n${s.coord[1].toFixed(5)}° N, ${Math.abs(s.coord[0]).toFixed(5)}° W`;
  $('detail-link').href=`https://www.google.com/maps/search/?api=1&query=${s.coord[1]},${s.coord[0]}`;
  $('detail').hidden=false;
- const r=svg.getBoundingClientRect();const h=Math.max(2800,Math.min(view.h,6000)),w=h*r.width/r.height;
- view={x:s.p[0]-w/2,y:s.p[1]-h*.42,w,h};draw();
+ focusMap(s.p,2200);sheetBody.scrollTop=0;
 }
 function zoom(factor,px=.5,py=.5){const next=Math.min(900000,Math.max(650,view.w*factor)),f=next/view.w;view={x:view.x+view.w*px*(1-f),y:view.y+view.h*py*(1-f),w:next,h:view.h*f};scheduleDraw()}
 let dragMoved=false,dragDistance=0,lastGesture=null,pressedStation=null,pressedPlace=null;const pointers=new Map();
@@ -302,10 +361,10 @@ function endPointer(e){pointers.delete(e.pointerId);lastGesture=pointers.size?ge
 svg.addEventListener('pointerup',endPointer);svg.addEventListener('pointercancel',endPointer);
 svg.addEventListener('wheel',e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoom(Math.exp(Math.max(-1,Math.min(1,e.deltaY*.002))),(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)},{passive:false});
 svg.addEventListener('keydown',e=>{if(e.target!==svg)return;const moves={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,-.1],ArrowDown:[0,.1]};if(moves[e.key]){e.preventDefault();view.x+=moves[e.key][0]*view.w;view.y+=moves[e.key][1]*view.h;scheduleDraw()}else if(['+','=','-'].includes(e.key)){e.preventDefault();zoom(e.key==='-'?1.35:1/1.35)}});
-$('zoom-in').onclick=()=>zoom(1/1.4);$('zoom-out').onclick=()=>zoom(1.4);$('fit').onclick=()=>fitStations(stations.filter(s=>s.lines.some(l=>visible.has(l))));$('center').onclick=()=>{const p=project([-3.701,40.426]),r=svg.getBoundingClientRect(),h=8000;view={x:p[0]-h*r.width/r.height/2,y:p[1]-h/2,w:h*r.width/r.height,h};draw()};
+$('zoom-in').onclick=()=>{if(sheetSnap==='expanded')setSheet('half');const r=mapWindow();zoom(1/1.4,.5,(r.top+r.usable/2)/r.height)};$('zoom-out').onclick=()=>{if(sheetSnap==='expanded')setSheet('half');const r=mapWindow();zoom(1.4,.5,(r.top+r.usable/2)/r.height)};$('fit').onclick=()=>fitStations(stations.filter(s=>s.lines.some(l=>visible.has(l))));$('center').onclick=()=>focusMap(project([-3.701,40.426]),6000);
 $('label-toggle').onclick=()=>{names=!names;$('label-toggle').setAttribute('aria-pressed',String(names));draw()};
 $('close-detail').onclick=()=>{selected=null;selectedPlace=null;$('detail').hidden=true;draw()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('close-detail').click();$('search').blur()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('close-detail').click();$('search').blur();setSheet('collapsed')}});
 $('show-all').onclick=allLines;
 $('search').addEventListener('input',()=>{activeLine=null;$('clear-search').hidden=!$('search').value;const query=normalize($('search').value.trim());showTab(tab==='places'||query&&!stations.some(s=>normalize(s.name).includes(query))&&places.some(p=>normalize(p.name+' '+p.address).includes(query))?'places':'stations');draw()});
 $('search').addEventListener('keydown',e=>{if(e.key==='Enter'){$(tab==='places'?'place-list':'station-list').querySelector('.station-row')?.click()}});
@@ -349,8 +408,18 @@ const placeLegend=html('span');placeLegend.append(html('i','place-number','★')
 const credit=html('a','','Place coordinates: OpenStreetMap contributors & Esri');credit.href='https://www.openstreetmap.org/copyright';credit.target='_blank';credit.rel='noopener';document.querySelector('.source .desktop-only').append(document.createElement('br'),credit);
 document.querySelector('.source .desktop-only').append(document.createElement('br'),document.createTextNode('An internet connection is required to load street tiles. Loaded streets remain visible while new tiles arrive. Places checked 4 Nov 2026.'));
 $('source-date').textContent='Static network · Updated '+DATA.updated+' · Retrieved '+DATA.retrieved;
+sheetBody.prepend($('detail'));
+const tools=document.querySelector('.map-tools');
+$('category-bar').before(tools);
+const captions={'zoom-in':'Zoom in','zoom-out':'Zoom out',fit:'Whole network',center:'Central Madrid','label-toggle':'Names','places-toggle':'Places'};
+for(const button of tools.querySelectorAll('button'))button.dataset.caption=captions[button.id];
+const source=document.querySelector('.source'),sourceDetails=html('details','source-disclosure'),sourceSummary=html('summary','','Sources & map information');
+sourceDetails.append(sourceSummary,source);sheetBody.append(sourceDetails);
+const sourceStyle=html('style');sourceStyle.textContent='.source-disclosure{margin-top:20px;font-size:11px;color:var(--muted)}.source-disclosure summary{cursor:pointer;padding:12px 0}#explore-sheet .source-disclosure .source{margin-top:0}';document.head.append(sourceStyle);
+$('search').addEventListener('focus',()=>{if(sheetSnap!=='expanded')setSheet('expanded')});
+setSheet('half',{recenter:false});
 renderList();fitStations(stations);
-let previousSize=null;new ResizeObserver(()=>{const r=svg.getBoundingClientRect();if(previousSize){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=view.h*r.width/r.height;view.x=cx-view.w/2;view.y=cy-view.h/2;scheduleDraw()}previousSize={w:r.width,h:r.height}}).observe(svg);
+let previousSize=null;new ResizeObserver(()=>{const r=svg.getBoundingClientRect();if(previousSize){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=view.h*r.width/r.height;view.x=cx-view.w/2;view.y=cy-view.h/2;setSheet(sheetSnap,{recenter:false});scheduleDraw()}previousSize={w:r.width,h:r.height}}).observe(svg);
 </script>
 </body>
 </html>
