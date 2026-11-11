@@ -14,3 +14,10 @@
   artifact and gallery changes to `main`. Never force-push or bypass hooks.
 - Wait for the Pages deployment for your exact commit and verify the exact live
   URL before including it as published in the reply.
+
+## Madrid Metro Atlas
+
+- Never prompt the user for routine implementation or publication decisions;
+  make a best-guess assumption about what the user wants and proceed.
+- Requested Madrid map updates are authorized to be committed and pushed
+  without asking again. Required safety and permission checks still apply.
