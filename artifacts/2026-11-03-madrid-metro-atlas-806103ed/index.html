@@ -52,6 +52,7 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <p class="stay-area-note" id="stay-policy-coverage"></p>
 <label class="stay-map-toggle"><input id="stay-starred" type="checkbox">Starred only</label>
 <p class="stay-area-note" id="stay-star-status" role="status">Stars are saved only in this browser. Open a stay to star it.</p>
+<p class="stay-area-note" id="map-settings-status" role="status">Map position, visibility and filters are saved in this browser.</p>
 <p class="stay-summary" id="stay-results" aria-live="polite"></p>
 <details class="stay-scope"><summary>Coverage, pricing, and location limitations</summary><p id="stay-coverage"></p><p>Snapshot, not a live availability feed or booking guarantee. Prices can change, and optional extras or taxes must be reconfirmed on Airbnb. Public map positions are rounded and displayed as approximate—not verified street addresses. Nearby-station distances are straight-line estimates.</p><p>No booking, payment, host contact, or private address information is stored. Apartment complexes and multi-unit listings may represent more than one unit. No room-type filter was applied.</p></details>
 <div id="stay-list"></div>
@@ -150,6 +151,67 @@ let visible=new Set(lines.map(l=>l.id)),activeLine=null,selected=null,tab='lines
 const svg=$('map'),normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const sheet=$('explore-sheet'),sheetBody=$('sheet-body'),snapNames=['collapsed','half','expanded'];
 let sheetSnap='half',sheetHeight=0,sheetDrag=null,suppressGripClick=false;
+const MAP_SETTINGS_KEY='madrid-metro-atlas.settings.v1';
+const savedFilterIds=['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-show'];
+let settingsReady=false,settingsTimer=0;
+function mapSettings(){
+ return {
+  version:1,view:{cx:view.x+view.w/2,cy:view.y+view.h/2,width:view.w},
+  visibleLines:[...visible],visibleAreas:[...visibleAreas],activeLine,names,showPlaces,category,tab,sheetSnap,staysOpened,
+  search:$('search').value,
+  filters:Object.fromEntries(savedFilterIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value])),
+  amenities:[...$('stay-amenities').querySelectorAll('input:checked')].map(n=>n.value)
+ };
+}
+function saveMapSettings(){
+ if(!settingsReady)return;
+ clearTimeout(settingsTimer);
+ try{
+  localStorage.setItem(MAP_SETTINGS_KEY,JSON.stringify(mapSettings()));
+  $('map-settings-status').textContent='Map position, visibility and filters are saved in this browser.';
+ }catch{
+  $('map-settings-status').textContent='Map settings could not be saved. Changes will last only for this visit.';
+ }
+}
+function queueSettingsSave(){
+ if(!settingsReady)return;
+ clearTimeout(settingsTimer);settingsTimer=setTimeout(saveMapSettings,250);
+}
+function restoreMapSettings(){
+ let saved;
+ try{saved=JSON.parse(localStorage.getItem(MAP_SETTINGS_KEY)||'null')}
+ catch{$('map-settings-status').textContent='Saved map settings could not be loaded. Using default settings.';return}
+ if(!saved||saved.version!==1)return;
+ if(Array.isArray(saved.visibleLines))visible=new Set(saved.visibleLines.filter(id=>byLine.has(id)));
+ if(Array.isArray(saved.visibleAreas)){visibleAreas.clear();for(const id of saved.visibleAreas)if(stayAreas.has(id))visibleAreas.add(id)}
+ activeLine=byLine.has(saved.activeLine)?saved.activeLine:null;
+ if(typeof saved.names==='boolean')names=saved.names;
+ if(typeof saved.showPlaces==='boolean')showPlaces=saved.showPlaces;
+ if(saved.category==='all'||Object.hasOwn(CATEGORIES,saved.category))category=saved.category;
+ $('category-filter').value=category;
+ $('label-toggle').setAttribute('aria-pressed',String(names));$('places-toggle').setAttribute('aria-pressed',String(showPlaces));
+ if(typeof saved.search==='string')$('search').value=saved.search.slice(0,500);
+ $('clear-search').hidden=!$('search').value;
+ for(const id of savedFilterIds){
+  const control=$(id),value=saved.filters?.[id];
+  if(control.type==='checkbox'){if(typeof value==='boolean')control.checked=value}
+  else if(control.tagName==='SELECT'){if([...control.options].some(o=>o.value===value))control.value=value}
+  else if(value==='')control.value='';
+  else if(typeof value==='string'&&Number.isFinite(Number(value))&&Number(value)>=0)control.value=String(id==='stay-price'?Math.min(2400000,Number(value)):Number(value));
+ }
+ if(Array.isArray(saved.amenities))for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=saved.amenities.includes(input.value);
+ // Do not let opening the restored Stays tab override its saved pin visibility.
+ staysOpened=saved.staysOpened===true||saved.tab==='stays';
+ showTab(tabNames.includes(saved.tab)?saved.tab:'lines');
+ setSheet(snapNames.includes(saved.sheetSnap)?saved.sheetSnap:'half',{recenter:false});
+ const v=saved.view,r=svg.getBoundingClientRect();
+ if(v&&[v.cx,v.cy,v.width].every(Number.isFinite)&&v.width>=650&&v.width<=900000&&Math.abs(v.cx)<WORLD&&Math.abs(v.cy)<WORLD){
+  const height=v.width*r.height/Math.max(1,r.width);view={x:v.cx-v.width/2,y:v.cy-height/2,w:v.width,h:height};
+ }
+ updateAreaControls();
+}
+window.addEventListener('pagehide',saveMapSettings);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)saveMapSettings()});
 function snapHeight(snap){
  const height=svg.getBoundingClientRect().height,safe=Number.parseFloat(getComputedStyle(sheet).paddingBottom)||0;
  return snap==='collapsed'?82+safe:snap==='expanded'?Math.max(82+safe,height-76):Math.max(82+safe,Math.min(440,height*.48));
@@ -164,6 +226,7 @@ function setSheet(snap,{recenter=true}={}){
  $('sheet-hint').textContent=snap==='collapsed'?'Swipe up for filters and options':'Metro, places, areas & stays';
  if(snap==='collapsed'&&sheetBody.contains(document.activeElement))$('sheet-grip').focus({preventScroll:true});
  if(recenter&&old&&view.h>1){view.y+=(sheetHeight-old)*view.h/svg.clientHeight/2;scheduleDraw()}
+ queueSettingsSave();
 }
 function mapWindow(){
  const r=svg.getBoundingClientRect(),top=r.height<500?80:125;
@@ -457,6 +520,7 @@ function draw(){
  const scale=75*unit*Math.cos(latitude(view.y+view.h/2));
  $('scale-text').textContent=(scale/1000).toFixed(scale<1000?1:0)+' km';
  queueBasemap();
+ queueSettingsSave();
 }
 function selectStation(s){
  resetStayDetail();
@@ -550,6 +614,7 @@ const sourceStyle=html('style');sourceStyle.textContent='.source-disclosure{marg
 $('search').addEventListener('focus',()=>{if(sheetSnap!=='expanded')setSheet('expanded')});
 setSheet('half',{recenter:false});
 renderList();fitStations(stations);
+restoreMapSettings();settingsReady=true;
 let previousSize=null;new ResizeObserver(()=>{const r=svg.getBoundingClientRect();if(previousSize){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=view.h*r.width/r.height;view.x=cx-view.w/2;view.y=cy-view.h/2;setSheet(sheetSnap,{recenter:false});scheduleDraw()}previousSize={w:r.width,h:r.height}}).observe(svg);
 </script>
 </body>
