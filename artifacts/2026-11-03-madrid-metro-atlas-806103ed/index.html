@@ -26,6 +26,9 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 .stay-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;padding:12px 0}.stay-filters label{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted)}.stay-filters input{padding:9px 10px;font-size:13px;border-radius:8px}.stay-filters select{padding:9px;font-size:12px}.stay-amenities{display:flex;flex-wrap:wrap;gap:8px 14px;padding:9px 0}.stay-amenities label{display:flex;align-items:center;gap:5px;font-size:11px}.stay-amenities input,.stay-map-toggle input{width:16px;height:16px;padding:0;accent-color:#147d80}.stay-map-toggle{display:flex;align-items:center;gap:6px;font-size:12px}.stay-summary{font-size:12px;color:var(--muted);line-height:1.6;margin:8px 0}.stay-actions{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:8px 0}.stay-row{width:100%;display:flex;align-items:flex-start;gap:12px;text-align:left;border:1px solid #dfe7df;border-radius:12px;padding:13px;background:#fff;margin-bottom:8px;cursor:pointer}.stay-row:hover{background:#f4f8f3}.stay-number{background:#147d80;color:white;border-radius:7px;min-width:30px;padding:7px 4px;font-size:11px;text-align:center}.stay-copy{flex:1;min-width:0}.stay-copy strong{display:block;font-size:13px}.stay-copy small{display:block;font-size:11px;color:var(--muted);line-height:1.6;margin-top:3px}.stay-price{white-space:nowrap;font-size:13px;font-weight:650;color:#126769}.stay-pin{cursor:pointer}.stay-pin rect{fill:#147d80;stroke:white;stroke-width:1.8}.stay-pin text{fill:white;text-anchor:middle;font:700 10px system-ui;pointer-events:none}.stay-pin.selected rect{fill:#174d50;stroke:#172c30;stroke-width:3}.stay-details{font-size:12px;line-height:1.7;color:var(--muted)}.stay-details h4{font-size:11px;letter-spacing:.5px;color:#294939;margin:13px 0 5px}.stay-tags{display:flex;flex-wrap:wrap;gap:5px}.stay-tags span{padding:3px 7px;background:#e8f0e5;border-radius:6px;font-size:10px;color:#294939}.stay-warning{background:#fff2dc;border-radius:7px;padding:9px;margin:9px 0}.stay-scope{font-size:11px;line-height:1.7;color:var(--muted);margin:10px 0;padding:10px 12px;background:#f4f7f1;border-radius:9px}.stay-scope summary{cursor:pointer}.stay-filters input:invalid{border-color:#b92836}@media(min-width:900px){#stay-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stay-row{margin-bottom:0}}@media(max-width:700px){#explore-sheet .tabs{gap:14px;justify-content:flex-start;overflow-x:auto;scrollbar-width:none}#explore-sheet .tab{white-space:nowrap;font-size:11px}.stay-filters{grid-template-columns:1fr 1fr}.stay-row{gap:8px;padding:10px}.stay-price{font-size:11px}.stay-copy strong{font-size:12px}.stay-filters label{font-size:10px}}
 .stay-group-heading{grid-column:1/-1;margin:24px 0 8px;padding-bottom:8px;border-bottom:1px solid var(--line);font-size:15px;font-weight:650;line-height:1.5;color:#294939}.stay-group-heading small{font-weight:400;font-size:11px;color:#526357;margin-left:8px}.stay-policy{color:#315744!important}.stay-area-note{font-size:11px;line-height:1.7;color:#526357;margin:10px 0}.stay-cancellation{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.stay-cancellation p{margin:5px 0}.stay-cancellation .checked{font-size:10px;color:#526357}.stay-price{font-variant-numeric:tabular-nums}.stay-filters label{min-width:0}.stay-filters input,.stay-filters select{width:100%;min-width:0;max-width:100%}@media(max-width:700px){.stay-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<style>
+.stay-star{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 12px;border:1px solid #147d80;border-radius:8px;background:white;color:#126769;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.stay-star svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8}.stay-star[aria-pressed=true]{background:#e8f0e5}.stay-star[aria-pressed=true] svg{fill:currentColor}.stay-star:focus-visible{outline:2px solid #126769;outline-offset:3px}
+</style>
 </head>
 <body>
 <header><div class="brand"><div class="logo" aria-hidden="true">M</div><div><h1>Madrid <span>Metro Atlas</span></h1><p class="eyebrow">A city, connected.</p></div></div><div class="header-note"><span class="dot"></span>Explore the network. Find your station.</div></header>
@@ -47,6 +50,8 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <div class="stay-actions"><label class="stay-map-toggle"><input id="stay-show" type="checkbox">Show stay pins</label><label class="stay-map-toggle"><input id="stay-group" type="checkbox" checked>Group by map area</label><button id="stay-fit" class="text-button">Fit matching stays</button><button id="stay-reset" class="text-button">Reset stay filters</button></div>
 <p class="stay-area-note">Area matches use the approximate Airbnb pin, not the listing’s neighborhood name. Groups favor the smallest neighborhood before its district; filters include all overlapping areas, even hidden polygons. Outside our 12 areas does not mean outside Madrid.</p>
 <p class="stay-area-note" id="stay-policy-coverage"></p>
+<label class="stay-map-toggle"><input id="stay-starred" type="checkbox">Starred only</label>
+<p class="stay-area-note" id="stay-star-status" role="status">Stars are saved only in this browser. Open a stay to star it.</p>
 <p class="stay-summary" id="stay-results" aria-live="polite"></p>
 <details class="stay-scope"><summary>Coverage, pricing, and location limitations</summary><p id="stay-coverage"></p><p>Snapshot, not a live availability feed or booking guarantee. Prices can change, and optional extras or taxes must be reconfirmed on Airbnb. Public map positions are rounded and displayed as approximate—not verified street addresses. Nearby-station distances are straight-line estimates.</p><p>No booking, payment, host contact, or private address information is stored. Apartment complexes and multi-unit listings may represent more than one unit. No room-type filter was applied.</p></details>
 <div id="stay-list"></div>
@@ -228,17 +233,39 @@ function renderList(){
  renderStays();
 }
 const clp=n=>'CLP $'+Math.round(n).toLocaleString('en-US');
+const STAY_STARS_KEY='madrid-metro-atlas.starred-stays.v1';
+let starredStays=new Set();
+try{
+ const saved=JSON.parse(localStorage.getItem(STAY_STARS_KEY)||'[]');
+ if(Array.isArray(saved))starredStays=new Set(saved.filter(id=>typeof id==='string'&&/^\d+$/.test(id)));
+}catch{
+ $('stay-star-status').textContent='Saved stars could not be loaded. You can still star stays for this visit.';
+}
+function refreshStayStar(button,s){
+ const active=starredStays.has(s.id);
+ button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',(active?'Unstar':'Star')+' this stay');
+ button.querySelector('span').textContent=active?'Starred':'Star this stay';
+}
+function toggleStayStar(s,button){
+ if(starredStays.has(s.id))starredStays.delete(s.id);else starredStays.add(s.id);
+ let message='Stars are saved only in this browser. Open a stay to star it.';
+ try{localStorage.setItem(STAY_STARS_KEY,JSON.stringify([...starredStays]))}
+ catch{message='Stars could not be saved in this browser. Changes will last only for this visit.'}
+ $('stay-star-status').textContent=message;
+ button.nextElementSibling.textContent=message;
+ refreshStayStar(button,s);updateStayFilters();
+}
 function filteredStays(){
  const max=Math.min(2400000,Math.max(0,Number($('stay-price').value)||0)),min=Number($('stay-rating').value),required=[...$('stay-amenities').querySelectorAll('input:checked')].map(n=>n.value),query=tab==='stays'?normalize($('search').value.trim()):'';
  const policy=$('stay-cancellation').value,area=$('stay-area').value,minReviews=Math.max(0,Number($('stay-reviews').value)||0);
- const matches=stays.filter(s=>s.totalCLP<=max&&s.rating>=min&&s.reviews>=minReviews&&required.every(a=>s.amenities.includes(a))&&($('stay-verification').value==='all'||s.quoteStatus==='detail-verified')&&(policy==='all'||s.cancellation.category===policy)&&stayAreaMatches(s,area)&&normalize(s.title+' '+s.area+' '+s.areaIds.map(stayAreaName).join(' ')).includes(query));
+ const matches=stays.filter(s=>(!$('stay-starred').checked||starredStays.has(s.id))&&s.totalCLP<=max&&s.rating>=min&&s.reviews>=minReviews&&required.every(a=>s.amenities.includes(a))&&($('stay-verification').value==='all'||s.quoteStatus==='detail-verified')&&(policy==='all'||s.cancellation.category===policy)&&stayAreaMatches(s,area)&&normalize(s.title+' '+s.area+' '+s.areaIds.map(stayAreaName).join(' ')).includes(query));
  return matches.sort((a,b)=>$('stay-sort').value==='rating'?b.rating-a.rating||b.reviews-a.reviews:$('stay-sort').value==='reviews'?b.reviews-a.reviews:a.totalCLP-b.totalCLP);
 }
 function renderStays(){
  const matches=filteredStays(),mapped=matches.filter(s=>s.p).length;
  $('stay-results').textContent=`${matches.length} of ${stays.length} stays match · ${mapped} approximate map positions${matches.length>mapped?' · '+(matches.length-mapped)+' without verified map coordinates':''}`;
  $('stay-fit').disabled=!mapped;$('stay-list').replaceChildren();
- if(!matches.length)$('stay-list').append(html('p','empty','No stays match these filters. Try a higher total, fewer amenities, or reset the filters.'));
+ if(!matches.length)$('stay-list').append(html('p','empty',$('stay-starred').checked?'No starred stays match. Turn off Starred only to find and star stays, or reset the filters.':'No stays match these filters. Try a higher total, fewer amenities, or reset the filters.'));
  const grouped=$('stay-group').checked,groups=new Map();
  for(const s of matches){const id=grouped?s.primaryAreaId:'all';if(!groups.has(id))groups.set(id,[]);groups.get(id).push(s)}
  const ordered=[...groups].sort(([a],[b])=>Number(['outside','unlocated'].includes(a))-Number(['outside','unlocated'].includes(b))||stayAreaName(a).localeCompare(stayAreaName(b),'es'));
@@ -246,6 +273,7 @@ function renderStays(){
   if(grouped){const heading=html('h3','stay-group-heading',stayAreaName(id));heading.dataset.areaGroup=id;heading.append(html('small','',`${items.length} ${items.length===1?'stay':'stays'}${stayAreaKind(id)?' · '+stayAreaKind(id):''}`));$('stay-list').append(heading)}
   for(const s of items){const row=html('button','stay-row');row.dataset.stayId=s.id;row.dataset.areaGroup=s.primaryAreaId;row.append(html('span','stay-number',s.number));const copy=html('span','stay-copy');copy.append(html('strong','',s.title),html('small','',`${s.rating.toFixed(2)} / 5 · ${s.reviews} reviews · ${s.area}`),html('small','',`Map area: ${stayAreaName(s.primaryAreaId)}${s.p?' · approximate':''}`),html('small','stay-policy',CANCELLATION_LABELS[s.cancellation.category]),html('small','',s.amenities.length?s.amenities.map(a=>STAY_AMENITIES[a]).join(' · '):'Amenities not verified'),html('small','',(s.quoteStatus==='detail-verified'?'Listing-page quote confirmed':'Search-result quote only')+(s.p?' · Approximate location':' · Location unavailable')));row.append(copy,html('span','stay-price',clp(s.totalCLP)));row.onclick=()=>selectStay(s);$('stay-list').append(row)}
  }
+ for(const row of $('stay-list').querySelectorAll('.stay-row'))if(starredStays.has(row.dataset.stayId))row.querySelector('.stay-copy').append(html('small','stay-policy','Starred'));
 }
 function resetStayDetail(){
  selectedStay=null;$('detail-stay')?.remove();$('detail-link').hidden=false;$('detail-link').textContent='View location in Google Maps ↗';$('detail-website').textContent='Official website ↗';
@@ -256,6 +284,11 @@ function selectStay(s){
  $('detail-lines').replaceChildren();$('detail-meta').textContent=`${clp(s.totalCLP)} total · ${STAY_DATA.nights} nights · ${s.rating.toFixed(2)}/5 (${s.reviews} reviews). ${s.capacity||s.area}`;
  $('detail-note').hidden=false;$('detail-note').textContent=`${s.quoteStatus==='detail-verified'?'Quote confirmed on the listing page':'Price captured from the search result; not reconfirmed on the listing page'} on ${s.checkedAt.slice(0,10)}. Recheck price, availability, cancellation terms and taxes on Airbnb.`;
  const extra=html('div','stay-details');extra.id='detail-stay';
+ const starButton=html('button','stay-star');starButton.type='button';
+ starButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/></svg><span></span>';
+ refreshStayStar(starButton,s);starButton.onclick=()=>toggleStayStar(s,starButton);
+ const starStatus=html('p','checked',$('stay-star-status').textContent);starStatus.setAttribute('role','status');
+ extra.append(starButton,starStatus);
  const policy=s.cancellation,policyBox=html('section','stay-cancellation');
  policyBox.append(html('h4','','CANCELLATION'),html('p','',CANCELLATION_LABELS[policy.category]),html('p','',policy.summary));
  policyBox.append(html('p','checked',policy.checkedAt?'Policy checked '+policy.checkedAt.slice(0,10)+' for 12–23 Feb 2027, 4 guests.':'No verified date-specific cancellation evidence.'));
@@ -498,10 +531,10 @@ for(const a of [...AREA_DATA.areas].sort((a,b)=>a.name.localeCompare(b.name,'es'
 for(const id of ['outside','unlocated']){const option=html('option','',stayAreaName(id)+' · '+stays.filter(s=>s.primaryAreaId===id).length);option.value=id;$('stay-area').append(option)}
 function updateStayFilters(){if(selectedStay&&!filteredStays().some(s=>s.id===selectedStay.id))$('close-detail').click();renderStays();draw()}
 for(const [id,title]of Object.entries(STAY_AMENITIES)){const label=html('label'),input=html('input');input.type='checkbox';input.value=id;input.addEventListener('change',updateStayFilters);label.append(input,document.createTextNode(title));$('stay-amenities').append(label)}
-for(const id of ['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group'])$(id).addEventListener(['stay-price','stay-reviews'].includes(id)?'input':'change',updateStayFilters);
+for(const id of ['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred'])$(id).addEventListener(['stay-price','stay-reviews'].includes(id)?'input':'change',updateStayFilters);
 $('stay-show').onchange=()=>draw();
 $('stay-fit').onclick=()=>{$('stay-show').checked=true;$('close-detail').click();fitStations(filteredStays().filter(s=>s.p));draw()};
-$('stay-reset').onclick=()=>{$('stay-price').value='2400000';$('stay-rating').value='4.5';$('stay-reviews').value='0';$('stay-sort').value='price';$('stay-verification').value='all';$('stay-cancellation').value='all';$('stay-area').value='all';$('stay-group').checked=true;$('search').value='';$('clear-search').hidden=true;for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=false;renderStays();draw()};
+$('stay-reset').onclick=()=>{$('stay-price').value='2400000';$('stay-rating').value='4.5';$('stay-reviews').value='0';$('stay-sort').value='price';$('stay-verification').value='all';$('stay-cancellation').value='all';$('stay-area').value='all';$('stay-group').checked=true;$('stay-starred').checked=false;$('search').value='';$('clear-search').hidden=true;for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=false;renderStays();draw()};
 const placeLegend=html('span');placeLegend.append(html('i','place-number','★'),document.createTextNode('Place'));document.querySelector('.legend').append(placeLegend);
 const credit=html('a','','Place coordinates: OpenStreetMap contributors & Esri');credit.href='https://www.openstreetmap.org/copyright';credit.target='_blank';credit.rel='noopener';document.querySelector('.source .desktop-only').append(document.createElement('br'),credit);
 document.querySelector('.source .desktop-only').append(document.createElement('br'),document.createTextNode('An internet connection is required to load street tiles. Loaded streets remain visible while new tiles arrive. Places checked 4 Nov 2026.'));
