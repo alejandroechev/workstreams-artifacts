@@ -51,6 +51,9 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <p class="stay-area-note">Area matches use the approximate Airbnb pin, not the listing’s neighborhood name. Groups favor the smallest neighborhood before its district; filters include all overlapping areas, even hidden polygons. Outside our 12 areas does not mean outside Madrid.</p>
 <p class="stay-area-note" id="stay-policy-coverage"></p>
 <label class="stay-map-toggle"><input id="stay-starred" type="checkbox">Starred only</label>
+<div class="stay-actions"><button id="stay-copy-stars" class="stay-star" type="button" disabled>Copy all starred links</button></div>
+<p class="stay-area-note" id="stay-copy-status" role="status">Copies every starred Airbnb link, including stays hidden by filters.</p>
+<div id="stay-copy-fallback" hidden><label for="stay-copy-links">Starred Airbnb links · select and copy</label><textarea id="stay-copy-links" readonly rows="5" style="width:100%;box-sizing:border-box;font:inherit"></textarea></div>
 <p class="stay-area-note" id="stay-star-status" role="status">Stars are saved only in this browser. Open a stay to star it.</p>
 <p class="stay-area-note" id="map-settings-status" role="status">Map position, visibility and filters are saved in this browser.</p>
 <p class="stay-summary" id="stay-results" aria-live="polite"></p>
@@ -309,8 +312,24 @@ function refreshStayStar(button,s){
  button.setAttribute('aria-pressed',String(active));button.setAttribute('aria-label',(active?'Unstar':'Star')+' this stay');
  button.querySelector('span').textContent=active?'Starred':'Star this stay';
 }
+function stayUrl(id){return `https://www.airbnb.com/rooms/${id}?check_in=${STAY_DATA.checkin}&check_out=${STAY_DATA.checkout}&adults=${STAY_DATA.adults}&children=${STAY_DATA.children}&currency=CLP`}
+$('stay-copy-stars').onclick=async()=>{
+ const ids=[...starredStays];if(!ids.length)return;
+ const text=ids.map(stayUrl).join('\n');
+ $('stay-copy-fallback').hidden=true;$('stay-copy-links').value='';
+ try{
+  await navigator.clipboard.writeText(text);
+  $('stay-copy-status').textContent=`Copied ${ids.length} starred Airbnb ${ids.length===1?'link':'links'}.`;
+ }catch{
+  $('stay-copy-links').value=text;$('stay-copy-fallback').hidden=false;
+  $('stay-copy-status').textContent='Clipboard access is unavailable. Select and copy the links below.';
+  $('stay-copy-links').focus();$('stay-copy-links').select();
+ }
+};
 function toggleStayStar(s,button){
  if(starredStays.has(s.id))starredStays.delete(s.id);else starredStays.add(s.id);
+ $('stay-copy-fallback').hidden=true;$('stay-copy-links').value='';
+ $('stay-copy-status').textContent='Copies every starred Airbnb link, including stays hidden by filters.';
  let message='Stars are saved only in this browser. Open a stay to star it.';
  try{localStorage.setItem(STAY_STARS_KEY,JSON.stringify([...starredStays]))}
  catch{message='Stars could not be saved in this browser. Changes will last only for this visit.'}
@@ -325,6 +344,7 @@ function filteredStays(){
  return matches.sort((a,b)=>$('stay-sort').value==='rating'?b.rating-a.rating||b.reviews-a.reviews:$('stay-sort').value==='reviews'?b.reviews-a.reviews:a.totalCLP-b.totalCLP);
 }
 function renderStays(){
+ $('stay-copy-stars').disabled=starredStays.size===0;
  const matches=filteredStays(),mapped=matches.filter(s=>s.p).length;
  $('stay-results').textContent=`${matches.length} of ${stays.length} stays match · ${mapped} approximate map positions${matches.length>mapped?' · '+(matches.length-mapped)+' without verified map coordinates':''}`;
  $('stay-fit').disabled=!mapped;$('stay-list').replaceChildren();
@@ -372,7 +392,7 @@ function selectStay(s){
   for(const {st,d}of near){if(d>5000)continue;const button=html('button','station-row nearby-station',st.name+' · ~'+Math.round(d/50)*50+' m');button.onclick=()=>selectStation(st);extra.append(button)}
   $('detail-link').href=`https://www.google.com/maps/search/?api=1&query=${s.coord[1]},${s.coord[0]}`;
  }else $('detail-link').hidden=true;
- $('detail-website').hidden=false;$('detail-website').textContent='View stay on Airbnb ↗';$('detail-website').href=`https://www.airbnb.com/rooms/${s.id}?check_in=${STAY_DATA.checkin}&check_out=${STAY_DATA.checkout}&adults=${STAY_DATA.adults}&children=${STAY_DATA.children}&currency=CLP`;
+ $('detail-website').hidden=false;$('detail-website').textContent='View stay on Airbnb ↗';$('detail-website').href=stayUrl(s.id);
  $('detail').hidden=false;
  if(s.p){$('stay-show').checked=true;const pin=stayNodes.find(n=>n.s.id===s.id);if(pin)$('stay-pins').append(pin.node);focusMap(s.p,2200)}else setSheet('half');
  sheetBody.scrollTop=0;draw();
