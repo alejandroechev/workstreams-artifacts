@@ -52,8 +52,8 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <p class="stay-area-note" id="stay-policy-coverage"></p>
 <label class="stay-map-toggle"><input id="stay-starred" type="checkbox">Starred only</label>
 <div class="stay-actions"><button id="stay-copy-stars" class="stay-star" type="button" disabled>Copy all starred links</button></div>
-<p class="stay-area-note" id="stay-copy-status" role="status">Copies every starred Airbnb link, including stays hidden by filters.</p>
-<div id="stay-copy-fallback" hidden><label for="stay-copy-links">Starred Airbnb links · select and copy</label><textarea id="stay-copy-links" readonly rows="5" style="width:100%;box-sizing:border-box;font:inherit"></textarea></div>
+<p class="stay-area-note" id="stay-copy-status" role="status">Copies every starred Airbnb link with a short description, price, rating, reviews and cancellation summary, including stays hidden by filters.</p>
+<div id="stay-copy-fallback" hidden><label for="stay-copy-links">Starred Airbnb summaries and links · select and copy</label><textarea id="stay-copy-links" readonly rows="8" style="width:100%;box-sizing:border-box;font:inherit"></textarea></div>
 <p class="stay-area-note" id="stay-star-status" role="status">Stars are saved only in this browser. Open a stay to star it.</p>
 <p class="stay-area-note" id="map-settings-status" role="status">Map position, visibility and filters are saved in this browser.</p>
 <p class="stay-summary" id="stay-results" aria-live="polite"></p>
@@ -313,23 +313,35 @@ function refreshStayStar(button,s){
  button.querySelector('span').textContent=active?'Starred':'Star this stay';
 }
 function stayUrl(id){return `https://www.airbnb.com/rooms/${id}?check_in=${STAY_DATA.checkin}&check_out=${STAY_DATA.checkout}&adults=${STAY_DATA.adults}&children=${STAY_DATA.children}&currency=CLP`}
+function starredStaySummary(id){
+ const s=stays.find(stay=>stay.id===id);
+ if(!s)return `Airbnb stay ${id}\nListing details are not available in this snapshot.\n${stayUrl(id)}`;
+ return [
+  s.title,
+  [s.area,s.capacity].filter(Boolean).join(' · '),
+  `Price: ${clp(s.totalCLP)} total for ${STAY_DATA.nights} nights (snapshot ${s.checkedAt.slice(0,10)}).`,
+  `Rating: ${s.rating.toFixed(2)}/5 stars · ${s.reviews} reviews.`,
+  `Cancellation: ${s.cancellation.summary}${s.cancellation.checkedAt?' (checked '+s.cancellation.checkedAt.slice(0,10)+')':''}`,
+  stayUrl(id)
+ ].join('\n');
+}
 $('stay-copy-stars').onclick=async()=>{
  const ids=[...starredStays];if(!ids.length)return;
- const text=ids.map(stayUrl).join('\n');
+ const text=`Starred Madrid stays · ${STAY_DATA.checkin} to ${STAY_DATA.checkout} · ${STAY_DATA.adults} adults + ${STAY_DATA.children} children\nPrices and cancellation terms are separate snapshots, not booking guarantees. Reconfirm availability, final price and refund conditions on Airbnb.\n\n`+ids.map(starredStaySummary).join('\n\n');
  $('stay-copy-fallback').hidden=true;$('stay-copy-links').value='';
  try{
   await navigator.clipboard.writeText(text);
-  $('stay-copy-status').textContent=`Copied ${ids.length} starred Airbnb ${ids.length===1?'link':'links'}.`;
+  $('stay-copy-status').textContent=`Copied ${ids.length} starred Airbnb ${ids.length===1?'summary':'summaries'} and ${ids.length===1?'link':'links'}.`;
  }catch{
   $('stay-copy-links').value=text;$('stay-copy-fallback').hidden=false;
-  $('stay-copy-status').textContent='Clipboard access is unavailable. Select and copy the links below.';
+  $('stay-copy-status').textContent='Clipboard access is unavailable. Select and copy the summaries and links below.';
   $('stay-copy-links').focus();$('stay-copy-links').select();
  }
 };
 function toggleStayStar(s,button){
  if(starredStays.has(s.id))starredStays.delete(s.id);else starredStays.add(s.id);
  $('stay-copy-fallback').hidden=true;$('stay-copy-links').value='';
- $('stay-copy-status').textContent='Copies every starred Airbnb link, including stays hidden by filters.';
+ $('stay-copy-status').textContent='Copies every starred Airbnb link with a short description, price, rating, reviews and cancellation summary, including stays hidden by filters.';
  let message='Stars are saved only in this browser. Open a stay to star it.';
  try{localStorage.setItem(STAY_STARS_KEY,JSON.stringify([...starredStays]))}
  catch{message='Stars could not be saved in this browser. Changes will last only for this visit.'}
