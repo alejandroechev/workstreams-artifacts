@@ -46,6 +46,7 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <p class="stay-summary" id="stay-scenario"></p>
 <div class="stay-filters"><label for="stay-price">Maximum total · CLP<input id="stay-price" type="number" min="0" max="2400000" step="10000" value="2400000"></label><label for="stay-rating">Minimum rating<select id="stay-rating"><option value="4.5">4.5+</option><option value="4.7">4.7+</option><option value="4.8">4.8+</option><option value="4.9">4.9+</option><option value="5">5.0</option></select></label><label for="stay-reviews">Minimum reviews<input id="stay-reviews" type="number" min="0" step="1" value="0"></label><label for="stay-cancellation">Cancellation<select id="stay-cancellation"><option value="all">Any cancellation terms</option><option value="free">Free cancellation window</option><option value="grace-period">Short booking grace period</option><option value="partial">Partial refund only</option><option value="nonrefundable">Non-refundable</option><option value="unknown">Not verified</option></select></label><label for="stay-area">Map area · approximate<select id="stay-area"><option value="all">All map areas</option></select></label><label for="stay-sort">Sort by<select id="stay-sort"><option value="price">Lowest stay total</option><option value="rating">Highest rating</option><option value="reviews">Most reviews</option></select></label><label for="stay-verification">Quote evidence<select id="stay-verification"><option value="all">All captured search quotes</option><option value="detail-verified">Also confirmed on listing page</option></select></label></div>
 <div class="stay-amenities" id="stay-amenities" role="group" aria-label="Required amenities"></div>
+<div class="stay-filters"><label for="stay-bedrooms">Minimum bedrooms<select id="stay-bedrooms"><option value="all">Any bedroom count</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="unknown">Count not verified</option></select></label></div>
 <label class="stay-map-toggle"><input id="stay-unrated" type="checkbox" checked>Include unrated stays regardless of minimum rating</label>
 <p class="stay-summary">Amenities filters require explicit “available” evidence; unverified amenities do not count as a match.</p>
 <div class="stay-actions"><label class="stay-map-toggle"><input id="stay-show" type="checkbox">Show stay pins</label><label class="stay-map-toggle"><input id="stay-group" type="checkbox" checked>Group by map area</label><button id="stay-fit" class="text-button">Fit matching stays</button><button id="stay-reset" class="text-button">Reset stay filters</button></div>
@@ -156,7 +157,7 @@ const svg=$('map'),normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,''
 const sheet=$('explore-sheet'),sheetBody=$('sheet-body'),snapNames=['collapsed','half','expanded'];
 let sheetSnap='half',sheetHeight=0,sheetDrag=null,suppressGripClick=false;
 const MAP_SETTINGS_KEY='madrid-metro-atlas.settings.v1';
-const savedFilterIds=['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-show','stay-unrated'];
+const savedFilterIds=['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-show','stay-unrated','stay-bedrooms'];
 let settingsReady=false,settingsTimer=0;
 function mapSettings(){
  return {
@@ -315,6 +316,15 @@ function refreshStayStar(button,s){
 }
 function stayUrl(id){return `https://www.airbnb.com/rooms/${id}?check_in=${STAY_DATA.checkin}&check_out=${STAY_DATA.checkout}&adults=${STAY_DATA.adults}&children=${STAY_DATA.children}&currency=CLP`}
 function stayRating(s){return s.rating===null?'Unrated · no reviews yet':`${s.rating.toFixed(2)}/5 stars · ${s.reviews} reviews`}
+function stayBedrooms(s){
+ if(Number.isInteger(s.bedrooms)&&s.bedrooms>=0)return s.bedrooms;
+ const match=s.capacity?.match(/\b(\d+)\s+bedrooms?\b/i);
+ return match?Number(match[1]):null;
+}
+function matchesBedrooms(s){
+ const filter=$('stay-bedrooms').value,count=stayBedrooms(s);
+ return filter==='all'||(filter==='unknown'?count===null:count!==null&&count>=Number(filter));
+}
 function starredStaySummary(id){
  const s=stays.find(stay=>stay.id===id);
  if(!s)return `Airbnb stay ${id}\nListing details are not available in this snapshot.\n${stayUrl(id)}`;
@@ -354,7 +364,7 @@ function toggleStayStar(s,button){
 function filteredStays(){
  const max=Math.min(2400000,Math.max(0,Number($('stay-price').value)||0)),min=Number($('stay-rating').value),required=[...$('stay-amenities').querySelectorAll('input:checked')].map(n=>n.value),query=tab==='stays'?normalize($('search').value.trim()):'';
  const policy=$('stay-cancellation').value,area=$('stay-area').value,minReviews=Math.max(0,Number($('stay-reviews').value)||0);
- const matches=stays.filter(s=>(!$('stay-starred').checked||starredStays.has(s.id))&&s.totalCLP<=max&&(s.rating===null?$('stay-unrated').checked:s.rating>=min)&&s.reviews>=minReviews&&required.every(a=>s.amenities.includes(a))&&($('stay-verification').value==='all'||s.quoteStatus==='detail-verified')&&(policy==='all'||s.cancellation.category===policy)&&stayAreaMatches(s,area)&&normalize(s.title+' '+s.area+' '+s.areaIds.map(stayAreaName).join(' ')).includes(query));
+ const matches=stays.filter(s=>matchesBedrooms(s)&&(!$('stay-starred').checked||starredStays.has(s.id))&&s.totalCLP<=max&&(s.rating===null?$('stay-unrated').checked:s.rating>=min)&&s.reviews>=minReviews&&required.every(a=>s.amenities.includes(a))&&($('stay-verification').value==='all'||s.quoteStatus==='detail-verified')&&(policy==='all'||s.cancellation.category===policy)&&stayAreaMatches(s,area)&&normalize(s.title+' '+s.area+' '+s.areaIds.map(stayAreaName).join(' ')).includes(query));
  return matches.sort((a,b)=>$('stay-sort').value==='rating'?b.rating-a.rating||b.reviews-a.reviews:$('stay-sort').value==='reviews'?b.reviews-a.reviews:a.totalCLP-b.totalCLP);
 }
 function renderStays(){
@@ -371,6 +381,10 @@ function renderStays(){
   for(const s of items){const row=html('button','stay-row');row.dataset.stayId=s.id;row.dataset.areaGroup=s.primaryAreaId;row.append(html('span','stay-number',s.number));const copy=html('span','stay-copy');copy.append(html('strong','',s.title),html('small','',`${stayRating(s)} · ${s.area}${s.manual?' · Manually added':''}`),html('small','',`Map area: ${stayAreaName(s.primaryAreaId)}${s.p?' · approximate':''}`),html('small','stay-policy',CANCELLATION_LABELS[s.cancellation.category]),html('small','',s.amenities.length?s.amenities.map(a=>STAY_AMENITIES[a]).join(' · '):'Amenities not verified'),html('small','',(s.quoteStatus==='detail-verified'?'Listing-page quote confirmed':'Search-result quote only')+(s.p?' · Approximate location':' · Location unavailable')));row.append(copy,html('span','stay-price',clp(s.totalCLP)));row.onclick=()=>selectStay(s);$('stay-list').append(row)}
  }
  for(const row of $('stay-list').querySelectorAll('.stay-row'))if(starredStays.has(row.dataset.stayId))row.querySelector('.stay-copy').append(html('small','stay-policy','Starred'));
+ for(const row of $('stay-list').querySelectorAll('.stay-row')){
+  const count=stayBedrooms(stays.find(s=>s.id===row.dataset.stayId));
+  row.querySelector('.stay-copy').append(html('small','',count===null?'Bedroom count not verified':`${count} ${count===1?'bedroom':'bedrooms'}`));
+ }
 }
 function resetStayDetail(){
  selectedStay=null;$('detail-stay')?.remove();$('detail-link').hidden=false;$('detail-link').textContent='View location in Google Maps ↗';$('detail-website').textContent='Official website ↗';
@@ -629,10 +643,10 @@ for(const a of [...AREA_DATA.areas].sort((a,b)=>a.name.localeCompare(b.name,'es'
 for(const id of ['outside','unlocated']){const option=html('option','',stayAreaName(id)+' · '+stays.filter(s=>s.primaryAreaId===id).length);option.value=id;$('stay-area').append(option)}
 function updateStayFilters(){if(selectedStay&&!filteredStays().some(s=>s.id===selectedStay.id))$('close-detail').click();renderStays();draw()}
 for(const [id,title]of Object.entries(STAY_AMENITIES)){const label=html('label'),input=html('input');input.type='checkbox';input.value=id;input.addEventListener('change',updateStayFilters);label.append(input,document.createTextNode(title));$('stay-amenities').append(label)}
-for(const id of ['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-unrated'])$(id).addEventListener(['stay-price','stay-reviews'].includes(id)?'input':'change',updateStayFilters);
+for(const id of ['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-unrated','stay-bedrooms'])$(id).addEventListener(['stay-price','stay-reviews'].includes(id)?'input':'change',updateStayFilters);
 $('stay-show').onchange=()=>draw();
 $('stay-fit').onclick=()=>{$('stay-show').checked=true;$('close-detail').click();fitStations(filteredStays().filter(s=>s.p));draw()};
-$('stay-reset').onclick=()=>{$('stay-price').value='2400000';$('stay-rating').value='4.5';$('stay-reviews').value='0';$('stay-sort').value='price';$('stay-verification').value='all';$('stay-cancellation').value='all';$('stay-area').value='all';$('stay-group').checked=true;$('stay-starred').checked=false;$('stay-unrated').checked=true;$('search').value='';$('clear-search').hidden=true;for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=false;renderStays();draw()};
+$('stay-reset').onclick=()=>{$('stay-price').value='2400000';$('stay-rating').value='4.5';$('stay-reviews').value='0';$('stay-sort').value='price';$('stay-verification').value='all';$('stay-cancellation').value='all';$('stay-area').value='all';$('stay-bedrooms').value='all';$('stay-group').checked=true;$('stay-starred').checked=false;$('stay-unrated').checked=true;$('search').value='';$('clear-search').hidden=true;for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=false;renderStays();draw()};
 const placeLegend=html('span');placeLegend.append(html('i','place-number','★'),document.createTextNode('Place'));document.querySelector('.legend').append(placeLegend);
 const credit=html('a','','Place coordinates: OpenStreetMap contributors & Esri');credit.href='https://www.openstreetmap.org/copyright';credit.target='_blank';credit.rel='noopener';document.querySelector('.source .desktop-only').append(document.createElement('br'),credit);
 document.querySelector('.source .desktop-only').append(document.createElement('br'),document.createTextNode('An internet connection is required to load street tiles. Loaded streets remain visible while new tiles arrive. Places checked 4 Nov 2026.'));
