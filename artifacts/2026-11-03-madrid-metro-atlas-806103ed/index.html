@@ -72,7 +72,7 @@ html,body{height:100%;overflow:hidden}body{--sheet-height:48dvh;background:#eee}
 <footer class="source"><a href="https://www.crtm.es/" target="_blank" rel="noopener">Powered by CRTM</a> &middot; Official open data, adapted.<br><span id="source-date"></span><span class="desktop-only"><br>Static Metro network, not live service information. Street maps are from OpenStreetMap.<br><a href="https://datos.crtm.es/maps/0a6c45e7bdd94679b67a2ae662c8838b/about" target="_blank" rel="noopener">Metro data</a> &middot; <a href="https://datos.crtm.es/maps/53c45916691a4256bf0f6f69fb0e182c/about" target="_blank" rel="noopener">Light rail data</a> &middot; <a href="https://www.crtm.es/licencia-de-uso/" target="_blank" rel="noopener">Data license</a><br>Independent explorer. Not endorsed by CRTM or Airbnb.</span></footer>
 </div></aside>
 <section class="map" aria-label="Interactive geographic map of Madrid">
-<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom." tabindex="0"><g id="osm-tiles"></g><g id="area-polygons"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g><g id="stay-pins"></g></svg>
+<svg id="map" role="group" aria-label="Madrid Metro map. Drag to pan, scroll or pinch to zoom. Use arrow keys to pan and plus or minus to zoom. In walking mode, press Enter to place circles at the visible map center." tabindex="0"><g id="osm-tiles"></g><g id="area-polygons"></g><g id="walking-rings" pointer-events="none"></g><g id="tracks"></g><g id="station-dots"></g><g id="labels"></g><g id="place-labels"></g><g id="place-pins"></g><g id="stay-pins"></g><g id="walking-labels" pointer-events="none"></g></svg>
 <div class="map-title"><h2>Madrid</h2><p>GEOGRAPHIC VIEW &nbsp;/&nbsp; METRO + LIGHT RAIL</p></div>
 <div id="map-status" class="map-status" aria-live="polite"></div>
 <div class="basemap-controls"><span id="basemap-status" role="status">Loading OpenStreetMap…</span><button id="retry-map" class="text-button" hidden>Retry streets</button></div>
@@ -163,6 +163,39 @@ let visible=new Set(lines.map(l=>l.id)),activeLine=null,selected=null,tab='lines
 const svg=$('map'),normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const sheet=$('explore-sheet'),sheetBody=$('sheet-body'),snapNames=['collapsed','half','expanded'];
 let sheetSnap='half',sheetHeight=0,sheetDrag=null,suppressGripClick=false;
+let walkingMode=false,walkingCenter=null;
+const walkingBands=[{minutes:30,meters:2400,color:'#6e3c88'},{minutes:15,meters:1200,color:'#245ca0'},{minutes:5,meters:400,color:'#126769'}];
+function walkingRadius(meters){return meters/Math.max(.01,Math.cos(latitude(walkingCenter[1])))}
+function setWalkingCenter(point){
+ walkingCenter=point;
+ $('close-detail').click();
+ draw();
+}
+function mapPoint(clientX,clientY){
+ const point=svg.createSVGPoint();point.x=clientX;point.y=clientY;
+ const mapped=point.matrixTransform(svg.getScreenCTM().inverse());
+ return [mapped.x,mapped.y];
+}
+function drawWalking(unit){
+ const rings=$('walking-rings'),labels=$('walking-labels');
+ rings.replaceChildren();labels.replaceChildren();
+ svg.classList.toggle('walking-mode',walkingMode);
+ $('walking-mode').checked=walkingMode;
+ $('walking-fit').disabled=!walkingCenter;$('walking-clear').disabled=!walkingCenter;
+ const status=walkingMode?'Walking mode: tap the map to place or move all three circles. Dragging still pans.':walkingCenter?'Walking circles hidden. Turn on walking mode to show them.':'Turn on walking mode, then tap a starting point on the map.';
+ if($('walking-status').textContent!==status)$('walking-status').textContent=status;
+ if(!walkingMode||!walkingCenter)return;
+ const [x,y]=walkingCenter;
+ let previousLabelY=-Infinity;
+ for(const band of walkingBands){
+  const radius=walkingRadius(band.meters);
+  rings.append(el('circle',{cx:x,cy:y,r:radius,fill:band.color,'fill-opacity':.05,stroke:band.color,'stroke-width':2,'vector-effect':'non-scaling-stroke','data-walk-minutes':band.minutes}));
+  const labelY=Math.max(y-radius-unit*8,previousLabelY+unit*18);previousLabelY=labelY;
+  const label=el('text',{x,y:labelY,'text-anchor':'middle',fill:band.color,stroke:'white','stroke-width':unit*3,'paint-order':'stroke','font-size':unit*12,'font-weight':650},`${band.minutes} min · ${band.meters<1000?band.meters+' m':band.meters/1000+' km'}`);
+  labels.append(label);
+ }
+ labels.append(el('circle',{cx:x,cy:y,r:unit*5,fill:'#126769',stroke:'white','stroke-width':unit*2}));
+}
 const MAP_SETTINGS_KEY='madrid-metro-atlas.settings.v1';
 const savedFilterIds=['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-show','stay-unrated','stay-bedrooms','stay-refund-full','stay-refund-half','stay-refund-basis'];
 let settingsReady=false,settingsTimer=0;
@@ -170,6 +203,7 @@ function mapSettings(){
  return {
   version:1,view:{cx:view.x+view.w/2,cy:view.y+view.h/2,width:view.w},
   visibleLines:[...visible],visibleAreas:[...visibleAreas],activeLine,names,showPlaces,category,tab,sheetSnap,staysOpened,
+  walkingMode,walkingCenter,
   search:$('search').value,
   filters:Object.fromEntries(savedFilterIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value])),
   amenities:[...$('stay-amenities').querySelectorAll('input:checked')].map(n=>n.value)
@@ -199,6 +233,8 @@ function restoreMapSettings(){
  activeLine=byLine.has(saved.activeLine)?saved.activeLine:null;
  if(typeof saved.names==='boolean')names=saved.names;
  if(typeof saved.showPlaces==='boolean')showPlaces=saved.showPlaces;
+ if(typeof saved.walkingMode==='boolean')walkingMode=saved.walkingMode;
+ if(Array.isArray(saved.walkingCenter)&&saved.walkingCenter.length===2&&saved.walkingCenter.every(n=>Number.isFinite(n)&&Math.abs(n)<WORLD))walkingCenter=saved.walkingCenter;
  if(saved.category==='all'||Object.hasOwn(CATEGORIES,saved.category))category=saved.category;
  $('category-filter').value=category;
  $('label-toggle').setAttribute('aria-pressed',String(names));$('places-toggle').setAttribute('aria-pressed',String(showPlaces));
@@ -565,6 +601,7 @@ function draw(){
  svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
  for(const area of areaNodes)area.node.style.display=visibleAreas.has(area.id)?'':'none';
  const rect=svg.getBoundingClientRect(),unit=view.w/Math.max(1,rect.width);
+ drawWalking(unit);
  const matchedStays=new Set(filteredStays().map(s=>s.id));
  for(const {s,node}of stayNodes){node.style.display=$('stay-show').checked&&matchedStays.has(s.id)?'':'none';node.setAttribute('transform',`translate(${s.p[0]} ${s.p[1]}) scale(${unit})`);node.classList.toggle('selected',s.id===selectedStay?.id)}
  for(const {node,line}of trackNodes){node.style.display=visible.has(line)?'':'none';node.setAttribute('stroke-width',activeLine?4.5:3.1)}
@@ -608,8 +645,15 @@ let dragMoved=false,dragDistance=0,lastGesture=null,pressedStation=null,pressedP
 function gesture(){const ps=[...pointers.values()];return {x:ps.reduce((n,p)=>n+p.x,0)/ps.length,y:ps.reduce((n,p)=>n+p.y,0)/ps.length,d:ps.length>1?Math.hypot(ps[0].x-ps[1].x,ps[0].y-ps[1].y):0}}
 svg.addEventListener('pointerdown',e=>{if(e.button!==0)return;dragMoved=pointers.size>0;dragDistance=0;pressedStation=stationNodes.find(n=>n.node===e.target)?.s||null;pressedPlace=places.find(p=>p.id===e.target.closest('[data-place]')?.getAttribute('data-place'))||null;pressedStay=stays.find(s=>s.id===e.target.closest('[data-stay]')?.getAttribute('data-stay'))||null;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});lastGesture=gesture();svg.classList.add('dragging');svg.setPointerCapture(e.pointerId)});
 svg.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const g=gesture(),r=svg.getBoundingClientRect(),dx=g.x-lastGesture.x,dy=g.y-lastGesture.y;dragDistance+=Math.hypot(dx,dy);if(dragDistance>5)dragMoved=true;if(g.d&&lastGesture.d){zoom(lastGesture.d/g.d,(g.x-r.left)/r.width,(g.y-r.top)/r.height);dragMoved=true}view.x-=dx*view.w/r.width;view.y-=dy*view.h/r.height;lastGesture=g;scheduleDraw()});
-function endPointer(e){pointers.delete(e.pointerId);lastGesture=pointers.size?gesture():null;if(!pointers.size){svg.classList.remove('dragging');if(e.type==='pointerup'&&!dragMoved){if(pressedStation)selectStation(pressedStation);if(pressedPlace)selectPlace(pressedPlace);if(pressedStay)selectStay(pressedStay)}pressedStation=null;pressedPlace=null;pressedStay=null}}
+function endPointer(e){const tracked=pointers.delete(e.pointerId);lastGesture=pointers.size?gesture():null;if(!pointers.size){svg.classList.remove('dragging');if(tracked&&e.type==='pointerup'&&!dragMoved){if(walkingMode)setWalkingCenter(mapPoint(e.clientX,e.clientY));else{if(pressedStation)selectStation(pressedStation);if(pressedPlace)selectPlace(pressedPlace);if(pressedStay)selectStay(pressedStay)}}pressedStation=null;pressedPlace=null;pressedStay=null}}
 svg.addEventListener('pointerup',endPointer);svg.addEventListener('pointercancel',endPointer);
+svg.addEventListener('keydown',e=>{
+ if(!walkingMode||!['Enter',' '].includes(e.key))return;
+ e.preventDefault();e.stopImmediatePropagation();
+ const stay=stays.find(s=>s.id===e.target.closest('[data-stay]')?.getAttribute('data-stay')),place=places.find(p=>p.id===e.target.closest('[data-place]')?.getAttribute('data-place')),station=stationNodes.find(n=>n.node===e.target)?.s;
+ const r=mapWindow();
+ setWalkingCenter(stay?.p||place?.p||station?.p||[view.x+view.w/2,view.y+(r.top+r.usable/2)*view.h/r.height]);
+},true);
 svg.addEventListener('wheel',e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoom(Math.exp(Math.max(-1,Math.min(1,e.deltaY*.002))),(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)},{passive:false});
 svg.addEventListener('keydown',e=>{if(e.target!==svg)return;const moves={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,-.1],ArrowDown:[0,.1]};if(moves[e.key]){e.preventDefault();view.x+=moves[e.key][0]*view.w;view.y+=moves[e.key][1]*view.h;scheduleDraw()}else if(['+','=','-'].includes(e.key)){e.preventDefault();zoom(e.key==='-'?1.35:1/1.35)}});
 $('zoom-in').onclick=()=>{if(sheetSnap==='expanded')setSheet('half');const r=mapWindow();zoom(1/1.4,.5,(r.top+r.usable/2)/r.height)};$('zoom-out').onclick=()=>{if(sheetSnap==='expanded')setSheet('half');const r=mapWindow();zoom(1.4,.5,(r.top+r.usable/2)/r.height)};$('fit').onclick=()=>fitStations(stations.filter(s=>s.lines.some(l=>visible.has(l))));$('center').onclick=()=>focusMap(project([-3.701,40.426]),6000);
@@ -678,6 +722,13 @@ $('source-date').textContent='Static network · Updated '+DATA.updated+' · Retr
 sheetBody.prepend($('detail'));
 const tools=document.querySelector('.map-tools');
 $('category-bar').before(tools);
+const walkingControls=html('section','walking-controls');walkingControls.setAttribute('aria-label','Walking distance');
+walkingControls.innerHTML='<label class="stay-map-toggle"><input id="walking-mode" type="checkbox">Walking distance mode</label><div class="stay-actions"><button id="walking-fit" class="text-button" disabled>Fit walking circles</button><button id="walking-clear" class="text-button" disabled>Clear walking circles</button></div><p id="walking-status" class="stay-area-note" role="status"></p><p class="stay-area-note">5 min: 400 m · 15 min: 1.2 km · 30 min: 2.4 km. Assumes 4.8 km/h. Straight-line distance circles, not walking routes: streets, crossings, hills and barriers can make walks longer. Keyboard: focus the map and press Enter to use its visible center.</p>';
+tools.after(walkingControls);
+$('walking-mode').onchange=()=>{walkingMode=$('walking-mode').checked;if(walkingMode){$('close-detail').click();if(sheetSnap==='expanded')setSheet('half')}draw()};
+$('walking-clear').onclick=()=>{walkingCenter=null;draw()};
+$('walking-fit').onclick=()=>{if(!walkingCenter)return;walkingMode=true;const [x,y]=walkingCenter,r=walkingRadius(2400);fitStations([{p:[x-r,y-r]},{p:[x+r,y+r]}]);draw()};
+const walkingStyle=html('style');walkingStyle.textContent='.walking-controls{padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:12px}.walking-controls .stay-area-note{margin:6px 0}#map.walking-mode,#map.walking-mode *{cursor:crosshair}#map.walking-mode.dragging,#map.walking-mode.dragging *{cursor:grabbing}';document.head.append(walkingStyle);
 const captions={'zoom-in':'Zoom in','zoom-out':'Zoom out',fit:'Whole network',center:'Central Madrid','label-toggle':'Names','places-toggle':'Places'};
 for(const button of tools.querySelectorAll('button'))button.dataset.caption=captions[button.id];
 const source=document.querySelector('.source'),sourceDetails=html('details','source-disclosure'),sourceSummary=html('summary','','Sources & map information');
