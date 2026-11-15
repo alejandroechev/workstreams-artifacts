@@ -516,6 +516,11 @@ for(const s of stations){const node=el('circle',{cx:s.p[0],cy:s.p[1],class:'stat
 const placeNodes=places.map(p=>{const node=el('g',{class:'place-pin','data-place':p.id,'data-category':p.category,role:'button',tabindex:0,'aria-label':'Place: '+p.name});node.style.setProperty('--place-color',CATEGORIES[p.category].color);node.append(el('circle',{r:12}),el('text',{'text-anchor':'middle',y:3.5},p.number),el('title',{},p.name+' · '+CATEGORIES[p.category].name));node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();selectPlace(p)}};$('place-pins').append(node);return {p,node}});
 const stayNodes=stays.filter(s=>s.p).map(s=>{const node=el('g',{class:'stay-pin','data-stay':s.id,role:'button',tabindex:0,'aria-label':'Stay: '+s.title});node.append(el('rect',{x:-15,y:-11,width:30,height:22,rx:6}),el('text',{y:3.5},s.number),el('title',{},s.title+' · '+clp(s.totalCLP)+' · '+stayRating(s)));node.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();selectStay(s)}};$('stay-pins').append(node);return {s,node}});
 const placesToggle=html('button','tool','★');placesToggle.id='places-toggle';placesToggle.setAttribute('aria-label','Toggle points of interest');placesToggle.setAttribute('aria-pressed','true');placesToggle.onclick=()=>{showPlaces=!showPlaces;placesToggle.setAttribute('aria-pressed',String(showPlaces));if(!showPlaces&&selectedPlace)$('close-detail').click();draw()};document.querySelector('.map-tools').append(placesToggle);
+const staysToggle=html('button','tool');staysToggle.id='stays-toggle';staysToggle.setAttribute('aria-label','Toggle stays');staysToggle.setAttribute('aria-pressed','false');
+staysToggle.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 20V4m18 16V10H3m0 7h18M6 10V6h5v4m3 0V6h5v4"/></svg>';
+function updateStayVisibility(){staysOpened=true;if(!$('stay-show').checked&&selectedStay)$('close-detail').click();draw()}
+staysToggle.onclick=()=>{$('stay-show').checked=!$('stay-show').checked;updateStayVisibility()};
+document.querySelector('.map-tools').append(staysToggle);
 const tileCache=new Map();
 let currentTileKeys=new Set();
 let tileKey='',tileGeneration=0,tileTimer=0,retryTimer=0;
@@ -598,6 +603,7 @@ window.addEventListener('online',retryStreets);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(retryTimer);else if(document.querySelector('.map').dataset.basemap==='error')retryStreets()});
 function scheduleDraw(){if(!renderFrame)renderFrame=requestAnimationFrame(()=>{renderFrame=0;draw()})}
 function draw(){
+ staysToggle.setAttribute('aria-pressed',String($('stay-show').checked));
  svg.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`);
  for(const area of areaNodes)area.node.style.display=visibleAreas.has(area.id)?'':'none';
  const rect=svg.getBoundingClientRect(),unit=view.w/Math.max(1,rect.width);
@@ -712,7 +718,7 @@ for(const id of ['outside','unlocated']){const option=html('option','',stayAreaN
 function updateStayFilters(){if(selectedStay&&!filteredStays().some(s=>s.id===selectedStay.id))$('close-detail').click();renderStays();draw()}
 for(const [id,title]of Object.entries(STAY_AMENITIES)){const label=html('label'),input=html('input');input.type='checkbox';input.value=id;input.addEventListener('change',updateStayFilters);label.append(input,document.createTextNode(title));$('stay-amenities').append(label)}
 for(const id of ['stay-price','stay-reviews','stay-rating','stay-sort','stay-verification','stay-cancellation','stay-area','stay-group','stay-starred','stay-unrated','stay-bedrooms','stay-refund-full','stay-refund-half','stay-refund-basis'])$(id).addEventListener(['stay-price','stay-reviews','stay-refund-full','stay-refund-half'].includes(id)?'input':'change',updateStayFilters);
-$('stay-show').onchange=()=>draw();
+$('stay-show').onchange=updateStayVisibility;
 $('stay-fit').onclick=()=>{$('stay-show').checked=true;$('close-detail').click();fitStations(filteredStays().filter(s=>s.p));draw()};
 $('stay-reset').onclick=()=>{$('stay-price').value='2400000';$('stay-rating').value='4.5';$('stay-reviews').value='0';$('stay-sort').value='price';$('stay-verification').value='all';$('stay-cancellation').value='all';$('stay-area').value='all';$('stay-bedrooms').value='all';$('stay-refund-full').value='';$('stay-refund-half').value='';$('stay-refund-basis').value='all';$('stay-group').checked=true;$('stay-starred').checked=false;$('stay-unrated').checked=true;$('search').value='';$('clear-search').hidden=true;for(const input of $('stay-amenities').querySelectorAll('input'))input.checked=false;renderStays();draw()};
 const placeLegend=html('span');placeLegend.append(html('i','place-number','★'),document.createTextNode('Place'));document.querySelector('.legend').append(placeLegend);
@@ -729,7 +735,7 @@ $('walking-mode').onchange=()=>{walkingMode=$('walking-mode').checked;if(walking
 $('walking-clear').onclick=()=>{walkingCenter=null;draw()};
 $('walking-fit').onclick=()=>{if(!walkingCenter)return;walkingMode=true;const [x,y]=walkingCenter,r=walkingRadius(2400);fitStations([{p:[x-r,y-r]},{p:[x+r,y+r]}]);draw()};
 const walkingStyle=html('style');walkingStyle.textContent='.walking-controls{padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:12px}.walking-controls .stay-area-note{margin:6px 0}#map.walking-mode,#map.walking-mode *{cursor:crosshair}#map.walking-mode.dragging,#map.walking-mode.dragging *{cursor:grabbing}';document.head.append(walkingStyle);
-const captions={'zoom-in':'Zoom in','zoom-out':'Zoom out',fit:'Whole network',center:'Central Madrid','label-toggle':'Names','places-toggle':'Places'};
+const captions={'zoom-in':'Zoom in','zoom-out':'Zoom out',fit:'Whole network',center:'Central Madrid','label-toggle':'Names','places-toggle':'Places','stays-toggle':'Stays'};
 for(const button of tools.querySelectorAll('button'))button.dataset.caption=captions[button.id];
 const source=document.querySelector('.source'),sourceDetails=html('details','source-disclosure'),sourceSummary=html('summary','','Sources & map information');
 sourceDetails.append(sourceSummary,source);sheetBody.append(sourceDetails);
