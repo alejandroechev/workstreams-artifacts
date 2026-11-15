@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f3ed">
+<meta name="color-scheme" content="light">
+<meta name="description" content="A guided design interview for Rust Pocket: real Rust checking and an AI tutor through a paired desktop. Save answers locally and export plain text.">
+<title>Rust Pocket — Local runner & mastery checks</title>
+<style>
+:root{--paper:#f5f3ed;--card:#fffef9;--ink:#28362f;--muted:#606d64;--line:#d7ddd2;--rust:#a64028;--green:#355b48;--pale:#e5edde;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}button:disabled{opacity:.42;cursor:default}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--rust);outline-offset:3px}input:focus,textarea:focus,select:focus{outline:2px solid var(--green);outline-offset:2px}h1,h2,h3,p{margin:0}h1,h2{font-family:Georgia,serif;font-weight:400;line-height:1.12;letter-spacing:-.7px}a{color:var(--rust)}button{border:0}header{max-width:1120px;padding:27px 28px 20px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{font-weight:750;font-size:19px;letter-spacing:-.6px}.brand span{color:var(--rust)}.label{font:11px/1.5 var(--mono);letter-spacing:1px;text-transform:uppercase}.muted{color:var(--muted)}.shell{max-width:1120px;margin:auto;padding:0 28px 50px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:35px}.sidebar{padding-top:18px}.sidebar h1{font-size:35px}.sidebar>p{font-size:13px;margin:14px 0 23px;color:var(--muted)}.tiny{font-size:12px}.status{border:1px solid var(--line);border-radius:11px;padding:10px 12px;color:var(--green);font-size:12px}.sidebar nav{display:grid;gap:7px;margin:22px 0}.section-button{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;background:transparent;padding:10px;border-radius:10px;font-size:13px;gap:9px;min-height:44px}.section-button.active{background:var(--pale);color:var(--green);font-weight:650}.section-button span:last-child{font:11px var(--mono);white-space:nowrap}.secondary,.primary,.quiet{min-height:46px;padding:11px 16px;border-radius:11px;font-weight:600;font-size:13px}.primary{background:var(--green);color:white}.secondary{border:1px solid var(--line);background:var(--card)}.quiet{background:none;color:var(--rust)}.full{width:100%}.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:9px 0 16px}.toolbar select{min-width:0;max-width:60%;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px;font-size:12px;min-height:44px}.progress{height:5px;border-radius:10px;background:#dce1d7;overflow:hidden;margin-bottom:22px}.progress>div{height:100%;background:var(--green);transition:width .15s}.question{padding:30px;background:var(--card);border:1px solid var(--line);border-radius:20px;min-width:0}.meta{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.badge{display:inline-block;font:10px var(--mono);letter-spacing:.5px;padding:5px 8px;border-radius:6px;border:1px solid var(--line)}.badge.Blocking{background:#f8e4d9;border-color:#e6c8b7;color:#86351d}.badge.High{background:var(--pale);color:var(--green)}.question h2{font-size:33px;margin-bottom:17px}.context{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px}.context p+p{margin-top:10px}.options{display:grid;gap:10px;margin:20px 0}.option{display:flex;align-items:flex-start;gap:12px;padding:15px 14px;border:1px solid var(--line);border-radius:12px;cursor:pointer;font-size:14px;min-height:56px}.option:has(input:checked){background:#edf3e6;border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}.option input{accent-color:var(--green);width:18px;height:18px;margin:3px 0 0;flex-shrink:0}.option .letter{font:12px var(--mono);color:var(--muted);margin-right:5px}.option.reco-option{border-style:dashed}.recommendation{border:1px solid var(--line);border-radius:12px;margin:19px 0;background:#f7f8f2}.recommendation summary{padding:13px 15px;cursor:pointer;font-size:13px;min-height:46px}.recommendation p{padding:0 15px 15px;font-size:13px;color:var(--green);line-height:1.75}.notes-label{display:block;font-size:13px;font-weight:650;margin-bottom:8px}textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;background:var(--paper);color:var(--ink);font-size:16px;resize:vertical;min-height:95px}.answer-state{font-size:12px;color:var(--muted);margin-top:8px;min-height:20px}.answer-state.attention{color:#953b25}.card-bottom{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:22px}.card-bottom .quiet{padding-left:0}.navigation{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:19px}.navigation .primary{min-width:135px}.navigation .tiny{text-align:center}.finish-bar{border-top:1px solid var(--line);margin-top:25px;padding-top:21px;display:flex;align-items:center;justify-content:space-between;gap:15px}.finish-bar p{font-size:12px;color:var(--muted);max-width:310px}.flow{border:1px solid var(--line);background:var(--paper);padding:15px;border-radius:13px;margin:18px 0;display:grid;gap:8px;text-align:center;font-size:12px}.flow div{padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--card)}.flow .branches{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:0;padding:0;background:none}.flow>span{color:var(--green);line-height:1;font-size:17px}.privacy{font-size:11px;color:var(--muted);margin:18px 0;line-height:1.8}.mobile-summary{display:none}.storage-error{background:#f7ddcb;color:#75361e;padding:12px;text-align:center;font-size:13px}dialog{border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);width:min(720px,calc(100% - 24px));max-height:90dvh;padding:24px;box-shadow:0 30px 100px #15251b30}dialog::backdrop{background:#1b2b2277;backdrop-filter:blur(4px)}.dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.dialog-heading h2{font-size:28px}.close{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--paper);font-size:23px;flex-shrink:0}.dialog-body p{font-size:14px;margin:12px 0}.dialog-actions{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.export-box{font:12px/1.7 var(--mono);min-height:240px;background:#f2f4ed}.summary-list{display:grid;gap:8px}.summary-row{border:1px solid var(--line);border-radius:11px;padding:13px;background:var(--paper);text-align:left;display:flex;gap:12px;align-items:start;width:100%;font-size:13px;overflow-wrap:anywhere}.summary-row .qid{font:12px var(--mono);color:var(--rust);min-width:25px}.summary-row small{display:block;color:var(--muted);margin-top:4px}.summary-row.missing{border-color:#d6a58b}.toast{position:fixed;bottom:calc(22px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;border-radius:12px;font-size:13px;z-index:5;max-width:90%;width:max-content}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.banner{font-size:12px;padding:12px 14px;border:1px solid #d5b393;border-radius:11px;background:#fbecdf;margin:13px 0}.empty{padding:40px 20px;text-align:center}.empty h2{font-size:29px;margin-bottom:14px}.empty button{margin-top:16px}
+@media(max-width:750px){header{padding:18px 18px 16px}.brand{font-size:18px}header .label{font-size:9px}.shell{display:block;padding:0 16px calc(28px + env(safe-area-inset-bottom))}.sidebar{display:none}.mobile-summary{display:block;padding:7px 3px 15px}.mobile-summary h1{font-size:35px}.mobile-summary p{font-size:13px;color:var(--muted);margin-top:9px}.toolbar{margin-top:4px}.toolbar .secondary{padding:9px 12px}.question{padding:22px 19px;border-radius:16px}.question h2{font-size:29px;letter-spacing:-.5px}.context{font-size:14px}.option{padding:14px 12px;font-size:14px}.meta{gap:7px}.meta .label{font-size:10px}.progress{margin-bottom:17px}.finish-bar{align-items:stretch;flex-direction:column;gap:12px}.finish-bar p{max-width:none}.finish-bar .primary{width:100%}.navigation .primary{min-width:105px}.navigation .tiny{font-size:11px}.navigation .secondary{padding:11px 13px}.card-bottom{gap:8px}.card-bottom .quiet{font-size:12px}.privacy{font-size:11px}dialog{padding:19px}.dialog-heading h2{font-size:26px}.dialog-actions .primary,.dialog-actions .secondary{flex:1;min-width:120px}.flow .branches{grid-template-columns:1fr}.question textarea{min-height:105px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="storage-error" class="storage-error" role="status" hidden></div>
+<header><div class="brand">rust pocket<span>.</span></div><div class="label muted">Design interview / round 02</div></header>
+<div class="shell">
+ <aside class="sidebar"><div class="label muted" style="margin-bottom:11px">MAKE IT YOURS</div><h1>A short<br>second round.</h1><p>One question at a time. Choose an option, accept a recommendation, or write your own answer.</p><div id="desktop-status" class="status"></div><nav id="sections" aria-label="Interview sections"></nav><button class="secondary full" data-action="overview">See every question</button><div class="privacy">This is a public questionnaire, not a connected learning app. Answers are saved in this browser only. They are not submitted or synced. Do not enter secrets or private source code.</div></aside>
+ <main id="main">
+  <div class="mobile-summary"><h1>Make learning stick.</h1><p>Six follow-ups: local code execution and the rules for earning “Learned.” One optional requirements question.</p></div>
+  <div class="toolbar"><label class="sr-only" for="filter">Which questions to show</label><select id="filter"><option value="all">All questions</option><option value="high">High + blocking</option><option value="blocking">Blocking decisions</option><option value="unanswered">Unanswered</option></select><button class="secondary" data-action="overview" id="overview-count">Overview</button></div>
+  <div class="progress" role="progressbar" aria-label="Answered questions" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><div id="progress-fill"></div></div>
+  <div id="question"></div>
+  <div class="navigation"><button class="secondary" id="previous" data-action="previous">← Back</button><span class="tiny muted" id="position"></span><button class="primary" id="next" data-action="next">Next →</button></div>
+  <div class="finish-bar"><p><b>Round 1 is recorded separately.</b> No blocking questions in this round. Blanks use labeled recommendations at finish.</p><button class="primary" data-action="finish">Finish round & export</button></div>
+  <button class="quiet full" data-action="draft" style="margin-top:9px">Export a partial draft instead</button>
+  <p class="privacy">Local saving is not a backup. Export your answers before changing browsers or clearing site data. Nothing is sent to Workstreams until you paste it into the companion.</p>
+ </main>
+</div>
+<dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<script id="questions-data" type="application/json">[{"id":"C5","title":"When may a newly generated pack run its validation code?","importance":"High","section":"C. Local runner follow-up","context":"Generating a pack is not just writing lesson text: validating its reference\nsolutions and tests executes Rust on the Mac. With a trusted local runner, that\ncode is not isolated from the user account. Approving a pack for learning and\napproving its first validation run are separate moments.","options":[{"key":"a","text":"Preview the generated code and test changes, then ask me to approve its first local validation run; request another approval if that code changes."},{"key":"b","text":"Treat my Generate pack request as authorization to run its validation automatically; still ask before adding the pack to the learning shelf."},{"key":"c","text":"Generate lesson text only in the app; prepare executable pack code manually."}],"recommendation":"(a) Add one explicit first-run approval for new generated code, without prompting on every ordinary answer check in an approved pack."},{"id":"E5","title":"What should the mastery assessment cover?","importance":"High","section":"E. Concept assessments","context":"Ordinary cards remain practice. The new assessment needs a clear scope, while\nstill fitting short phone interactions and allowing interruption.","options":[{"key":"a","text":"One concept at a time: three unseen, authored items covering prediction, code completion or repair, and a small application of the concept."},{"key":"b","text":"One topic pack at a time: a longer checkpoint combining several concepts."},{"key":"c","text":"One coding challenge per concept, without separate reading questions."}],"recommendation":"(a) Use a resumable three-item concept check, with equivalent reviewed variants rather than repeated practice answers. Writing concepts should include actual code."},{"id":"E6","title":"What help is allowed during a mastery attempt?","importance":"High","section":"E. Concept assessments","context":"Using compiler diagnostics is part of programming; asking for a solution changes\nwhat a successful attempt demonstrates. This is a personal learning signal, not\nan anti-cheating system.","options":[{"key":"a","text":"Allow normal compiler/test feedback and edits. Requesting a hint, tutor help, or a solution converts the attempt to practice; a fresh assessment is needed for learned status."},{"key":"b","text":"Allow hints and the tutor during assessments; success still earns learned status."},{"key":"c","text":"Allow one submission only, without compiler feedback until the assessment ends."}],"recommendation":"(a) Keep realistic coding feedback but distinguish assisted practice from an independent assessment."},{"id":"E7","title":"What earns the learned label?","importance":"High","section":"E. Concept assessments","context":"This defines the pass rule, not a guarantee of permanent mastery. In a three-item\nassessment, each item should test an advertised learning objective rather than\nan incidental style preference.","options":[{"key":"a","text":"Pass every item and its declared concept constraints without learning assistance."},{"key":"b","text":"Pass at least two of three items; show the missed area as a review suggestion."},{"key":"c","text":"Let me mark the concept learned manually after seeing the results."}],"recommendation":"(a) Require all three items. Do not penalize compiler-driven edits allowed by E6; for prediction questions, score the submitted answer rather than repeated guessing after the answer is revealed."},{"id":"E8","title":"How should a learner retry after an unsuccessful assessment?","importance":"Medium","section":"E. Concept assessments","context":"Repeating identical questions immediately can test answer recall rather than the\nconcept. A cooldown, on the other hand, can interrupt a useful learning session.","options":[{"key":"a","text":"Offer targeted practice, then let me immediately retry with an unused equivalent assessment; do not impose a time lock."},{"key":"b","text":"Require one targeted practice card before a new assessment."},{"key":"c","text":"Wait until the next day before allowing a new assessment."}],"recommendation":"(a) Encourage repair without forcing it. If no unused reviewed variant exists, show a previously-seen retry clearly instead of calling it unseen evidence; obtaining new variants does not silently trigger AI."},{"id":"E9","title":"What happens to learned status over time?","importance":"Medium","section":"E. Concept assessments","context":"Passing once and remaining fluent months later are different. The learning record\nshould preserve what happened without making decay feel like lost progress.","options":[{"key":"a","text":"Keep Learned with its assessment date; separately show Review due or Needs refresh when follow-up practice exposes a gap."},{"key":"b","text":"Expire Learned on a schedule and require another assessment to restore it."},{"key":"c","text":"Keep Learned permanently and stop scheduling review for that concept."}],"recommendation":"(a) Preserve the milestone while showing current review needs; no automatic deletion of earned progress."},{"id":"Z2","title":"Any additional non-functional requirements from these follow-ups?","importance":"Low","section":"Z. Non-functional requirements","context":"Round 1 specified no additional NFRs. Leave this blank unless the trusted local\nrunner or assessment flow introduces a new measurable requirement. Previously\nanswered functional decisions still apply.","options":[],"recommendation":"none; preserve the Round 1 answer unless you add a specific requirement here."}]</script>
+<script>
+'use strict';
+const questions=JSON.parse(document.getElementById('questions-data').textContent);
+const KEY='rust-pocket-grill-d23b7026-round-2';
+const VERSION='rust-pocket-grill/round-2/d23b7026';
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fresh=()=>({version:VERSION,answers:{},current:questions[0].id,filter:'all',finished:false});
+let state=fresh(),storageProblem='',exportText='',exportParts=[],partIndex=0,toastTimer;
+try{
+ const raw=JSON.parse(localStorage.getItem(KEY)||'null');
+ if(raw&&raw.version===VERSION&&raw.answers&&typeof raw.answers==='object'&&!Array.isArray(raw.answers)){
+  for(const q of questions){
+   const a=raw.answers[q.id];if(!a||typeof a!=='object')continue;
+   const choice=typeof a.choice==='string'&&(q.options.some(o=>o.key===a.choice)||(['custom','reco'].includes(a.choice)&&!(q.importance==='Blocking'&&a.choice==='reco')))?a.choice:'';
+   state.answers[q.id]={choice,notes:typeof a.notes==='string'?a.notes.slice(0,2000):'',defaulted:a.defaulted===true&&q.importance!=='Blocking'&&choice==='reco'};
+  }
+  if(questions.some(q=>q.id===raw.current))state.current=raw.current;
+  if(['all','high','blocking','unanswered'].includes(raw.filter))state.filter=raw.filter;
+  state.finished=raw.finished===true;
+ }else if(raw){storageProblem='A saved draft used a different format. This page is starting a new round.';}
+}catch{storageProblem='Browser storage could not be read. Export your answers before closing this page.';}
+const answer=q=>state.answers[q.id]||{choice:'',notes:'',defaulted:false};
+function answered(q){const a=answer(q);return !!a.notes.trim()||!!(a.choice&&a.choice!=='custom');}
+function blockers(){return questions.filter(q=>q.importance==='Blocking'&&(!answered(q)||(!q.options.some(o=>o.key===answer(q).choice)&&/^\s*reco(?:mmendation)?\s*[.!]?\s*$/i.test(answer(q).notes))));}
+function persist(){
+ try{localStorage.setItem(KEY,JSON.stringify(state));}
+ catch{storageProblem='Browser storage is unavailable or full. Your answers are in memory only; copy or download them before closing.';}
+ $('#storage-error').hidden=!storageProblem;$('#storage-error').textContent=storageProblem;
+}
+function toast(text){$('#toast').textContent=text;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').hidden=true,3500);}
+function eligible(){return questions.filter(q=>state.filter==='all'||(state.filter==='high'&&['High','Blocking'].includes(q.importance))||(state.filter==='blocking'&&q.importance==='Blocking')||(state.filter==='unanswered'&&(!answered(q)||q.id===state.current)));}
+function current(){return questions.find(q=>q.id===state.current);}
+function statistics(){
+ const count=questions.filter(answered).length,missing=blockers().length;
+ $('#desktop-status').textContent=`${count} / ${questions.length} answered · ${missing} blocking left`;
+ $('#overview-count').textContent=`Overview · ${count}/${questions.length}`;
+ $('.progress').setAttribute('aria-valuenow',count);$('.progress').setAttribute('aria-valuemax',questions.length);
+ $('#progress-fill').style.width=`${count/questions.length*100}%`;
+ const sections=[...new Set(questions.map(q=>q.section))];
+ $('#sections').innerHTML=sections.map(s=>{
+  const items=questions.filter(q=>q.section===s);
+  return `<button class="section-button ${current()?.section===s?'active':''}" data-section="${esc(s)}"><span>${esc(s)}</span><span>${items.filter(answered).length}/${items.length}</span></button>`;
+ }).join('');
+}
+function answerLabel(q){
+ const a=answer(q);
+ if(!answered(q))return q.importance==='Blocking'?'Your explicit answer is needed. A recommendation cannot fill this one.':q.id==='Z2'?'Optional. Blank means no additional non-functional requirements.':'Not answered yet. The recommendation applies only when you finish the round.';
+ if(a.defaulted)return 'Recommendation applied at finish · default, not reviewed';
+ if(q.importance==='Blocking'&&blockers().some(x=>x.id===q.id))return 'Please choose an option or describe your decision, rather than writing “reco”.';
+ return 'Answer recorded' + (storageProblem?' in memory.':' locally.');
+}
+function updateAnswerState(){
+ const q=current();if(!q)return;
+ $('#answer-state').textContent=answerLabel(q);
+ $('#answer-state').className='answer-state'+(q.importance==='Blocking'&&blockers().some(x=>x.id===q.id)?' attention':'');
+ statistics();
+}
+function contextHtml(q){
+ const text=q.context.replace(/```mermaid[\s\S]*?```/g,'').trim();
+ let html=text.split(/\n\s*\n/).map(p=>`<p>${esc(p.replace(/\n/g,' '))}</p>`).join('');
+ if(q.id==='B1')html+=`<div class="flow" aria-label="Proposed architecture"><div>Phone · lessons, drafts, attempts</div><span aria-hidden="true">↓</span><div>Authenticated relay</div><span aria-hidden="true">↓</span><div>Workstreams · learning jobs</div><span aria-hidden="true">↓</span><div class="branches"><div>Isolated Rust checker</div><div>Restricted AI tutor</div></div><span aria-hidden="true">↓</span><div>Results tied to the submitted answer → phone</div></div>`;
+ return html;
+}
+function render(focus=false){
+ let list=eligible();
+ if(!list.some(q=>q.id===state.current)){state.current=list[0]?.id||'';list=eligible();}
+ $('#filter').value=state.filter;
+ const q=current();
+ if(!q){
+  $('#question').innerHTML='<div class="question empty"><h2>Nothing left in this view.</h2><p class="muted">Switch back to all questions or finish the round.</p><button class="secondary" data-action="all">Show all questions</button></div>';
+  $('#previous').disabled=true;$('#next').disabled=true;$('#position').textContent='';
+ }else{
+  const a=answer(q),i=list.findIndex(x=>x.id===q.id);
+  $('#question').innerHTML=`<article class="question"><div class="meta"><span class="badge">${q.id}</span><span class="badge ${q.importance}">${q.importance}</span><span class="label muted">${esc(q.section.replace(/^[A-Z]\.\s*/,''))}</span></div><h2 id="question-title" tabindex="-1">${esc(q.title)}</h2><div class="context">${contextHtml(q)}</div><div class="options" role="radiogroup" aria-labelledby="question-title">${q.options.map(o=>`<label class="option"><input type="radio" name="choice" value="${o.key}" ${a.choice===o.key?'checked':''}><span><span class="letter">${o.key.toUpperCase()}</span>${esc(o.text)}</span></label>`).join('')}${q.importance!=='Blocking'?`<label class="option reco-option"><input type="radio" name="choice" value="reco" ${a.choice==='reco'?'checked':''}><span>${q.id==='Z2'?'No additional requirements':'Use the recommendation'}</span></label>`:''}<label class="option"><input type="radio" name="choice" value="custom" ${a.choice==='custom'?'checked':''}><span>${q.id==='Z2'?'Specify a requirement below':'My own answer / a different approach'}</span></label></div><details class="recommendation"><summary>See the recommendation</summary><p>${esc(q.recommendation)}</p></details><label class="notes-label" for="notes">${q.id==='Z2'?'Additional requirements (optional)':'Your answer or notes (optional with a choice)'}</label><textarea id="notes" maxlength="2000" placeholder="${q.importance==='Blocking'?'Choose an option above, or state your decision here.':'Add a nuance, change the recommendation, or answer in your own words.'}">${esc(a.notes)}</textarea><div id="answer-state" class="answer-state" role="status"></div><div class="card-bottom"><button class="quiet" data-action="clear">Clear this answer</button><span class="tiny muted">Saved as you go</span></div></article>`;
+  $('#previous').disabled=i<=0;$('#next').disabled=false;
+  $('#next').textContent=i===list.length-1?'Review →':'Next →';
+  $('#position').textContent=`${i+1} of ${list.length}${state.filter!=='all'?' in this view':''}`;
+  updateAnswerState();
+ }
+ statistics();persist();
+ if(focus){$('#question-title')?.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});}
+}
+function openDialog(title,html){
+ $('#dialog').innerHTML=`<div class="dialog-heading"><h2 id="dialog-title">${esc(title)}</h2><button class="close" data-action="close" aria-label="Close dialog">×</button></div><div class="dialog-body">${html}</div>`;
+ if(!$('#dialog').open)$('#dialog').showModal();
+}
+function summaryText(q){
+ const a=answer(q);
+ if(!answered(q))return q.importance==='Blocking'?'NEEDS YOUR ANSWER':'Blank · recommendation will apply at finish';
+ const choice=q.options.find(o=>o.key===a.choice);
+ return (choice?`${choice.key.toUpperCase()} · ${choice.text}`:a.choice==='reco'?(a.defaulted?'Defaulted · not reviewed':'Recommendation accepted'):'Written answer')+(a.notes?` — ${a.notes.slice(0,100)}${a.notes.length>100?'…':''}`:'');
+}
+function overview(warn=false){
+ const missing=blockers();
+ openDialog('Your decisions so far',`${warn?`<div class="banner">Finish needs explicit answers for ${missing.map(q=>q.id).join(', ')}. You can still export a partial draft.</div>`:'<p>Jump to any decision. Recommendations stay available without being selected for you.</p>'}<div class="summary-list">${questions.map(q=>`<button class="summary-row ${missing.some(m=>m.id===q.id)?'missing':''}" data-jump="${q.id}"><span class="qid">${q.id}</span><span>${esc(q.title)}<small>${esc(summaryText(q))}</small></span></button>`).join('')}</div><div class="dialog-actions"><button class="primary" data-action="finish">Finish round & export</button><button class="secondary" data-action="draft">Export partial draft</button></div>`);
+}
+function fullAnswer(q){
+ const a=answer(q);
+ if(!answered(q))return q.importance==='Blocking'?'UNANSWERED — blocking; do not infer.':'UNANSWERED — draft; recommendation not yet applied.';
+ const o=q.options.find(x=>x.key===a.choice);
+ let value=o?`${o.key} — ${o.text}`:a.choice==='reco'?`reco${a.defaulted?' (default — not reviewed)':' (explicitly accepted)'} — ${q.recommendation}`:'';
+ if(a.notes.trim())value+=(value?'\nNotes: ':'')+a.notes.trim();
+ return value;
+}
+function makeExport(){
+ const ready=state.finished&&blockers().length===0;
+ const header=`${ready?'review':'Partial answers — please review answered items; blocking decisions may remain.'}\n\nRust Pocket / Workstreams design interview\nRound: 2\nQuestion set: ${VERSION}\nStatus: ${ready?'Round finished — ready for review, not yet converged':'Partial draft — do not treat as converged'}\nExported: ${new Date().toISOString()}\n\n`;
+ const blocks=questions.map(q=>`${q.id}. ${q.title}\nImportance: ${q.importance}\nAnswer: ${fullAnswer(q)}\n`);
+ exportText=header+blocks.join('\n');
+ const chunks=[];let chunk=header;
+ for(const block of blocks){if(chunk.length+block.length+1>5500&&chunk!==header){chunks.push(chunk);chunk='';}chunk+=block+'\n';}
+ if(chunk)chunks.push(chunk);
+ exportParts=chunks.map((s,i)=>`Rust Pocket answers — part ${i+1}/${chunks.length}\n${i===chunks.length-1?'Final part. Review after all parts have arrived.':'More parts follow. Wait for the final part before reviewing.'}\n\n${s}`);
+ partIndex=0;
+}
+function exportDialog(){
+ makeExport();
+ openDialog(state.finished?'Ready to bring back':'Export your partial answers',`<p>Download a plain-text file, or copy answers into the Workstreams companion. This page does not submit anything.</p><p class="tiny muted">${exportText.length.toLocaleString()} characters · ${exportParts.length} companion-friendly ${exportParts.length===1?'part':'parts'}. The file includes stable question IDs and labels every default.</p><div class="dialog-actions"><button class="primary" data-action="download">Download .txt</button><button class="secondary" data-action="copy-all">Copy all answers</button></div><div class="dialog-actions"><button class="secondary" data-action="copy-part" id="copy-part">Copy part 1/${exportParts.length}</button><button class="quiet" data-action="restart-parts">Start parts over</button></div><label class="notes-label" for="export-text">Plain text — select and copy manually if needed</label><textarea id="export-text" class="export-box" readonly>${esc(exportText)}</textarea><div class="dialog-actions"><button class="secondary" data-action="select-text">Select text</button><button class="secondary" data-action="next-part">Show next part manually</button></div><p id="copy-status" role="status" class="tiny muted">Paste this text back into the companion when ready.</p>`);
+}
+function finish(){
+ if(blockers().length){overview(true);return;}
+ for(const q of questions)if(!answered(q))state.answers[q.id]={choice:'reco',notes:'',defaulted:true};
+ state.finished=true;persist();render();exportDialog();
+}
+async function copy(text,onSuccess){
+ try{
+  if(!navigator.clipboard?.writeText)throw Error('Clipboard unavailable');
+  await navigator.clipboard.writeText(text);
+  $('#copy-status').textContent='Copied. Paste into the Workstreams companion.';
+  onSuccess?.();
+ }catch{
+  $('#export-text').value=text;$('#export-text').focus();$('#export-text').select();
+  $('#copy-status').textContent='Automatic copy is unavailable. The requested text is selected above; use your browser’s Copy command.';
+ }
+}
+function changeAnswer(update){
+ const q=current();state.answers[q.id]={...answer(q),...update,defaulted:false};state.finished=false;persist();updateAnswerState();
+}
+document.addEventListener('change',e=>{
+ if(e.target.name==='choice'){changeAnswer({choice:e.target.value});if(e.target.value==='custom')$('#notes').focus();}
+ if(e.target.id==='filter'){state.filter=e.target.value;render(true);}
+});
+document.addEventListener('input',e=>{if(e.target.id==='notes')changeAnswer({notes:e.target.value});});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.section){state.filter='all';state.current=questions.find(q=>q.section===b.dataset.section).id;render(true);return;}
+ if(b.dataset.jump){$('#dialog').close();state.filter='all';state.current=b.dataset.jump;render(true);return;}
+ switch(b.dataset.action){
+  case 'previous':case 'next':{
+   const list=eligible(),i=list.findIndex(q=>q.id===state.current),n=i+(b.dataset.action==='next'?1:-1);
+   if(n>=list.length){overview();return;}if(n>=0){state.current=list[n].id;render(true);}break;
+  }
+  case 'all':state.filter='all';render(true);break;
+  case 'clear':delete state.answers[state.current];state.finished=false;render();break;
+  case 'overview':overview();break;
+  case 'close':$('#dialog').close();break;
+  case 'finish':finish();break;
+  case 'draft':exportDialog();break;
+  case 'download':{
+   const blob=new Blob([exportText],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=url;a.download='rust-pocket-round-2-answers.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);break;
+  }
+  case 'copy-all':copy(exportText);break;
+  case 'copy-part':{
+   const i=partIndex;copy(exportParts[i],()=>{partIndex=(i+1)%exportParts.length;$('#copy-part').textContent=`Copy part ${partIndex+1}/${exportParts.length}`;$('#copy-status').textContent=`Copied part ${i+1}/${exportParts.length}. ${i===exportParts.length-1?'That was the final part.':'Paste it, then copy the next part.'}`;});break;
+  }
+  case 'restart-parts':partIndex=0;$('#copy-part').textContent=`Copy part 1/${exportParts.length}`;$('#export-text').value=exportText;$('#copy-status').textContent='Part sequence reset. The full export is shown above.';break;
+  case 'next-part':partIndex=(partIndex+1)%exportParts.length;$('#copy-part').textContent=`Copy part ${partIndex+1}/${exportParts.length}`;$('#export-text').value=exportParts[partIndex];$('#copy-status').textContent=`Showing part ${partIndex+1}/${exportParts.length}. Select and copy the text manually.`;break;
+  case 'select-text':$('#export-text').focus();$('#export-text').select();break;
+ }
+});
+render();
+</script>
+</body>
+</html>
