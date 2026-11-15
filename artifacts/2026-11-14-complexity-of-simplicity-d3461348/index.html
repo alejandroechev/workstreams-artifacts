@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f2e9">
+  <meta name="description" content="A visual companion to Bryan Cantrill's The Complexity of Simplicity: abstraction, essential and accidental complexity, and four kinds of software systems.">
+  <title>The Complexity of Simplicity — A Visual Field Guide</title>
+  <style>
+    :root {
+      --paper: #f5f2e9; --ink: #252c29; --muted: #59615a; --rule: #cecfc2;
+      --green: #245c48; --mint: #dce9df; --rust: #a53d2b; --peach: #f1dfd3;
+      --purple: #60577e; --lilac: #e7e3ed; --gold: #71601e; --yellow: #efe7c9;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scrollbar-color: var(--green) var(--paper); }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 "Avenir Next", Avenir, "Segoe UI", sans-serif; }
+    ::selection { background: var(--green); color: white; }
+    a { color: inherit; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+    a:hover { color: var(--rust); }
+    button { font: inherit; cursor: pointer; color: inherit; }
+    :focus-visible { outline: 3px solid var(--rust); outline-offset: 5px; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2 { font-family: var(--serif); font-weight: 400; line-height: 1.06; letter-spacing: -.035em; text-wrap: balance; }
+    h1 { font-size: clamp(3.6rem, 7.5vw, 6rem); }
+    h2 { font-size: clamp(2.2rem, 4vw, 3.5rem); }
+    h3 { font-weight: 650; line-height: 1.3; }
+    p { max-width: 70ch; }
+    svg { display: block; max-width: 100%; }
+    .wrap { max-width: 1220px; margin: auto; padding: 0 42px; }
+    .skip { position: absolute; top: -80px; left: 20px; padding: 10px 20px; background: var(--ink); color: white; z-index: 3; }
+    .skip:focus { top: 10px; }
+    .skip:hover { color: white; }
+    .masthead { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 27px 0; border-bottom: 1px solid var(--ink); font-size: 13px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand svg { width: 43px; }
+    .masthead a { white-space: nowrap; }
+    .hero { display: grid; grid-template-columns: 1.65fr 1fr; gap: 60px; padding: 64px 0 52px; align-items: end; }
+    h1 em { color: var(--green); }
+    .hero-note { padding-bottom: 5px; }
+    .hero-note p { font-size: 18px; line-height: 1.65; }
+    .byline { margin-top: 21px; font-size: 13px; color: var(--muted); }
+    .byline strong { color: var(--ink); display: block; font-size: 15px; }
+    .route { display: flex; flex-wrap: wrap; gap: 12px 30px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 15px 0; font-size: 14px; }
+    .route a { text-decoration: none; }
+    .route a::after { content: " ↓"; color: var(--green); }
+    section { scroll-margin-top: 24px; }
+    .abstraction { padding: 65px 0 60px; display: grid; grid-template-columns: .95fr 1.3fr; gap: 65px; align-items: start; }
+    .lede { color: var(--muted); margin-top: 18px; }
+    .concept { margin-top: 23px; display: grid; grid-template-columns: 19px 1fr; gap: 10px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; margin-top: 8px; background: var(--green); }
+    .dot.accidental { border-radius: 1px; background: repeating-linear-gradient(45deg, var(--rust) 0 2px, transparent 2px 4px); border: 1px solid var(--rust); }
+    .concept h3 { font-size: 16px; }
+    .concept p { font-size: 14px; margin-top: 4px; color: var(--muted); }
+    .stamp { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+    .section-source { margin-top: 19px; }
+    .boundary { background: var(--ink); color: var(--paper); padding: 27px 28px 23px; position: relative; }
+    .boundary-top { display: flex; justify-content: space-between; gap: 16px; align-items: center; font-size: 13px; }
+    .boundary-top span { color: #c6d3c8; }
+    .toggle { padding: 7px 12px; background: transparent; color: var(--paper); border: 1px solid #98b3a0; border-radius: 3px; font-size: 12px; min-height: 40px; }
+    .toggle:hover { background: #3a473e; }
+    .boundary :focus-visible { outline-color: #efb5a3; }
+    .boundary svg { width: 100%; margin-top: 16px; }
+    .boundary figcaption { font-size: 13px; color: #c6d3c8; margin-top: 8px; min-height: 66px; }
+    figure { margin: 0; }
+    .leaks { opacity: 0; transition: opacity .35s ease-out; }
+    .is-leaky .leaks { opacity: 1; }
+    .boundary-line { transition: stroke .35s ease-out; }
+    .is-leaky .boundary-line { stroke: #efad96; stroke-dasharray: 14 12; }
+    .contagion { display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: center; border-top: 1px solid var(--rule); padding: 25px 0 55px; }
+    .contagion p { font-size: 15px; }
+    .contagion strong { color: var(--rust); }
+    .transfer { display: flex; align-items: center; gap: 20px; }
+    .transfer div { flex: 1; padding: 16px 0; border-top: 2px solid var(--rust); }
+    .transfer small { display: block; color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+    .transfer b { font-size: 16px; line-height: 1.3; display: block; }
+    .transfer svg { width: 42px; flex-shrink: 0; }
+    .taxonomy { border-top: 1px solid var(--ink); padding-top: 47px; }
+    .section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; align-items: end; margin-bottom: 30px; }
+    .section-head p { font-size: 15px; color: var(--muted); }
+    .section-head p a { display: inline-block; margin-top: 8px; }
+    .map { display: grid; grid-template-columns: 38px 1fr; }
+    .y-axis { display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; letter-spacing: .03em; gap: 35px; }
+    .y-axis span { color: var(--muted); }
+    .axis-line { width: 1px; height: 65px; background: var(--rule); }
+    .map-body { min-width: 0; }
+    .axis-row { display: flex; justify-content: space-between; font-size: 12px; padding: 0 2px 12px; color: var(--muted); }
+    .axis-row b { color: var(--ink); font-weight: 600; }
+    .quadrants { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; background: var(--paper); }
+    .quadrant { position: relative; border: 0; padding: 23px 27px 22px; text-align: left; min-height: 225px; overflow: hidden; transition: box-shadow .18s ease-out; }
+    .quadrant:hover { box-shadow: inset 0 0 0 2px currentColor; }
+    .quadrant[aria-pressed="true"] { box-shadow: inset 0 0 0 3px currentColor; }
+    .quadrant:focus-visible { outline-offset: -6px; outline-color: currentColor; z-index: 1; }
+    .constructed { background: var(--lilac); color: var(--purple); }
+    .revolutionary { background: var(--mint); color: var(--green); }
+    .accreted { background: var(--peach); color: var(--rust); }
+    .rebellious { background: var(--yellow); color: var(--gold); }
+    .quad-title { font-family: var(--serif); font-size: clamp(1.7rem, 3vw, 2.45rem); display: block; line-height: 1.15; letter-spacing: -.025em; }
+    .quad-origin { font-size: 11px; display: block; margin-top: 5px; }
+    .quad-idea { display: block; font-size: 14px; margin-top: 15px; max-width: 30ch; color: var(--ink); }
+    .quad-examples { display: block; font-size: 12px; margin-top: 10px; padding-right: 75px; }
+    .quad-icon { position: absolute; width: 100px; height: 64px; right: 25px; bottom: 20px; opacity: .8; }
+    .quad-mark { position: absolute; right: 25px; top: 24px; font-size: 17px; }
+    .axis-foot { text-align: center; color: var(--muted); padding-top: 12px; font-size: 12px; }
+    .map-hint { display: flex; justify-content: space-between; gap: 15px; padding: 15px 0 23px 38px; font-size: 12px; color: var(--muted); }
+    .detail { margin-left: 38px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+    .detail-panel { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 32px; padding: 25px 0 28px; }
+    .detail-panel[hidden] { display: none; }
+    .detail-panel h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin-bottom: 9px; }
+    .detail-panel p { font-size: 14px; }
+    .detail-panel strong { display: block; font-size: 12px; margin-bottom: 8px; }
+    .detail-panel .risk { color: var(--rust); }
+    .detail-panel a { display: inline-block; margin-top: 12px; }
+    .journeys { padding: 55px 0; display: grid; grid-template-columns: .8fr 1.4fr; gap: 60px; }
+    .journeys h2 { font-size: 36px; }
+    .journeys .lede { font-size: 14px; }
+    .journey { padding: 13px 0; border-bottom: 1px solid var(--rule); }
+    .journey:first-child { padding-top: 0; }
+    .journey-head { display: flex; align-items: center; gap: 12px; font-size: 16px; }
+    .journey-head svg { width: 40px; height: 16px; flex-shrink: 0; }
+    .journey p { margin-top: 6px; color: var(--muted); font-size: 13px; }
+    .journey .from { color: var(--purple); }
+    .journey .to { color: var(--gold); }
+    .journey:nth-child(2) .from { color: var(--rust); }
+    .journey:nth-child(2) .to { color: var(--green); }
+    .closing { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; background: var(--green); color: var(--paper); padding: 45px; margin: 0 -3px; }
+    .closing h2 { font-size: clamp(2.3rem, 4vw, 3.5rem); }
+    .closing p { margin-top: 20px; color: #e0e9df; font-size: 15px; }
+    .closing a { color: #e0e9df; }
+    .closing a:hover { color: white; }
+    .closing ul { margin: 4px 0 0; padding: 0; list-style: none; }
+    .closing li { padding: 13px 0; border-bottom: 1px solid #608571; font-size: 14px; }
+    .closing li:first-child { padding-top: 0; }
+    .closing li:last-child { border: 0; padding-bottom: 0; }
+    .closing li strong { display: block; font-size: 16px; }
+    .closing li span { color: #dbe6dd; }
+    .footer { margin-top: 33px; padding: 0 0 35px; display: grid; grid-template-columns: 1fr auto; gap: 25px; font-size: 12px; color: var(--muted); }
+    .footer p { max-width: 90ch; }
+    .footer a { white-space: nowrap; }
+    @media (max-width: 900px) {
+      .wrap { padding: 0 26px; }
+      .hero { gap: 30px; grid-template-columns: 1.5fr 1fr; }
+      .hero-note p { font-size: 16px; }
+      .abstraction { gap: 32px; }
+      .quadrant { padding: 22px; min-height: 240px; }
+      .quad-icon { width: 75px; right: 20px; bottom: 16px; }
+      .quad-idea { max-width: 27ch; }
+      .quad-examples { padding-right: 65px; }
+      .quad-mark { right: 19px; top: 19px; }
+      .detail-panel { gap: 24px; }
+    }
+    @media (max-width: 650px) {
+      .wrap { padding: 0 20px; }
+      .masthead { padding: 20px 0; font-size: 11px; gap: 12px; }
+      .brand { gap: 8px; }
+      .brand svg { width: 32px; flex-shrink: 0; }
+      .hero { grid-template-columns: 1fr; gap: 22px; padding: 36px 0 30px; }
+      h1 { font-size: clamp(3.35rem, 12vw, 4.7rem); }
+      .hero-note p { font-size: 16px; max-width: 43ch; }
+      .byline { margin-top: 16px; }
+      .byline strong { display: inline; margin-right: 7px; }
+      .route { gap: 12px 22px; font-size: 12px; }
+      .abstraction { grid-template-columns: 1fr; gap: 27px; padding: 40px 0 28px; }
+      .abstraction h2 { max-width: 16ch; }
+      .boundary { padding: 22px 18px 17px; }
+      .boundary figcaption { min-height: 65px; }
+      .contagion { grid-template-columns: 1fr; gap: 19px; padding: 25px 0 36px; }
+      .transfer { gap: 13px; }
+      .transfer b { font-size: 14px; }
+      .transfer svg { width: 28px; }
+      .taxonomy { padding-top: 35px; }
+      .section-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
+      .section-head p { font-size: 14px; }
+      .map { grid-template-columns: 24px 1fr; margin-left: -5px; }
+      .y-axis { font-size: 11px; gap: 28px; }
+      .axis-row { font-size: 11px; gap: 10px; padding-bottom: 9px; }
+      .quadrant { padding: 18px 12px 72px; min-height: 256px; }
+      .quad-title { font-size: clamp(1.23rem, 4.9vw, 1.8rem); }
+      .quad-origin { font-size: 11px; margin-top: 7px; }
+      .quad-idea { font-size: 12px; margin-top: 13px; line-height: 1.5; }
+      .quad-examples { font-size: 11px; padding-right: 0; margin-top: 9px; }
+      .quad-icon { width: 72px; height: 46px; left: 12px; right: auto; bottom: 15px; }
+      .quad-mark { right: 12px; top: auto; bottom: 27px; }
+      .axis-foot { font-size: 11px; }
+      .map-hint { padding-left: 19px; flex-direction: column; gap: 4px; }
+      .detail { margin-left: 19px; }
+      .detail-panel { grid-template-columns: 1fr; gap: 20px; padding: 22px 0; }
+      .detail-panel h3 { font-size: 29px; }
+      .detail-panel strong { margin-bottom: 5px; }
+      .journeys { grid-template-columns: 1fr; padding: 38px 0; gap: 23px; }
+      .journeys h2 { font-size: 32px; }
+      .journey-head { gap: 8px; font-size: 14px; flex-wrap: wrap; }
+      .journey-head svg { width: 25px; }
+      .closing { grid-template-columns: 1fr; gap: 30px; padding: 30px 24px; }
+      .closing h2 { font-size: 40px; }
+      .footer { grid-template-columns: 1fr; gap: 15px; margin-top: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+    @media print {
+      body { font-size: 12px; }
+      .wrap { max-width: none; padding: 0; }
+      .skip, .toggle, .route, .map-hint { display: none; }
+      .hero { padding: 25px 0; }
+      .detail-panel[hidden] { display: grid; }
+      .detail-panel, .boundary, .quadrants, .closing { break-inside: avoid; }
+      .quadrant { min-height: 200px; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#abstraction">Skip to the visual summary</a>
+  <div class="wrap">
+    <header>
+      <div class="masthead">
+        <div class="brand">
+          <svg viewBox="0 0 44 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6c12 0 5 17 17 17S8 1 20 1s4 11 23 11M1 18c9 0 10-12 17-12s6 6 25 6"/></svg>
+          <span>A visual field guide</span>
+        </div>
+        <a href="https://www.youtube.com/watch?v=Cum5uN2634o" target="_blank" rel="noopener noreferrer">Watch the talk ↗</a>
+      </div>
+      <div class="hero">
+        <h1>The complexity<br>of <em>simplicity.</em></h1>
+        <div class="hero-note">
+          <p>Software gets better when we change what people have to think about—not merely how much code they have to write.</p>
+          <div class="byline"><strong>Bryan Cantrill</strong>“The Complexity of Simplicity”<br>A visual synthesis of the talk, not a transcript.</div>
+        </div>
+      </div>
+      <nav class="route" aria-label="Summary sections">
+        <a href="#abstraction">The boundary</a>
+        <a href="#taxonomy">The four systems</a>
+        <a href="#lesson">The way forward</a>
+      </nav>
+    </header>
+    <main>
+      <section id="abstraction" class="abstraction" aria-labelledby="abstraction-title">
+        <div>
+          <h2 id="abstraction-title">Abstraction is a boundary,<br>not an eraser.</h2>
+          <p class="lede">A good abstraction lets you use a system without understanding all the machinery underneath. The complexity still exists. You no longer have to carry it.</p>
+          <div class="concept">
+            <span class="dot" aria-hidden="true"></span>
+            <div><h3>Essential complexity</h3><p>The difficulty inherent in the problem. It must be handled, not wished away.</p></div>
+          </div>
+          <div class="concept">
+            <span class="dot accidental" aria-hidden="true"></span>
+            <div><h3>Accidental complexity</h3><p>The difficulty our choices add: entanglement, awkward interfaces, and unnecessary constraints.</p></div>
+          </div>
+          <p class="section-source"><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=368" target="_blank" rel="noopener noreferrer">Abstraction · 06:08 ↗</a> &nbsp; <a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=503" target="_blank" rel="noopener noreferrer">Brooks’s distinction · 08:23 ↗</a></p>
+        </div>
+        <figure class="boundary" id="boundary">
+          <div class="boundary-top"><span id="boundary-state">A well-contained system</span><button class="toggle" id="leak-toggle" type="button" aria-pressed="false" aria-controls="boundary-caption boundary-diagram">Show a leaky boundary</button></div>
+          <svg id="boundary-diagram" viewBox="0 0 500 292" role="img" aria-labelledby="boundary-svg-title boundary-svg-desc">
+            <title id="boundary-svg-title">An abstraction contains the complexity underneath</title>
+            <desc id="boundary-svg-desc">A caller uses a simple interface above an abstraction boundary. Many connected implementation details remain below. The toggle reveals how leaking details force the caller to handle them.</desc>
+            <defs>
+              <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0v6" stroke="#efad96" stroke-width="2"/></pattern>
+            </defs>
+            <g font-family="Avenir, Segoe UI, sans-serif" font-size="12" fill="#e1eadf">
+              <text x="0" y="20">YOUR APPLICATION</text>
+              <rect x="177" y="3" width="146" height="47" rx="4" fill="#3c5446" stroke="#a9ccb2"/>
+              <text x="250" y="32" text-anchor="middle" fill="#f5f2e9" font-size="16">One clear interface</text>
+              <path d="M250 50v43m-5-6 5 6 5-6" fill="none" stroke="#b6d2bb" stroke-width="1.5"/>
+              <path class="boundary-line" d="M0 103H500" stroke="#b6d2bb" stroke-width="3"/>
+              <rect x="162" y="94" width="176" height="19" fill="#252c29"/>
+              <text x="250" y="107" text-anchor="middle" fill="#c6d3c8" font-size="11" letter-spacing="1.5">ABSTRACTION BOUNDARY</text>
+              <text x="0" y="282" font-size="10" fill="#c6d3c8">IMPLEMENTATION: THE REAL WORK STILL HAPPENS HERE</text>
+            </g>
+            <g stroke="#86ab92" stroke-width="1.4" fill="none" opacity=".8">
+              <path d="M250 115v26H65v43h370v-43H250m-185 43v51h102v-94m-44 43 90 51 79-94 81 94 62-51M167 141l-44 43h250l-81 51H65m308-51v51H167"/>
+            </g>
+            <g fill="#b9d1ba" stroke="#252c29" stroke-width="3">
+              <circle cx="65" cy="141" r="8"/><circle cx="167" cy="141" r="8"/><circle cx="292" cy="141" r="8"/><circle cx="435" cy="141" r="8"/>
+              <circle cx="65" cy="184" r="8"/><circle cx="123" cy="184" r="8"/><circle cx="250" cy="184" r="8"/><circle cx="373" cy="184" r="8"/><circle cx="435" cy="184" r="8"/>
+              <circle cx="65" cy="235" r="8"/><circle cx="167" cy="235" r="8"/><circle cx="213" cy="235" r="8"/><circle cx="292" cy="235" r="8"/><circle cx="373" cy="235" r="8"/>
+            </g>
+            <g class="leaks" stroke="#efad96" stroke-width="2" fill="none">
+              <path d="M123 184V73H80V38h78M373 235V68h68V27H338M292 141V77h58"/>
+              <rect x="65" y="17" width="29" height="27" fill="url(#hatch)"/>
+              <rect x="428" y="14" width="26" height="26" fill="url(#hatch)"/>
+              <rect x="338" y="65" width="25" height="25" fill="url(#hatch)"/>
+            </g>
+          </svg>
+          <figcaption id="boundary-caption" aria-live="polite">A good boundary contains the details. The caller works with the interface, not every implementation decision.</figcaption>
+        </figure>
+      </section>
+      <aside class="contagion" aria-label="Complexity spreads between layers">
+        <p><strong>The catch: complexity is contagious.</strong> What was avoidable in one layer can become an unavoidable constraint for the person building above it. <a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=594" target="_blank" rel="noopener noreferrer">09:54 ↗</a></p>
+        <div class="transfer">
+          <div><small>LOWER LAYER</small><b>“Our accidental complexity”</b></div>
+          <svg viewBox="0 0 44 24" fill="none" stroke="#a53d2b" stroke-width="1.5" aria-hidden="true"><path d="M1 12h40M32 3l9 9-9 9"/></svg>
+          <div><small>LAYER ABOVE</small><b>“Your essential constraint”</b></div>
+        </div>
+      </aside>
+      <section id="taxonomy" class="taxonomy" aria-labelledby="taxonomy-title">
+        <div class="section-head">
+          <h2 id="taxonomy-title">Four ways a<br>system takes shape.</h2>
+          <p>Two independent questions: <b>How was it built?</b> And <b>how simple are the abstractions it offers?</b> Simple here does not mean easy to implement.<br><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=662" target="_blank" rel="noopener noreferrer">The taxonomy · 11:02 ↗</a></p>
+        </div>
+        <div class="map">
+          <div class="y-axis" aria-hidden="true"><span>EMERGENT · reactive / iterative</span><i class="axis-line"></i><b>ENGINEERED · deliberate</b></div>
+          <div class="map-body">
+            <div class="axis-row" aria-hidden="true"><span>COMPLEX ABSTRACTIONS</span><span>SIMPLER ABSTRACTIONS <b>→</b></span></div>
+            <div class="quadrants" role="group" aria-label="System taxonomy: select a quadrant for examples and risks">
+              <button type="button" class="quadrant constructed" data-system="constructed" aria-pressed="false" aria-controls="detail-constructed">
+                <span class="quad-title">Constructed</span><span class="quad-origin">Engineered × complex</span>
+                <span class="quad-idea">Build a large system to solve a large problem.</span>
+                <span class="quad-examples">OS/360 · airline reservations</span><span class="quad-mark" aria-hidden="true">+</span>
+                <svg class="quad-icon" viewBox="0 0 110 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 14h86M12 32h86M12 50h86M12 14v36m28-36v36m29-36v36m29-36v36"/><g fill="currentColor"><circle cx="12" cy="14" r="3"/><circle cx="40" cy="14" r="3"/><circle cx="69" cy="14" r="3"/><circle cx="98" cy="14" r="3"/><circle cx="12" cy="32" r="3"/><circle cx="40" cy="32" r="3"/><circle cx="69" cy="32" r="3"/><circle cx="98" cy="32" r="3"/><circle cx="12" cy="50" r="3"/><circle cx="40" cy="50" r="3"/><circle cx="69" cy="50" r="3"/><circle cx="98" cy="50" r="3"/></g></svg>
+              </button>
+              <button type="button" class="quadrant revolutionary" data-system="revolutionary" aria-pressed="true" aria-controls="detail-revolutionary">
+                <span class="quad-title">Revolutionary</span><span class="quad-origin">Engineered × simple</span>
+                <span class="quad-idea">Rethink the abstraction. Keep the real problem solved.</span>
+                <span class="quad-examples">Rust · SQLite · ZFS · DTrace</span><span class="quad-mark" aria-hidden="true">−</span>
+                <svg class="quad-icon" viewBox="0 0 110 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 10C46 10 26 32 56 32h45M9 23c30 0 23 9 47 9M9 41c30 0 23-9 47-9M9 54C46 54 26 32 56 32"/><circle cx="82" cy="32" r="10" fill="#dce9df"/><path d="m78 32 3 3 6-7"/></svg>
+              </button>
+              <button type="button" class="quadrant accreted" data-system="accreted" aria-pressed="false" aria-controls="detail-accreted">
+                <span class="quad-title">Accreted</span><span class="quad-origin">Emergent × complex</span>
+                <span class="quad-idea">Layers of history become today’s constraints.</span>
+                <span class="quad-examples">ACPI · UEFI · IPMI</span><span class="quad-mark" aria-hidden="true">+</span>
+                <svg class="quad-icon" viewBox="0 0 110 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 45c44-54 66 29 89-29S11 2 24 49s91-24 63-35S9 45 69 57 74 1 49 9s-8 51 56 35M2 32c34 0 66-29 66 0S13 60 14 19"/></svg>
+              </button>
+              <button type="button" class="quadrant rebellious" data-system="rebellious" aria-pressed="false" aria-controls="detail-rebellious">
+                <span class="quad-title">Rebellious</span><span class="quad-origin">Emergent × simple</span>
+                <span class="quad-idea">Reject the excess. Do less, much more simply.</span>
+                <span class="quad-examples">Unix vs. Multics · RISC vs. CISC</span><span class="quad-mark" aria-hidden="true">+</span>
+                <svg class="quad-icon" viewBox="0 0 110 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><g opacity=".35" stroke-dasharray="3 4"><path d="M6 12h45v40H6zM6 32h45M28 12v40"/></g><path d="M62 32h37m-7-7 7 7-7 7"/><circle cx="28" cy="32" r="6" fill="currentColor"/></svg>
+              </button>
+            </div>
+            <p class="axis-foot">Horizontal: the abstraction offered · Vertical: the system’s origin</p>
+          </div>
+        </div>
+        <div class="map-hint"><span>Select a quadrant to explore its promise and failure mode.</span><span>A lens, not a ranking. Systems can move.</span></div>
+        <div class="detail" aria-live="polite">
+          <article class="detail-panel" id="detail-constructed">
+            <div><h3>Constructed</h3><p>Deliberate engineering at large scale, often with a high degree of essential complexity.</p><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=942" target="_blank" rel="noopener noreferrer">In the talk · 15:42 ↗</a></div>
+            <div><strong>WHAT IT MAKES POSSIBLE</strong><p>Foundational systems such as operating systems, compilers, and databases. Airline reservations illustrate the size and difficulty of the problem itself.</p></div>
+            <div><strong class="risk">WHERE IT GOES WRONG</strong><p>Scope creep and second-system syndrome. Without a unifying philosophy, there is no clear reason to say no.</p></div>
+          </article>
+          <article class="detail-panel" id="detail-revolutionary">
+            <div><h3>Revolutionary</h3><p>A deliberate redesign that changes the abstraction, rather than only removing features.</p><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=2512" target="_blank" rel="noopener noreferrer">In the talk · 41:52 ↗</a></div>
+            <div><strong>WHAT IT MAKES POSSIBLE</strong><p>SQLite makes a database a library. ZFS rethinks filesystem and volume-management boundaries. Rust’s sum types change the experience of error handling.</p></div>
+            <div><strong class="risk">WHERE IT GOES WRONG</strong><p>Shipping takes longer; adoption requires people to rethink old habits. Funding must survive long enough to prove the idea.</p></div>
+          </article>
+          <article class="detail-panel" id="detail-accreted">
+            <div><h3>Accreted</h3><p>The system you would not design from a clean sheet—but which you still have to live with.</p><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=1987" target="_blank" rel="noopener noreferrer">In the talk · 33:07 ↗</a></div>
+            <div><strong>WHY IT PERSISTS</strong><p>It works well enough. Replacing it is not simple. Cantrill points to ACPI, UEFI, and IPMI as examples of accumulated architectural constraints.</p></div>
+            <div><strong class="risk">WHERE IT GOES WRONG</strong><p>Historical choices become the next layer’s mandatory complexity. Maintenance becomes demoralizing even when the system still functions.</p></div>
+          </article>
+          <article class="detail-panel" id="detail-rebellious">
+            <div><h3>Rebellious</h3><p>A reaction to an overcomplicated system: much of this machinery might not be necessary.</p><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=1381" target="_blank" rel="noopener noreferrer">In the talk · 23:01 ↗</a></div>
+            <div><strong>WHAT IT MAKES POSSIBLE</strong><p>Unix pares back Multics. RISC reduces instruction-set complexity. Rails challenges the ceremony of J2EE. Rebellion can unlock enormous progress.</p></div>
+            <div><strong class="risk">WHERE IT GOES WRONG</strong><p>Throwing out essential complexity with the accidental. Microservices can redistribute the monolith instead of eliminating its problems.</p></div>
+          </article>
+        </div>
+      </section>
+      <section class="journeys" aria-labelledby="journeys-title">
+        <div><h2 id="journeys-title">These are not<br>permanent addresses.</h2><p class="lede">The taxonomy describes a system’s approach and abstractions, not an immutable identity. Cantrill explicitly allows debate over placement.</p></div>
+        <div>
+          <div class="journey"><div class="journey-head"><b class="from">Constructed</b><svg viewBox="0 0 40 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="M1 8h36m-7-6 7 6-7 6"/></svg><b class="to">Rebellious</b></div><p>Excess provokes simplification. Multics gives Unix something to reject. <a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=1418" target="_blank" rel="noopener noreferrer">23:38 ↗</a></p></div>
+          <div class="journey"><div class="journey-head"><b class="from">Accreted</b><svg viewBox="0 0 40 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="M1 8h36m-7-6 7 6-7 6"/></svg><b class="to">Revolutionary</b></div><p>Living with inherited constraints can inspire a new abstraction. This is Cantrill’s framing of Oxide. <a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=3286" target="_blank" rel="noopener noreferrer">54:46 ↗</a></p></div>
+          <div class="journey"><div class="journey-head"><b>Once simple</b><svg viewBox="0 0 40 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="M1 8h36m-7-6 7 6-7 6"/></svg><b style="color:var(--rust)">Accreted</b></div><p>Success does not prevent drift. In his telling, Docker moved from revolutionary to accreted quickly. <a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=3080" target="_blank" rel="noopener noreferrer">51:20 ↗</a></p></div>
+        </div>
+      </section>
+      <section id="lesson" class="closing" aria-labelledby="lesson-title">
+        <div><h2 id="lesson-title">Keep the hard problem.<br>Lose the needless burden.</h2><p>Progress is possible—not everywhere, not automatically. A better abstraction can reveal that something we thought was essential was only accidental.</p><p><a class="stamp" href="https://www.youtube.com/watch?v=Cum5uN2634o&t=3319" target="_blank" rel="noopener noreferrer">The closing argument · 55:19 ↗</a></p></div>
+        <ul aria-label="Practical lessons synthesized from the talk">
+          <li><strong>Protect the boundary.</strong><span>Contain the details instead of exporting them to every caller.</span></li>
+          <li><strong>Know what to say no to.</strong><span>A coherent philosophy gives scope a stopping point.</span></li>
+          <li><strong>Simplify without amputating.</strong><span>Retain the requirements that make the system useful.</span></li>
+          <li><strong>Prove the new abstraction early.</strong><span>Focused teams, historical knowledge, and early milestones help a revolution survive.</span></li>
+        </ul>
+      </section>
+    </main>
+    <footer class="footer">
+      <p>Based on Bryan Cantrill’s <a href="https://www.youtube.com/watch?v=Cum5uN2634o" target="_blank" rel="noopener noreferrer">The Complexity of Simplicity</a>, published by Oxide Computer Company. English auto-captions were used; timestamps are approximate. Diagrams and practical lessons are an original synthesis. Example placements reflect the speaker’s judgments, not universal classifications. No analytics or external dependencies.</p>
+      <a href="../../">More visual artifacts ↗</a>
+    </footer>
+  </div>
+  <script>
+    const boundary = document.getElementById('boundary');
+    const leakToggle = document.getElementById('leak-toggle');
+    leakToggle.addEventListener('click', () => {
+      const leaky = leakToggle.getAttribute('aria-pressed') !== 'true';
+      leakToggle.setAttribute('aria-pressed', String(leaky));
+      boundary.classList.toggle('is-leaky', leaky);
+      leakToggle.textContent = leaky ? 'Restore the boundary' : 'Show a leaky boundary';
+      document.getElementById('boundary-state').textContent = leaky ? 'Details escape into the caller' : 'A well-contained system';
+      document.getElementById('boundary-caption').textContent = leaky
+        ? 'A leaky boundary exports its details. The caller must now handle constraints that belong inside the system.'
+        : 'A good boundary contains the details. The caller works with the interface, not every implementation decision.';
+    });
+    const quadrants = [...document.querySelectorAll('[data-system]')];
+    function selectSystem(name) {
+      quadrants.forEach(button => {
+        const selected = button.dataset.system === name;
+        button.setAttribute('aria-pressed', String(selected));
+        button.querySelector('.quad-mark').textContent = selected ? '−' : '+';
+        document.getElementById('detail-' + button.dataset.system).hidden = !selected;
+      });
+    }
+    quadrants.forEach(button => button.addEventListener('click', () => selectSystem(button.dataset.system)));
+    selectSystem('revolutionary');
+  </script>
+</body>
+</html>
