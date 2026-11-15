@@ -1,0 +1,344 @@
+<!doctype html>
+<!-- THROWAWAY — validates a mobile learning experience, not production code. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f4ee">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Rust Pocket: a phone-first, interactive microlearning concept. Small exercises, useful ideas, no rush.">
+<title>Rust Pocket — A little Rust, every day</title>
+<style>
+:root{--paper:#f6f4ee;--card:#fffefa;--ink:#252c29;--muted:#6b716b;--line:#dedfd5;--rust:#aa432b;--rust-light:#f6e5dc;--green:#355b4b;--mint:#e1eadc;--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--serif:Georgia,'Times New Roman',serif}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer;color:inherit}button{border:0;background:none}button:disabled{opacity:.45;cursor:default}button:focus-visible,a:focus-visible{outline:3px solid var(--rust);outline-offset:4px}input:focus,textarea:focus,select:focus{outline:2px solid var(--green);outline-offset:2px}a{color:var(--rust)}h1,h2,h3,p{margin:0}h1{font:normal clamp(38px,6vw,57px)/1.07 var(--serif);letter-spacing:-1.9px}h2{font:normal 28px/1.2 var(--serif);letter-spacing:-.7px}h3{font-size:16px;line-height:1.35}svg{width:21px;height:21px;flex-shrink:0;vertical-align:middle}small,.small{font-size:12px}.muted{color:var(--muted)}.eyebrow{font:11px/1.5 var(--mono);letter-spacing:1.4px;text-transform:uppercase}.row{display:flex;align-items:center;gap:12px}.between{justify-content:space-between}.stack{display:grid;gap:16px}.section-title{display:flex;justify-content:space-between;align-items:baseline;margin:29px 0 15px}.section-title h2{font-size:24px}.pill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:600;white-space:nowrap}.pill.green{background:var(--mint);color:var(--green)}.pill.rust{background:var(--rust-light);color:var(--rust)}.pill.neutral{background:#eeeee7;color:#60665e}.dot{width:6px;height:6px;border-radius:50%;background:currentColor}.icon-button{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;background:var(--card);flex-shrink:0}.primary,.secondary{min-height:50px;border-radius:13px;font-weight:600;padding:12px 19px;display:inline-flex;align-items:center;justify-content:center;gap:10px}.primary{background:var(--ink);color:#fffefa}.primary.rust{background:var(--rust)}.primary svg{width:18px}.secondary{border:1px solid var(--line);background:var(--card)}.text-button{color:var(--rust);font-size:13px;padding:12px 0;min-height:44px;font-weight:600}.full{width:100%}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:21px}.rule{height:1px;background:var(--line);margin:22px 0}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.shell{max-width:1220px;margin:auto;display:grid;grid-template-columns:215px minmax(0,1fr);min-height:100dvh}.sidebar{padding:40px 24px;border-right:1px solid var(--line);position:sticky;top:0;height:100dvh;display:flex;flex-direction:column}.brand{gap:9px;font-weight:720;font-size:20px;letter-spacing:-.7px}.brandmark{background:var(--rust);color:var(--paper);border-radius:11px;padding:7px;display:flex}.brandmark svg{width:24px;height:24px}.sidebar nav{display:grid;gap:8px;margin-top:55px}.nav-item{display:flex;align-items:center;gap:12px;text-align:left;padding:13px 15px;border-radius:12px;font-weight:550;color:var(--muted)}.nav-item.active{color:var(--rust);background:var(--rust-light)}.side-note{margin-top:auto;font-size:12px;color:var(--muted);padding:16px 4px;line-height:1.8}.side-note b{font-weight:500;color:var(--green)}.workspace{min-width:0;padding:30px 42px 60px}.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:37px}.mobile-brand{display:none}.top-label{color:var(--muted)}.top-actions{display:flex;gap:9px;align-items:center}.prototype-tag{font:10px var(--mono);letter-spacing:.6px;color:var(--muted);border:1px solid var(--line);padding:5px 8px;border-radius:5px}.bottom-nav{display:none}.intro{margin-bottom:28px}.intro p{color:var(--muted);margin-top:13px;font-size:15px}.intro .eyebrow{margin-bottom:12px;color:var(--rust)}.home-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(235px,1fr);gap:22px;align-items:start}.hero{background:var(--mint);border:1px solid #d1dcc9;border-radius:21px;overflow:hidden}.hero-art{height:159px;position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 50%,#edf2e8 0,#e1eadc 72%)}.hero-art:before,.hero-art:after{content:"";position:absolute;width:220px;height:220px;border:1px solid #c8d6c1;border-radius:50%}.hero-art:after{width:330px;height:330px}.ownership-art{position:relative;z-index:1;display:flex;align-items:center;gap:18px;transform:rotate(-5deg)}.owner-tile{background:var(--card);border:1px solid #c5d0bd;box-shadow:0 7px 0 #c6d3bf;border-radius:13px;width:78px;height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font:13px var(--mono)}.owner-tile span{font-size:10px;color:var(--muted)}.owner-tile.borrower{background:var(--green);color:white;transform:rotate(10deg)}.owner-tile.borrower span{color:#d8e5d7}.borrow-link{display:flex;flex-direction:column;align-items:center;color:var(--green);gap:5px;font:10px var(--mono)}.borrow-link svg{width:37px}.hero-body{padding:22px}.hero-body h2{font-size:31px;margin:12px 0 9px}.hero-body>p{font-size:14px;color:#52644f}.hero-meta{display:flex;gap:16px;color:#52644f;font-size:12px;margin:17px 0}.time-picker{display:flex;background:#d3dfce;border-radius:11px;padding:4px;gap:4px;margin:19px 0 12px}.time-picker button{flex:1;padding:8px 3px;border-radius:8px;font-size:13px;min-height:40px}.time-picker button[aria-pressed=true]{background:var(--card);box-shadow:0 1px 3px #25401b12;font-weight:650}.path-card{padding:22px}.path-card .eyebrow{color:var(--muted);margin-bottom:17px}.path-step{display:flex;gap:13px;position:relative;padding-bottom:24px;align-items:center}.path-step:last-child{padding-bottom:0}.path-step:not(:last-child):before{content:"";position:absolute;left:16px;top:32px;height:27px;border-left:1px solid var(--line)}.step-dot{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);background:var(--paper);border-radius:50%;font:12px var(--mono);flex-shrink:0}.step-dot.done{background:var(--mint);color:var(--green);border-color:#c5d5bf}.path-step p{font-size:13px;font-weight:600}.path-step small{color:var(--muted);font-size:11px}.gentle{display:flex;gap:12px;margin:19px 6px 0;color:var(--muted);font-size:12px}.gentle svg{color:var(--green);margin-top:3px}.format-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.format{padding:17px 10px 13px;border:1px solid var(--line);border-radius:15px;background:var(--card);display:flex;align-items:center;flex-direction:column;gap:8px;min-height:108px}.format svg{color:var(--rust);width:23px;height:23px}.format b{font-size:12px}.format small{font-size:10px;color:var(--muted)}.resume{display:flex;gap:12px;align-items:center;background:var(--rust-light);border:1px solid #e8c9b9;border-radius:13px;padding:15px;margin-bottom:20px}.resume button{margin-left:auto}.review-banner{display:flex;align-items:center;gap:15px}.review-banner .review-icon{background:var(--rust-light);color:var(--rust);padding:12px;border-radius:13px}.review-banner p{font-size:13px;margin-top:4px}.review-banner .text-button{margin-left:auto;white-space:nowrap}
+.filters{display:flex;gap:8px;overflow:auto;padding:3px 1px 10px;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid var(--line);border-radius:30px;padding:9px 14px;min-height:42px;font-size:12px;background:var(--card)}.chip.active{background:var(--ink);border-color:var(--ink);color:var(--card)}.search{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);padding:12px 15px;border-radius:13px;margin:22px 0 13px;color:var(--muted)}.search input{width:100%;border:0;background:none;min-width:0;font-size:16px;color:var(--ink)}.exercise-list{display:grid;gap:11px;margin-top:15px}.exercise-card{display:flex;gap:14px;align-items:center;padding:17px;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:15px}.exercise-card:hover{border-color:#a6b29f}.exercise-icon{width:43px;height:43px;border-radius:12px;background:var(--rust-light);color:var(--rust);display:grid;place-items:center;flex-shrink:0}.exercise-card:nth-child(3n+2) .exercise-icon{background:var(--mint);color:var(--green)}.exercise-card h3{font-size:14px}.exercise-card p{font-size:11px;color:var(--muted);margin-top:5px}.exercise-card>.trailing{margin-left:auto;display:flex;align-items:center;gap:9px;color:var(--muted)}.exercise-card .trailing svg{width:17px}.packs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pack h3{margin:10px 0 6px}.pack p{font-size:12px;color:var(--muted);margin-bottom:13px}.pack .secondary{min-height:43px;font-size:12px}.pack .eyebrow{font-size:10px;color:var(--rust)}.empty{text-align:center;padding:33px 17px;border:1px dashed #c9cdbf;border-radius:16px;color:var(--muted)}.empty svg{margin-bottom:9px}.empty p{font-size:13px;margin-top:9px}.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:25px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:19px 12px;text-align:center}.stat b{display:block;font:32px var(--serif);color:var(--green)}.stat span{font-size:11px;color:var(--muted)}.note{border-left:3px solid #b9cbb1;padding:4px 0 4px 15px;font-size:14px}.note p{margin:7px 0;color:var(--muted)}.note+.note{margin-top:22px}.topic-form{display:grid;gap:10px;margin-top:14px}.topic-form input,.topic-form textarea,dialog textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--paper);font-size:16px;color:var(--ink)}.topic-form label{font-size:13px}.topic-wish{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);gap:12px}
+.exercise-shell{max-width:660px;margin:0 auto;padding:24px 24px 40px;min-height:100dvh}.exercise-header{display:flex;align-items:center;gap:15px;margin-bottom:22px}.exercise-header>div{flex:1}.exercise-header .icon-button{width:42px;height:42px}.progress-track{height:5px;background:#e1e3d8;border-radius:8px;margin-top:9px;overflow:hidden}.progress-fill{background:var(--green);height:100%;border-radius:8px;transition:width .25s}.exercise-heading{margin:27px 0 20px}.exercise-heading h1{font-size:36px;margin:13px 0 12px;letter-spacing:-1px}.exercise-heading p{color:var(--muted);font-size:15px}.code-window{background:#252e2a;border:1px solid #303d35;border-radius:15px;overflow:hidden;margin:17px 0}.code-title{padding:11px 15px;display:flex;justify-content:space-between;border-bottom:1px solid #405045;color:#b1c1b3;font:10px var(--mono);letter-spacing:.6px}.code-title span:last-child{color:#d6b788}.code-window pre{margin:0;padding:19px 17px;overflow-x:auto;color:#e3e8dc;font:13px/1.85 var(--mono);tab-size:4}.kw{color:#edaa88}.str{color:#c4d59b}.comment{color:#a7b5a6}.num{color:#e8c887}.code-window textarea{display:block;width:100%;min-height:156px;border:0;padding:17px;color:#e9ecdf;background:#252e2a;resize:vertical;font:16px/1.7 var(--mono);tab-size:4;border-radius:0}.code-window textarea:focus{outline:2px solid #c4d59b;outline-offset:-3px}.editor-label{font-size:12px;font-weight:600}.tokenbar{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.tokenbar button{font:13px var(--mono);min-width:37px;min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:6px 10px}.checker-note{font-size:11px;color:var(--muted);margin:9px 0 16px;line-height:1.6}.options{display:grid;gap:10px;margin:20px 0}.option{min-height:57px;display:flex;align-items:center;gap:13px;text-align:left;border:1px solid var(--line);border-radius:13px;background:var(--card);padding:13px 15px;font-size:14px}.option .letter{width:25px;height:25px;border:1px solid var(--line);border-radius:7px;display:grid;place-items:center;font:11px var(--mono);flex-shrink:0}.option.selected{border-color:var(--green);background:#e8eee2;box-shadow:inset 0 0 0 1px var(--green)}.option.selected .letter{background:var(--green);border-color:var(--green);color:white}.option.correct{background:var(--mint);border-color:var(--green)}.option.incorrect{background:var(--rust-light);border-color:var(--rust)}.feedback{border-radius:15px;padding:19px;margin:20px 0;background:var(--mint);border:1px solid #cbd9c3}.feedback.warn{background:var(--rust-light);border-color:#e4c6b6}.feedback h3{display:flex;align-items:center;gap:9px;margin-bottom:9px;font-size:15px}.feedback p{font-size:14px;line-height:1.65}.feedback pre{overflow:auto;white-space:pre-wrap;font:12px/1.7 var(--mono);margin-bottom:0}.hint{border:1px dashed #c5cabb;border-radius:12px;padding:14px;font-size:13px;color:var(--green);margin:12px 0;background:#edf1e8}.exercise-actions{display:flex;align-items:center;gap:13px;margin-top:20px}.exercise-actions .primary{flex:1}.subactions{display:flex;align-items:center;justify-content:space-between;gap:12px}.subactions .text-button{font-size:12px}.test-cases{font:12px/1.8 var(--mono);border:1px solid var(--line);border-radius:12px;padding:12px 15px;color:var(--muted);margin-top:15px}.test-cases .eyebrow{font-size:9px;margin-bottom:5px}.lesson-card{border:1px solid var(--line);border-radius:18px;padding:24px;background:var(--card);margin-top:19px}.lesson-card h2{font-size:25px;margin-bottom:15px}.lesson-card p{line-height:1.8;font-size:15px;color:#525c52}.lesson-dots{display:flex;gap:6px;margin:20px 0}.lesson-dots i{width:22px;height:4px;border-radius:5px;background:#dedfd5}.lesson-dots i.current{background:var(--rust)}.rating{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.rating button{font-size:13px}.summary{padding-top:45px;text-align:center}.summary .stamp{width:90px;height:90px;border:1px solid #b8cbae;border-radius:50%;background:var(--mint);color:var(--green);display:grid;place-items:center;margin:0 auto 27px;box-shadow:0 0 0 9px #eaf0e4}.summary .stamp svg{width:38px;height:38px}.summary h1{font-size:43px;margin:14px 0}.summary>p{color:var(--muted);max-width:380px;margin:0 auto 26px}.summary .card{text-align:left;margin:24px 0}.summary .card p{font-size:14px;margin-top:9px}.summary .primary{margin-bottom:12px}
+dialog{border:1px solid var(--line);border-radius:22px;background:var(--card);color:var(--ink);width:min(590px,calc(100% - 24px));max-height:88dvh;padding:25px;box-shadow:0 25px 100px #18201925}dialog::backdrop{background:#1b241d70;backdrop-filter:blur(3px)}.dialog-heading{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:21px}.dialog-heading h2{font-size:27px}.dialog-body{font-size:14px;line-height:1.75}.dialog-body p{margin:12px 0}.dialog-body h3{margin-top:22px}.dialog-body li{margin:8px 0}.dialog-body ul{padding-left:20px}.dialog-body .pill{line-height:1.4}.dialog-body textarea{margin:12px 0;min-height:115px}.storage-warning{position:relative;background:#f6e5dc;padding:10px 20px;color:#783222;font-size:12px;text-align:center}.toast{position:fixed;bottom:calc(92px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;border-radius:12px;z-index:20;max-width:90vw;width:max-content;font-size:13px;box-shadow:0 5px 25px #0002}.fade-in{animation:appear .24s ease-out}@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1150px){.workspace{padding-left:50px;padding-right:50px}}
+@media(max-width:950px){.shell{grid-template-columns:175px minmax(0,1fr)}.sidebar{padding-left:16px;padding-right:16px}.workspace{padding:28px 25px 50px}.home-grid{grid-template-columns:1fr}.side-column{display:none}.brand{font-size:18px}.hero-art{height:135px}.hero-body h2{font-size:29px}}
+@media(max-width:650px){body{font-size:14px}.shell{display:block}.sidebar{display:none}.workspace{padding:19px 20px calc(105px + env(safe-area-inset-bottom))}.topbar{margin-bottom:29px}.mobile-brand{display:flex}.top-label{display:none}.brand{font-size:19px}.brandmark{border-radius:10px;padding:6px}.brandmark svg{width:21px;height:21px}.top-actions{gap:8px}.top-actions .icon-button{height:37px;width:37px}.prototype-tag{font-size:9px;padding:4px 6px}.intro{margin-bottom:22px}.intro h1{font-size:44px}.intro p{font-size:14px;margin-top:12px}.intro .eyebrow{font-size:10px}.home-grid{gap:0}.hero-art{height:129px}.owner-tile{height:68px;width:68px}.hero-body{padding:19px 20px 20px}.hero-body h2{font-size:29px;margin:11px 0 8px}.hero-body>p{font-size:13px}.hero-meta{margin:13px 0}.time-picker{margin-top:15px}.section-title{margin-top:26px;margin-bottom:13px}.section-title h2{font-size:23px}.format-grid{grid-template-columns:repeat(3,1fr);gap:9px}.format{min-height:96px;padding:14px 6px 11px}.format:nth-child(4),.format:nth-child(5){flex-direction:row;flex-wrap:wrap;justify-content:center;min-height:74px}.format small{width:100%;text-align:center}.format-grid .format:nth-child(4){grid-column:span 1}.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#f6f4eef5;backdrop-filter:blur(15px);border-top:1px solid var(--line);padding:8px 16px calc(9px + env(safe-area-inset-bottom));z-index:10}.bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:10px;min-height:47px}.bottom-nav button.active{color:var(--rust);font-weight:700}.bottom-nav button svg{width:22px;height:22px}.bottom-nav button.active:before{content:"";position:absolute;top:0;width:28px;height:3px;background:var(--rust);border-radius:0 0 4px 4px}.review-banner{padding:17px;gap:11px}.review-banner h3{font-size:14px}.review-banner p{font-size:11px}.review-banner .review-icon{padding:9px}.card{padding:19px}.packs{gap:10px}.pack{padding:16px}.pack h3{font-size:15px}.pack .secondary{padding:10px}.exercise-shell{padding:17px 20px calc(30px + env(safe-area-inset-bottom))}.exercise-heading h1{font-size:33px}.exercise-heading{margin-top:22px}.exercise-heading p{font-size:14px}.code-window pre{font-size:12px;padding:17px 14px}.lesson-card{padding:21px}.exercise-header{margin-bottom:19px}.summary{padding-top:30px}dialog{padding:21px}.rating .secondary{padding:11px}.stat{padding:17px 8px}.stat span{font-size:10px}.intro .row{align-items:flex-start}}
+@media(max-width:650px){
+ .bottom-nav button{padding:6px 12px;border-radius:8px;background:none}
+ .format-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+ .format-grid .format{grid-column:span 2}
+ .format-grid .format:nth-child(4),.format-grid .format:nth-child(5){grid-column:span 3}
+}
+@media(max-width:370px){
+ .packs{grid-template-columns:minmax(0,1fr)}
+ .top-actions .prototype-tag{display:none}
+ .section-title{gap:8px;flex-wrap:wrap}
+ .review-banner{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="storage-warning" hidden class="storage-warning" role="status">Browser storage is unavailable. You can explore, but changes will not survive a reload.</div>
+<div id="app"></div>
+<dialog id="modal" aria-labelledby="modal-title"></dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+'use strict';
+const icons = {
+ leaf:'<path d="M20 4C10 2 3 8 5 15c7 3 14-1 15-11Z"/><path d="m4 21 10-12M10 15l-1-5"/>',
+ today:'<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-11 5h6"/>',
+ explore:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+ book:'<path d="M4 4h6a3 3 0 0 1 3 3v14a4 4 0 0 0-4-3H4ZM20 4h-4a3 3 0 0 0-3 3m0 14a4 4 0 0 1 4-3h3V4"/>',
+ read:'<path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 20"/>',
+ write:'<path d="m4 16 11-11 4 4L8 20H4Zm9-9 4 4M14 20h7"/>',
+ fill:'<path d="M8 4H4v16h4m8-16h4v16h-4M9 12h6m-3-3v6"/>',
+ fix:'<path d="m13 7 4 4 4-4a7 7 0 0 1-9 9l-5 5-4-4 5-5a7 7 0 0 1 9-9Z"/>',
+ lesson:'<path d="M9 18h6m-5 3h4M8 14a7 7 0 1 1 8 0l-1 4H9Z"/>',
+ arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',
+ chevron:'<path d="m9 5 7 7-7 7"/>',
+ back:'<path d="M20 12H4m6-6-6 6 6 6"/>',
+ check:'<path d="m5 12 4 4L19 6"/>',
+ close:'<path d="m6 6 12 12M6 18 18 6"/>',
+ bookmark:'<path d="M6 3h12v18l-6-4-6 4Z"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-11v1"/>',
+ repeat:'<path d="M19 8A8 8 0 0 0 5 6L2 9m0-6v6h6m-3 7a8 8 0 0 0 14 2l3-3m0 6v-6h-6"/>',
+ search:'<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
+ plus:'<path d="M12 4v16M4 12h16"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+};
+const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.book}</svg>`;
+const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const formats = {read:['Read code','Predict what happens'],write:['Write','Start with a blank'],fill:['Complete','Find the missing piece'],fix:['Debug','Make it work'],lesson:['Mini lesson','One useful idea']};
+const exercises = [
+ {id:'move',type:'read',topic:'Ownership',title:'Who owns the greeting?',time:'1 min',prompt:'Read this code. What happens when we try to print first?',
+ code:'let first = String::from("hello");\nlet second = first;\nprintln!("{first}");',
+ options:['It prints hello','It prints an empty string','It does not compile'],answer:2,
+ why:'Assigning first to second moves the String. second now owns the allocation; first can no longer be used. This is a compile-time error, not a crash.',
+ hint:'String does not implement Copy. Ask yourself whether the assignment duplicates the bytes or transfers ownership.',takeaway:'A String assignment transfers ownership. It does not silently copy the allocation.'},
+ {id:'borrow',type:'fill',topic:'Ownership',title:'Borrow, don’t take.',time:'1 min',prompt:'Fill the blank so len can read name without taking ownership.',
+ code:'fn len(s: &str) -> usize {\n    s.len()\n}\nlet name = String::from("Rust");\nlet count = len(____);\nprintln!("{name}: {count}");',
+ starter:'',placeholder:'Replace ____',samples:['&name','name.as_str()'],reference:'&name',
+ why:'&name borrows the String. Rust coerces &String to &str here. name stays usable after the call. name.as_str() also works.',
+ hint:'The function wants a reference. There is a one-character borrowing operator.',takeaway:'Borrow with & to let a function read a value without owning it.'},
+ {id:'mut',type:'fix',topic:'Fundamentals',title:'One word makes it mutable.',time:'1 min',prompt:'The compiler rejects this counter. Edit the code so it prints 2.',
+ starter:'let count = 1;\ncount += 1;\nprintln!("{count}");',
+ samples:['let mut count = 1;\ncount += 1;\nprintln!("{count}");'],reference:'let mut count = 1;\ncount += 1;\nprintln!("{count}");',
+ diagnostic:'E0384 · cannot assign twice to immutable variable `count`',
+ why:'Bindings are immutable by default. let mut allows count to change. Mutability belongs to the binding, not to the integer type.',
+ hint:'Keep the code. Add mut to the binding that changes.',takeaway:'let is immutable by default. Reach for let mut when a value needs to change.'},
+ {id:'even',type:'write',topic:'Fundamentals',title:'A tiny function, from scratch.',time:'2 min',prompt:'Write a function is_even(n: i32) -> bool. Return true for even integers, including zero and negative values.',
+ starter:'',placeholder:'fn is_even(n: i32) -> bool {\n    // your code\n}',
+ samples:['fn is_even(n: i32) -> bool { n % 2 == 0 }','fn is_even(n: i32) -> bool { return n % 2 == 0; }','fn is_even(n: i32) -> bool { (n % 2) == 0 }'],
+ reference:'fn is_even(n: i32) -> bool {\n    n % 2 == 0\n}',cases:'is_even(4)  → true\nis_even(3)  → false\nis_even(0)  → true\nis_even(-2) → true',
+ why:'The remainder operator is %. An even integer has remainder zero when divided by two. With no trailing semicolon, the last expression is returned.',
+ hint:'Use n % 2 == 0. A final expression without a semicolon becomes the return value.',takeaway:'A function can return its final expression without the return keyword.'},
+ {id:'option',type:'lesson',topic:'Error handling',title:'Absence is a type.',time:'2 min',prompt:'A tiny introduction to Option. No null checks hiding in the margins.',
+ slides:[
+ {title:'Sometimes, there is no value.',text:'A search can find nothing. Instead of pretending a value is always there, Rust puts the possibility of absence in the type: Option<T>. It has two variants: Some(value) and None.',code:'let found: Option<i32> = Some(42);\nlet missing: Option<i32> = None;'},
+ {title:'Choose a fallback deliberately.',text:'unwrap_or supplies a default when an Option is None. Unlike unwrap(), it does not panic just because the value is absent. Use match when the two cases need different behavior.',code:'let score: Option<i32> = None;\nlet shown = score.unwrap_or(0);\n// shown is 0'}
+ ],quiz:'What does Some(7).unwrap_or(0) evaluate to?',options:['0','7','It panics'],answer:1,
+ why:'The fallback is used only for None. Some(7) already contains a value, so unwrap_or returns 7.',hint:'There is already a value inside Some.',takeaway:'Option makes absence explicit. Handle Some and None instead of assuming a value exists.'},
+ {id:'copy',type:'read',topic:'Ownership',title:'Not every assignment moves.',time:'1 min',prompt:'Same shape, different type. What does this print?',
+ code:'let a = 5;\nlet b = a;\nprintln!("{a} {b}");',options:['5 5','It does not compile','0 5'],answer:0,
+ why:'Integers implement Copy, so assigning a to b copies the value. Both bindings remain usable. This is different from String.',
+ hint:'Small scalar types such as i32 implement Copy.',takeaway:'Copy types, including integers and bool, remain usable after assignment.'},
+ {id:'iter',type:'fill',topic:'Iterators',title:'Keep only what you need.',time:'2 min',prompt:'Fill the closure body to keep only even numbers.',
+ code:'let values = vec![1, 2, 3, 4];\nlet evens: Vec<i32> = values\n    .into_iter()\n    .filter(|n| ____)\n    .collect();\n// expected: [2, 4]',
+ starter:'',placeholder:'Predicate for filter',samples:['n % 2 == 0','*n % 2 == 0'],reference:'n % 2 == 0',
+ why:'filter keeps items whose predicate returns true. Its closure receives a reference to each item, even though into_iter owns the iterator’s values.',
+ hint:'The predicate must return bool. Check the remainder after division by 2.',takeaway:'filter keeps values for which its predicate returns true.'},
+ {id:'result',type:'read',topic:'Error handling',title:'When parsing doesn’t work.',time:'1 min',prompt:'The input is not a number. Which branch runs?',
+ code:'match "oops".parse::<i32>() {\n    Ok(n) => println!("{n}"),\n    Err(_) => println!("try again"),\n}',
+ options:['It prints 0','It prints try again','It always panics'],answer:1,
+ why:'parse returns a Result. Invalid input produces Err, which this match handles. There is no unwrap here to turn that error into a panic.',
+ hint:'Result separates success (Ok) from failure (Err).',takeaway:'Result makes recoverable failures explicit: match on Ok and Err.'},
+ {id:'serde',pack:'serde',type:'lesson',topic:'Serde',title:'A struct goes on the wire.',time:'2 min',prompt:'Meet Serde: a shared vocabulary for serialization.',
+ slides:[
+ {title:'Describe your data once.',text:'Serde defines serialization and deserialization traits. Its derive feature can generate implementations for your structs. A format crate such as serde_json handles the actual JSON.',code:'use serde::{Serialize, Deserialize};\n\n#[derive(Serialize, Deserialize)]\nstruct Score {\n    points: u32,\n}'},
+ {title:'Formats are separate.',text:'serde_json::to_string returns a Result<String>. Parsing is fallible too: data may be invalid JSON or may not fit your type. These examples need pinned Serde and serde_json dependencies in the real runner.',code:'let value = Score { points: 7 };\nlet json = serde_json::to_string(&value)?;'}
+ ],quiz:'Which crate writes the JSON format?',options:['serde_json','The standard library','The derive keyword alone'],answer:0,
+ why:'Serde provides the traits and data model. serde_json is the format implementation that reads and writes JSON.',hint:'Serde is format-independent.',takeaway:'Serde defines serialization traits; format crates such as serde_json encode the bytes.'},
+ {id:'serde-read',pack:'serde',type:'read',topic:'Serde',title:'Valid JSON, wrong shape.',time:'1 min',prompt:'Assume Serde derives are enabled. What does result contain?',
+ code:'#[derive(serde::Deserialize)]\nstruct Score { points: u32 }\n\nlet result = serde_json::from_str::<Score>(\n    r#"{"points":"many"}"#\n);',
+ options:['Ok(Score { points: 0 })','Err(...)','A String'],answer:1,
+ why:'The JSON is syntactically valid, but "many" is a string and points expects a u32. Deserialization returns an error.',hint:'Check both the JSON syntax and the field’s Rust type.',takeaway:'Valid JSON can still fail deserialization if it does not fit the Rust type.'},
+ {id:'tokio',pack:'tokio',type:'lesson',topic:'Tokio',title:'A future is not a thread.',time:'2 min',prompt:'A small mental model for async Rust.',
+ slides:[
+ {title:'Calling is not running.',text:'Calling an async function creates a future. Its body runs when the future is polled, usually by awaiting it within a runtime. Creating a future alone does not start a background thread.',code:'async fn answer() -> u32 { 42 }\n\nlet future = answer();\nlet value = future.await;'},
+ {title:'The runtime does the scheduling.',text:'Tokio provides an async runtime, timers, networking, and task scheduling. await can yield while an operation is pending. Blocking work still blocks its thread; async is not a magic speed switch.',code:'// Inside a Tokio runtime:\ntokio::time::sleep(\n    std::time::Duration::from_secs(1)\n).await;'}
+ ],quiz:'Does calling an async function automatically start a new OS thread?',options:['Yes, always','No; it produces a future'],answer:1,
+ why:'An async function call produces a future. Threading and scheduling are separate runtime concerns.',hint:'A future describes work. It is not itself a thread.',takeaway:'async functions produce futures. A runtime polls and schedules them.'},
+ {id:'tokio-read',pack:'tokio',type:'read',topic:'Tokio',title:'Which sleep yields?',time:'1 min',prompt:'Inside a Tokio async task, which waits without blocking the executor thread?',
+ code:'// A\nstd::thread::sleep(duration);\n\n// B\ntokio::time::sleep(duration).await;',
+ options:['A','B','Both are equivalent'],answer:1,
+ why:'Tokio’s timer can yield the task while waiting. std::thread::sleep blocks the operating-system thread and can stall other tasks on it.',hint:'A standard-library thread sleep is still blocking inside async code.',takeaway:'Use async-aware operations in async tasks; blocking work can stall the executor.'}
+];
+const byId = id => exercises.find(e=>e.id===id);
+const KEY = 'rust-pocket-4f82c9a1-v1';
+const fresh = () => ({minutes:5,progress:{},drafts:{},bookmarks:[],packs:[],topics:[],feedback:'',active:null});
+let state = fresh(), storageOK = true;
+try {
+ const raw=JSON.parse(localStorage.getItem(KEY)||'null');
+ if(raw && typeof raw==='object') {
+  state={...fresh(),...raw};
+  for(const key of ['bookmarks','packs','topics']) if(!Array.isArray(state[key])) state[key]=[];
+  for(const key of ['progress','drafts']) if(!state[key]||typeof state[key]!=='object'||Array.isArray(state[key])) state[key]={};
+  if(![2,5,10].includes(state.minutes)) state.minutes=5;
+  if(state.active && (!Array.isArray(state.active.ids)||!state.active.ids.length||state.active.ids.some(id=>!byId(id))||!Number.isInteger(state.active.index)||state.active.index<0||state.active.index>=state.active.ids.length)) state.active=null;
+ }
+} catch { storageOK=false; }
+let page='today', filter='All', search='', session=null, selected=null, feedback=null, hintOpen=false, slide=0, toastTimer;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{storageOK=false;}document.getElementById('storage-warning').hidden=storageOK;}
+function toast(text){const el=document.getElementById('toast');el.textContent=text;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,2800);}
+function navButton(id,label){return `<button class="nav-item ${page===id?'active':''}" data-nav="${id}" ${page===id?'aria-current="page"':''}>${icon(id==='notebook'?'book':id)}${label}</button>`;}
+function shell(content){
+ return `<div class="shell"><aside class="sidebar"><div class="brand row"><span class="brandmark">${icon('read')}</span>rust pocket<span style="color:var(--rust)">.</span></div><nav aria-label="Main">${navButton('today','Today')}${navButton('explore','Explore')}${navButton('notebook','Notebook')}</nav><div class="side-note"><b>Small steps. Solid foundations.</b><br>No leaderboard. No falling behind.<br><button class="text-button" data-action="about">About this prototype ${icon('arrow')}</button></div></aside><div class="workspace"><header class="topbar"><span class="eyebrow top-label">A LITTLE RUST, EVERY DAY</span><div class="brand row mobile-brand"><span class="brandmark">${icon('read')}</span>rust pocket<span style="color:var(--rust)">.</span></div><div class="top-actions"><span class="prototype-tag">PROTOTYPE</span><button class="icon-button" data-action="about" aria-label="About this prototype">${icon('info')}</button></div></header><main id="main" class="fade-in" tabindex="-1">${content}</main></div><nav class="bottom-nav" aria-label="Mobile main">${navButton('today','Today')}${navButton('explore','Explore')}${navButton('notebook','Notebook')}</nav></div>`;
+}
+function unlocked(){return exercises.filter(e=>!e.pack||state.packs.includes(e.pack));}
+function due(){return exercises.filter(e=>state.progress[e.id]?.due && state.progress[e.id].due<=Date.now());}
+function countPracticed(){return Object.values(state.progress).filter(p=>p?.practiced).length;}
+function home(){
+ const planned=['move','borrow','mut','even','option'];
+ const n=state.minutes===2?1:state.minutes===5?3:5;
+ const reviews=due();
+ return `<section class="intro"><div class="eyebrow">YOUR DAILY DOSE OF RUST</div><h1>Small steps.<br>Solid Rust.</h1><p>A useful idea. A little practice. Back to your day.</p></section>
+ ${state.active?`<div class="resume">${icon('clock')}<div><b>Your place is saved</b><div class="small muted">${esc(byId(state.active.ids[state.active.index]).title)}</div></div><button class="text-button" data-action="resume">Resume ${icon('arrow')}</button></div>`:''}
+ <div class="home-grid"><section class="hero"><div class="hero-art" aria-hidden="true"><div class="ownership-art"><div class="owner-tile">String<span>owner</span></div><div class="borrow-link">&amp;${icon('arrow')}just borrowing</div><div class="owner-tile borrower">&amp;str<span>reader</span></div></div></div><div class="hero-body"><span class="eyebrow" style="color:var(--green)">TODAY’S LITTLE ADVENTURE</span><h2>Borrow, don’t take.</h2><p>Meet ownership. Make a prediction.<br>Let the idea click, one small step at a time.</p><div class="hero-meta"><span>Beginner friendly</span><span>·</span><span>${n} ${n===1?'experience':'experiences'}</span></div><div class="time-picker" aria-label="Session length">${[2,5,10].map(m=>`<button data-minutes="${m}" aria-pressed="${state.minutes===m}">${m} min</button>`).join('')}</div><button class="primary full" data-action="daily">Let’s do a little Rust ${icon('arrow')}</button><p class="small" style="text-align:center;margin-top:11px;font-size:10px;color:#586851">A time estimate, not a countdown. Stop whenever.</p></div></section>
+ <div class="side-column"><section class="card path-card"><p class="eyebrow">IN THIS SESSION</p>${planned.slice(0,n).map((id,i)=>`<div class="path-step"><div class="step-dot ${state.progress[id]?.practiced?'done':''}">${state.progress[id]?.practiced?icon('check'):String(i+1).padStart(2,'0')}</div><div><p>${esc(byId(id).title)}</p><small>${formats[byId(id).type][0]} · ${byId(id).time}</small></div></div>`).join('')}</section><div class="gentle">${icon('leaf')}<p>You don’t need a streak.<br>Just a moment of curiosity.</p></div></div></div>
+ <div class="section-title"><h2>How do you want to learn?</h2></div><div class="format-grid">${Object.entries(formats).map(([k,v])=>`<button class="format" data-format="${k}">${icon(k)}<b>${v[0]}</b><small>${k==='read'?'Make a prediction':k==='write'?'A few lines':k==='fill'?'Fill the gap':k==='fix'?'Spot the bug':'One good idea'}</small></button>`).join('')}</div>
+ <div class="section-title"><h2>A second look</h2><span class="small muted">${reviews.length} ready</span></div><section class="card review-banner"><span class="review-icon">${icon('repeat')}</span><div><h3>${reviews.length?'Make it stick.':'Room to come back.'}</h3><p>${reviews.length?'Revisit the ideas you wanted to practice.':'Practice a card to start your review shelf.'}</p></div><button class="text-button" data-action="${reviews.length?'review':'browse'}">${reviews.length?'Review':'Explore'} ${icon('arrow')}</button></section>`;
+}
+function exerciseCard(e){return `<button class="exercise-card" data-start="${e.id}"><span class="exercise-icon">${icon(e.type)}</span><div><h3>${esc(e.title)}</h3><p>${esc(e.topic)} · ${formats[e.type][0]} · ${e.time}</p></div><span class="trailing">${state.progress[e.id]?.practiced?icon('check'):''}${icon('chevron')}</span></button>`;}
+function explore(){
+ return `<section class="intro"><div class="eyebrow">FOLLOW YOUR CURIOSITY</div><h1>Your Rust shelf.</h1><p>Start anywhere. Grow it as you go.</p></section>
+ <label class="search">${icon('search')}<span class="sr-only">Search topics and exercises</span><input id="search" type="search" placeholder="Ownership, iterators, a little async…" value="${esc(search)}"></label>
+ <div class="filters" aria-label="Filter by experience">${['All',...Object.keys(formats)].map(k=>`<button class="chip ${filter===k?'active':''}" data-filter="${k}" aria-pressed="${filter===k}">${k==='All'?'Everything':formats[k][0]}</button>`).join('')}</div>
+ <div id="exercise-results">${results()}</div>
+ <div class="section-title"><h2>Make room for more.</h2><span class="small muted">Starter packs</span></div><div class="packs">${['serde','tokio'].map(p=>`<section class="card pack"><div class="eyebrow">${p==='serde'?'DATA & FORMATS':'ASYNC & RUNTIMES'}</div><h3>${p==='serde'?'A taste of Serde':'A little Tokio'}</h3><p>${p==='serde'?'Types meet JSON. Learn what travels, and what can go wrong.':'Futures, waiting, and why async is not a faster thread.'}</p><button class="secondary full" data-pack="${p}" ${state.packs.includes(p)?'disabled':''}>${icon(state.packs.includes(p)?'check':'plus')}${state.packs.includes(p)?'On your shelf':'Add 2 experiences'}</button></section>`).join('')}</div>
+ <section class="card" style="margin-top:16px"><div class="row between"><div><h3>Where next?</h3><p class="small muted" style="margin-top:4px">Keep a wishlist for your next learning pack.</p></div>${icon('leaf')}</div><form id="topic-form" class="topic-form"><label for="topic-input">A topic you’re curious about</label><div class="row"><input id="topic-input" maxlength="80" placeholder="e.g. lifetimes, traits, Axum" required><button class="icon-button" type="submit" aria-label="Add topic to wishlist">${icon('plus')}</button></div></form><div>${state.topics.map((t,i)=>`<div class="topic-wish"><span>${esc(t)}</span><button class="icon-button" style="width:35px;height:35px" data-remove-topic="${i}" aria-label="Remove ${esc(t)}">${icon('close')}</button></div>`).join('')}</div><p class="small muted" style="margin-top:12px">Wishlist only. Adding a topic does not generate lessons.</p></section>`;
+}
+function results(){
+ const items=unlocked().filter(e=>(filter==='All'||e.type===filter)&&`${e.title} ${e.topic} ${e.prompt}`.toLowerCase().includes(search.toLowerCase()));
+ return `<div class="row between" style="margin-top:12px"><span class="eyebrow muted">${items.length} LITTLE EXPERIENCES</span><span class="small muted">Choose your own path</span></div><div class="exercise-list">${items.length?items.map(exerciseCard).join(''):'<div class="empty">No matches yet.<p>Try another topic or experience type.</p></div>'}</div>`;
+}
+function notebook(){
+ const learned=exercises.filter(e=>state.progress[e.id]?.practiced),saved=exercises.filter(e=>state.bookmarks.includes(e.id));
+ return `<section class="intro"><div class="eyebrow">A LITTLE MORE THAN YESTERDAY</div><h1>Things that stick.</h1><p>Your practice, saved on this browser. No account needed.</p></section>
+ <div class="stat-grid"><div class="stat"><b>${learned.length}</b><span>cards practiced</span></div><div class="stat"><b>${new Set(learned.map(e=>e.topic)).size}</b><span>topics explored</span></div><div class="stat"><b>${due().length}</b><span>ready to revisit</span></div></div>
+ <p class="small muted">Practice is not mastery. Code cards here are not compiler-verified.</p>
+ <div class="section-title"><h2>Saved for later</h2><span class="small muted">${saved.length} bookmarks</span></div><div class="exercise-list">${saved.length?saved.map(exerciseCard).join(''):`<div class="empty">${icon('bookmark')}<h3>A place for the good bits.</h3><p>Tap the bookmark inside an experience to keep it here.</p></div>`}</div>
+ <div class="section-title"><h2>Your pocket notes</h2></div><section class="card">${learned.length?learned.map(e=>`<div class="note"><span class="eyebrow muted">${esc(e.topic)}</span><p>${esc(e.takeaway)}</p><button class="text-button" data-start="${e.id}">Revisit ${icon('arrow')}</button></div>`).join(''):'<p class="muted">Each practiced card leaves one useful idea here. Your notebook will grow with you.</p>'}</section>
+ <div class="section-title"><h2>Help shape this.</h2></div><section class="card"><h3>What felt useful? What got in the way?</h3><p class="muted" style="font-size:13px;margin:8px 0 13px">Keep feedback as you explore, then export it to share. Nothing is sent automatically.</p><button class="secondary full" data-action="feedback">Leave a prototype note ${icon('write')}</button></section>
+ <button class="text-button full" data-action="export">Export progress & feedback</button><p class="small muted" style="text-align:center">Local to this URL and browser. Not synced or backed up.</p>`;
+}
+function render(focus=false){
+ document.getElementById('app').innerHTML=session?renderExercise():shell(page==='today'?home():page==='explore'?explore():notebook());
+ document.getElementById('storage-warning').hidden=storageOK;
+ if(focus){window.scrollTo(0,0);document.querySelector('main')?.focus({preventScroll:true});}
+}
+function highlight(code){
+ return code.split(/("(?:[^"\\]|\\.)*"|\/\/[^\n]*|\b(?:fn|let|mut|pub|return|match|async|struct|use|true|false)\b|\b\d+\b)/g).map(s=>{
+  const cl=s.startsWith('//')?'comment':s.startsWith('"')?'str':/^(fn|let|mut|pub|return|match|async|struct|use|true|false)$/.test(s)?'kw':/^\d+$/.test(s)?'num':'';
+  return cl?`<span class="${cl}">${esc(s)}</span>`:esc(s);
+ }).join('');
+}
+function codeBlock(code,label='main.rs'){return `<div class="code-window"><div class="code-title"><span>${esc(label)}</span><span>RUST</span></div><pre><code>${highlight(code)}</code></pre></div>`;}
+function current(){return byId(session.ids[session.index]);}
+function start(ids,resume=false){
+ session=resume?{...state.active}: {ids,index:0,completed:0};
+ selected=null;feedback=null;hintOpen=false;slide=0;state.active={...session};save();render(true);
+}
+function renderExercise(){
+ if(session.summary)return summary();
+ const e=current(),isQuiz=e.type==='read'||(e.type==='lesson'&&slide>=e.slides.length),isCode=['write','fix','fill'].includes(e.type);
+ const bookmarked=state.bookmarks.includes(e.id);
+ let body='';
+ if(e.type==='lesson'&&!isQuiz){
+  const s=e.slides[slide];
+  body=`<div class="lesson-dots" aria-label="Lesson page ${slide+1} of ${e.slides.length}">${e.slides.map((_,i)=>`<i class="${i===slide?'current':''}"></i>`).join('')}</div><article class="lesson-card"><h2>${esc(s.title)}</h2><p>${esc(s.text)}</p>${codeBlock(s.code)}</article><div class="exercise-actions">${slide?'<button class="secondary" data-action="previous-slide">Back</button>':''}<button class="primary" data-action="next-slide">${slide===e.slides.length-1?'One quick check':'Next idea'} ${icon('arrow')}</button></div>`;
+ }else{
+  if(e.code)body+=codeBlock(e.code);
+  if(e.diagnostic)body+=`<div class="hint" style="color:var(--rust);background:var(--rust-light);border-color:#d6b5a2"><span class="eyebrow">EXAMPLE COMPILER MESSAGE</span><p style="margin-top:6px">${esc(e.diagnostic)}</p></div>`;
+  if(isQuiz){
+   body+=`${e.type==='lesson'?`<h3 style="margin-top:25px">${esc(e.quiz)}</h3>`:''}<div class="options" role="group" aria-label="Answer choices">${e.options.map((o,i)=>`<button class="option ${selected===i?'selected':''} ${feedback&&i===e.answer?'correct':''} ${feedback&&selected===i&&i!==e.answer?'incorrect':''}" data-option="${i}" aria-pressed="${selected===i}" ${feedback?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span>${esc(o)}</button>`).join('')}</div>`;
+  }
+  if(isCode){
+   body+=`<label class="editor-label" for="code-input">${e.type==='fill'?'Your missing expression':'Your code'}</label><div class="code-window"><div class="code-title"><span>${e.type==='fill'?'FILL THE GAP':'EDITABLE · DRAFT SAVED LOCALLY'}</span><span>DEMO CHECK</span></div><textarea id="code-input" aria-label="${e.type==='fill'?'Missing expression':'Rust code editor'}" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" rows="${e.type==='fill'?2:6}" placeholder="${esc(e.placeholder||'')}" ${feedback?.ok?'readonly':''}>${esc(state.drafts[e.id]??e.starter??'')}</textarea></div><div class="tokenbar" aria-label="Rust typing shortcuts">${['&','mut ','::','->','{','}','(',')',';'].map(t=>`<button data-token="${esc(t)}" ${feedback?.ok?'disabled':''}>${esc(t)}</button>`).join('')}</div>
+   <p class="checker-note">Prototype checker: compares with a few known examples. <strong>No Rust is compiled or executed.</strong> Other valid solutions may not be recognized.</p>`;
+   if(e.cases)body+=`<div class="test-cases"><div class="eyebrow">EXPECTED BEHAVIOR · NOT EXECUTED</div>${esc(e.cases).replace(/\n/g,'<br>')}</div>`;
+  }
+  if(hintOpen)body+=`<div class="hint">${esc(e.hint)}</div>`;
+  if(feedback){
+   body+=`<section class="feedback ${feedback.ok?'':'warn'}" role="status"><h3>${icon(feedback.ok?'check':'info')}${esc(feedback.title)}</h3><p>${esc(feedback.text)}</p>${feedback.ok&&isCode?'<p style="margin-top:9px;font-size:12px"><b>Example matched; compiler and runtime behavior are unverified.</b></p>':''}</section>`;
+   if(feedback.ok||isQuiz)body+=`<p class="small muted" style="margin-top:22px">How does this idea feel?</p><div class="rating"><button class="secondary" data-rate="again">${icon('repeat')}Revisit soon</button><button class="primary" data-rate="good">Got the idea ${icon('arrow')}</button></div><p class="small muted" style="text-align:center;margin-top:10px">“Revisit soon” schedules 10 minutes; “Got it” schedules tomorrow.</p>`;
+   else body+=`<div class="exercise-actions"><button class="secondary" data-action="example">Use an example</button><button class="primary" data-action="check">Check again ${icon('arrow')}</button></div>`;
+  }else body+=`<div class="exercise-actions"><button class="secondary" data-action="hint">${icon('lesson')}Hint</button><button class="primary" data-action="check" ${isQuiz&&selected===null?'disabled':''}>${isCode?'Check example':'Check answer'} ${icon('arrow')}</button></div>`;
+  body+=`<div class="subactions">${isCode?'<button class="text-button" data-action="example">Show an example</button>':'<span></span>'}<button class="text-button" data-action="skip">Skip for now</button></div>`;
+ }
+ return `<main class="exercise-shell fade-in" tabindex="-1"><header class="exercise-header"><button class="icon-button" data-action="exit" aria-label="Save and exit session">${icon('close')}</button><div><div class="row between"><span class="eyebrow muted">A LITTLE PRACTICE</span><span class="small muted">${session.index+1} / ${session.ids.length}</span></div><div class="progress-track"><div class="progress-fill" style="width:${session.index/session.ids.length*100}%"></div></div></div><button class="icon-button" data-action="bookmark" aria-label="${bookmarked?'Remove bookmark':'Bookmark experience'}" aria-pressed="${bookmarked}" style="${bookmarked?'color:var(--rust);background:var(--rust-light)':''}">${icon('bookmark')}</button></header><div class="row between"><span class="pill ${e.type==='lesson'?'green':'rust'}">${icon(e.type)}${formats[e.type][0]}</span><span class="small muted">${esc(e.topic)} · ${e.time}</span></div><section class="exercise-heading"><h1>${esc(e.title)}</h1><p>${esc(e.prompt)}</p></section>${body}</main>`;
+}
+function check(){
+ const e=current(),isCode=['write','fix','fill'].includes(e.type);
+ if(isCode){
+  const value=state.drafts[e.id]??e.starter??'';
+  const normalize=s=>s.trim().replace(/\s+/g,'');
+  const ok=e.samples.some(s=>normalize(s)===normalize(value));
+  feedback=ok?{ok:true,title:'Matches a known example',text:e.why}:{ok:false,title:value.trim()?'Not evaluated — not necessarily wrong':'Your turn to write a little Rust',text:value.trim()?'This prototype cannot compile your answer. It does not match the small set of examples built into this card. Your solution may still be valid. Edit it, or inspect a known example.':'Write your answer above, or use a hint. The checker only recognizes a few example solutions.'};
+ }else{
+  if(selected===null)return;
+  feedback={ok:selected===e.answer,title:selected===e.answer?'Exactly. Here’s why.':'A useful surprise.',text:e.why};
+ }
+ render();
+ document.querySelector('.feedback')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function advance(rating){
+ if(rating){
+  const e=current(),old=state.progress[e.id]||{};
+  state.progress[e.id]={...old,practiced:true,visits:(old.visits||0)+1,due:Date.now()+(rating==='again'?600000:86400000),lastPracticed:Date.now(),verification:['write','fill','fix'].includes(e.type)?'example-only':'authored-answer'};
+  session.completed=(session.completed||0)+1;
+ }
+ session.index++;
+ selected=null;feedback=null;hintOpen=false;slide=0;
+ if(session.index>=session.ids.length){session.summary=true;state.active=null;}else state.active={...session};
+ save();render(true);
+}
+function summary(){
+ return `<main class="exercise-shell summary fade-in" tabindex="-1"><div class="stamp">${icon('leaf')}</div><div class="eyebrow muted">A SMALL STEP IS STILL A STEP</div><h1>${session.completed?'A little more Rust.':'Back when you’re ready.'}</h1><p>${session.completed?'You made space for something new. That’s enough for today.':'No pressure. The cards are on your shelf whenever you feel curious.'}</p><span class="pill green">${session.completed||0} ${session.completed===1?'experience':'experiences'} practiced</span><div class="card"><span class="eyebrow muted">TAKE IT WITH YOU</span><p>${session.completed?'Your practiced cards now live in Notebook, with one takeaway each and a time to revisit.':'Skipping does not mark a card as practiced or change your progress.'}</p><p class="small muted">Code checks in this prototype match examples, not compiled programs.</p></div><button class="primary full" data-action="finish">That’s enough for now ${icon('check')}</button><button class="secondary full" data-action="more">Explore one more</button><button class="text-button" data-action="feedback">A thought about this experience?</button></main>`;
+}
+function openModal(title,body){
+ const modal=document.getElementById('modal');
+ modal.innerHTML=`<div class="dialog-heading"><h2 id="modal-title">${title}</h2><button class="icon-button" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="dialog-body">${body}</div>`;
+ modal.showModal();
+}
+function about(){
+ openModal('A small mock. A real direction.',`<span class="pill rust">INTERACTIVE CONCEPT · NOT A NATIVE APP</span>
+ <p>Explore five formats: read code, write from scratch, fill a gap, debug, and mini lessons. Drafts, practice, bookmarks, and added packs stay in this browser.</p>
+ <h3>What’s real here</h3><p>Navigation, authored quiz answers, editable code, hints, saved drafts, a simple review schedule, pack installation, and feedback export.</p>
+ <h3>What’s deliberately simulated</h3><p>Code checking compares text with known examples. There is no compiler, sandbox, test runner, AI tutor, cross-device sync, or installed-app offline cache. Nothing you type is uploaded. An already-open page works without a connection; a fresh offline visit is not guaranteed.</p>
+ <h3>The production direction</h3><p>Tauri 2 + React/TypeScript. Automerge documents persisted in IndexedDB, with optional background sync. Store attempts separately from versioned content packs so updating lessons never resets progress.</p>
+ <h3>Rust execution needs its own design</h3><ul><li><b>Tauri is not a Rust playground.</b> Its compiled backend does not include rustc. Arbitrary learner code needs a separate toolchain and isolated runner.</li><li><b>On phones:</b> start with offline lessons and quizzes; queue code checks for an opt-in remote runner or a paired desktop. Never show “passed” while a check is pending.</li><li><b>On desktop:</b> a local installed toolchain is viable, but compile and run untrusted code outside the app’s privileges. Time, memory, processes, filesystem, and network all need limits.</li><li><b>WebAssembly:</b> can execute compiled modules, but does not compile Rust source by itself. Target support differs; filesystem, threads, and many runtime-dependent crates need extra work.</li><li><b>Correctness:</b> compilation is just one gate. Use hidden behavior tests, edge cases, timeouts, and compile-fail tests. Valid solutions must not be reduced to string matches. Tests are evidence, not a proof of all behavior.</li><li><b>Crates:</b> pin toolchains, editions, and allowed dependencies. Build scripts and procedural macros execute during compilation, so compilation needs isolation too.</li></ul>
+ <h3>Growing the curriculum</h3><p>Versioned packs should carry stable exercise IDs, prerequisites, learning goals, reference answers, harnesses, hints, and toolchain/crate versions. Run every exercise in CI. Keep introductory moments short, but connect them to deeper practice so pattern recognition does not masquerade as understanding.</p>
+ <h3>Phone-specific rough edges</h3><p>Punctuation-heavy typing, soft keyboards, selection, and compiler diagnostics need real-device testing. Favor tiny editable regions and optional token keys. This responsive mock approximates the layout; native keyboard, safe-area, and app lifecycle behavior still need a Tauri build.</p>
+ <h3>Platform distribution</h3><p>On-device compilation and dynamically executed code also need platform and app-store review. Educational exceptions can exist; they are not blanket approval. Validate the intended Android and iOS distribution separately.</p>
+ <p class="small">References: <a href="https://v2.tauri.app/start/" target="_blank" rel="noopener">Tauri 2</a> · <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html" target="_blank" rel="noopener">Cargo build scripts</a> · <a href="https://doc.rust-lang.org/rustc/platform-support/wasm32-unknown-unknown.html" target="_blank" rel="noopener">Rust’s WebAssembly target</a> · <a href="https://developer.apple.com/app-store/review/guidelines/#software-requirements" target="_blank" rel="noopener">App Store guidelines</a></p>`);
+}
+function feedbackModal(){openModal('Leave a pocket note.',`<p>What should stay? What felt awkward on your phone?</p><label for="feedback-input">Your feedback (saved locally, not sent)</label><textarea id="feedback-input" placeholder="I liked… / I got stuck when…">${esc(state.feedback||'')}</textarea><button class="primary full" data-action="save-feedback">Save note ${icon('check')}</button><button class="text-button full" data-action="export">Download progress & feedback</button>`);}
+function exportData(){
+ const data={app:'Rust Pocket prototype',exportedAt:new Date().toISOString(),feedback:state.feedback,topics:state.topics,packs:state.packs,progress:state.progress,bookmarks:state.bookmarks,drafts:state.drafts};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+ const a=document.createElement('a');a.href=url;a.download='rust-pocket-feedback.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+ toast('Export downloaded. Share it when you’re ready.');
+}
+document.addEventListener('click',event=>{
+ const b=event.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.nav){page=b.dataset.nav;session=null;render(true);return;}
+ if(b.dataset.minutes){state.minutes=Number(b.dataset.minutes);save();render();return;}
+ if(b.dataset.format){page='explore';filter=b.dataset.format;search='';render(true);return;}
+ if(b.dataset.filter){filter=b.dataset.filter;render();return;}
+ if(b.dataset.start){start([b.dataset.start]);return;}
+ if(b.dataset.pack){state.packs.push(b.dataset.pack);save();render();toast('Two new experiences added to your shelf.');return;}
+ if(b.dataset.removeTopic!==undefined){state.topics.splice(Number(b.dataset.removeTopic),1);save();render();return;}
+ if(b.dataset.option!==undefined){selected=Number(b.dataset.option);render();return;}
+ if(b.dataset.rate){advance(b.dataset.rate);return;}
+ if(b.dataset.token!==undefined){
+  const input=document.getElementById('code-input');if(!input||input.readOnly)return;
+  const from=input.selectionStart,to=input.selectionEnd;
+  input.setRangeText(b.dataset.token,from,to,'end');input.focus();state.drafts[current().id]=input.value;save();return;
+ }
+ switch(b.dataset.action){
+  case 'about':about();break;
+  case 'close-modal':document.getElementById('modal').close();break;
+  case 'daily':start(['move','borrow','mut','even','option'].slice(0,state.minutes===2?1:state.minutes===5?3:5));break;
+  case 'resume':start(null,true);break;
+  case 'browse':page='explore';filter='All';search='';render(true);break;
+  case 'review':start(due().map(e=>e.id));break;
+  case 'exit':state.active={...session};save();session=null;page='today';render(true);break;
+  case 'bookmark':{const id=current().id;state.bookmarks=state.bookmarks.includes(id)?state.bookmarks.filter(x=>x!==id):[...state.bookmarks,id];save();render();break;}
+  case 'hint':hintOpen=!hintOpen;render();break;
+  case 'check':check();break;
+  case 'next-slide':slide++;render(true);break;
+  case 'previous-slide':slide--;render(true);break;
+  case 'skip':advance(null);break;
+  case 'example':state.drafts[current().id]=current().reference;feedback=null;save();render();toast('Example inserted. Read it, then check it.');break;
+  case 'finish':session=null;page='today';render(true);break;
+  case 'more':session=null;page='explore';filter='All';search='';render(true);break;
+  case 'feedback':feedbackModal();break;
+  case 'save-feedback':state.feedback=document.getElementById('feedback-input').value;save();document.getElementById('modal').close();toast('Note saved on this browser. Nothing was sent.');break;
+  case 'export':exportData();break;
+ }
+});
+document.addEventListener('input',event=>{
+ const el=event.target;
+ if(el.id==='search'){search=el.value;document.getElementById('exercise-results').innerHTML=results();}
+ if(el.id==='code-input'){state.drafts[current().id]=el.value;save();}
+ if(el.id==='feedback-input'){state.feedback=el.value;save();}
+});
+document.addEventListener('submit',event=>{
+ if(event.target.id!=='topic-form')return;event.preventDefault();
+ const value=document.getElementById('topic-input').value.trim();if(!value)return;
+ if(!state.topics.some(t=>t.toLowerCase()===value.toLowerCase()))state.topics.push(value);
+ save();render();toast('Added to your topic wishlist.');
+});
+document.addEventListener('keydown',event=>{
+ if(event.target.id==='code-input'&&event.key==='Tab'&&!event.shiftKey){event.preventDefault();const el=event.target;el.setRangeText('    ',el.selectionStart,el.selectionEnd,'end');state.drafts[current().id]=el.value;save();}
+});
+save();render();
+</script>
+</body>
+</html>
