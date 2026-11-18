@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Night Shift — a self-healing CI story</title>
+<style>
+  :root { --bg:#0b0f14; --panel:#121821; --line:#243042; --text:#e6edf3; --muted:#8b98a8; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922; --bad:#f85149; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header { display:flex; align-items:center; gap:14px; padding:14px 22px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header a { color:var(--muted); text-decoration:none; font-size:14px; }
+  header h1 { font-size:18px; margin:0; flex:1; }
+  .stage { display:grid; grid-template-columns:300px 1fr; min-height:calc(100vh - 120px); }
+  aside { border-right:1px solid var(--line); padding:26px 22px; display:flex; flex-direction:column; gap:22px;
+    background:linear-gradient(180deg, #0b1424 var(--night,100%), #2b2410 160%); transition:background 1s; }
+  .clock { font:800 64px/1 ui-monospace,Menlo,Consolas,monospace; letter-spacing:-.02em; }
+  .clock small { display:block; font:600 13px/1.4 -apple-system,sans-serif; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:6px; }
+  .sky { font-size:44px; }
+  .status { display:grid; gap:8px; }
+  .pill { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:var(--panel); border:1px solid var(--line); font-size:14px; }
+  .dot { width:11px; height:11px; border-radius:50%; background:var(--muted); box-shadow:0 0 0 3px rgba(255,255,255,.04); }
+  .dot.red { background:var(--bad); box-shadow:0 0 12px var(--bad); } .dot.green { background:var(--ok); box-shadow:0 0 12px var(--ok); } .dot.amber { background:var(--warn); box-shadow:0 0 12px var(--warn); }
+  .who { font-size:13px; color:var(--muted); }
+  .who b { color:var(--text); }
+  .term { padding:22px 26px 90px; font:15px/1.6 ui-monospace,Menlo,Consolas,monospace; overflow-y:auto; max-height:calc(100vh - 120px); }
+  .line { opacity:0; transform:translateY(6px); transition:all .35s; margin:0 0 10px; display:grid; grid-template-columns:62px 92px 1fr; gap:10px; }
+  .line.show { opacity:1; transform:none; }
+  .t { color:var(--muted); } .actor { font-weight:700; }
+  .a-pipe { color:var(--bad); } .a-dog { color:var(--warn); } .a-agent { color:var(--accent); } .a-lab { color:#a371f7; } .a-human { color:var(--ok); }
+  .msg { white-space:pre-wrap; word-break:break-word; }
+  .hl { background:rgba(248,81,73,.16); padding:0 4px; border-radius:3px; }
+  .good { background:rgba(63,185,80,.16); padding:0 4px; border-radius:3px; }
+  .callout { grid-column:1/-1; margin:6px 0 16px; padding:12px 16px; border-left:3px solid var(--accent); background:rgba(88,166,255,.08); border-radius:0 10px 10px 0;
+    font:15px/1.5 -apple-system,sans-serif; color:#c9d6e3; }
+  .callout.red { border-color:var(--bad); background:rgba(248,81,73,.08); }
+  .callout.green { border-color:var(--ok); background:rgba(63,185,80,.08); }
+  .controls { position:fixed; bottom:0; left:0; right:0; display:flex; gap:10px; align-items:center; padding:12px 22px; background:#0e141c; border-top:1px solid var(--line); flex-wrap:wrap; }
+  button { background:#1c2533; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font:600 14px/1 -apple-system,sans-serif; cursor:pointer; }
+  button:hover, button:focus-visible { border-color:var(--accent); outline:none; }
+  button.primary { background:var(--accent); color:#06121f; border-color:var(--accent); }
+  .bar { flex:1; min-width:120px; height:6px; background:var(--line); border-radius:3px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--accent); transition:width .3s; }
+  .hint { color:var(--muted); font-size:13px; }
+  .end { display:none; grid-column:1/-1; text-align:center; padding:28px 10px 10px; font-family:-apple-system,sans-serif; }
+  .end.show { display:block; animation:pop .5s ease; }
+  .end h2 { font-size:clamp(26px,4vw,40px); margin:0 0 8px; }
+  .end p { color:var(--muted); margin:4px 0; }
+  .stats { display:flex; justify-content:center; gap:28px; margin:18px 0; flex-wrap:wrap; }
+  .stats div b { display:block; font-size:36px; color:var(--ok); }
+  .stats div span { color:var(--muted); font-size:13px; }
+  @keyframes pop { from { transform:scale(.96); opacity:0; } to { transform:none; opacity:1; } }
+  @media (max-width:760px) {
+    .stage { grid-template-columns:1fr; }
+    aside { border-right:0; border-bottom:1px solid var(--line); flex-direction:row; flex-wrap:wrap; align-items:center; padding:16px; gap:14px; }
+    .clock { font-size:40px; } .status { flex:1; min-width:200px; }
+    .term { max-height:none; padding:16px 14px 110px; font-size:13.5px; }
+    .line { grid-template-columns:48px 1fr; } .line .actor { grid-column:2; } .line .msg { grid-column:1/-1; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="./">← All prototypes</a>
+  <h1>The Night Shift</h1>
+  <span class="hint">Space / → next · P play · R restart</span>
+</header>
+<div class="stage">
+  <aside id="aside">
+    <div class="sky" id="sky" aria-hidden="true">🌙</div>
+    <div class="clock" id="clock">03:59<small id="phase">everyone is asleep</small></div>
+    <div class="status" aria-label="Pipeline status">
+      <div class="pill">Phone test suite <span class="dot" id="d-phone"></span></div>
+      <div class="pill">Watchdog <span class="dot" id="d-dog"></span></div>
+      <div class="pill">Coding agent <span class="dot" id="d-agent"></span></div>
+      <div class="pill">Pull request <span class="dot" id="d-pr"></span></div>
+    </div>
+    <div class="who" id="who">Humans awake: <b>0</b></div>
+  </aside>
+  <section class="term" id="term" aria-live="polite"></section>
+</div>
+<div class="controls">
+  <button id="prev" aria-label="Previous step">←</button>
+  <button id="play" class="primary">▶ Play</button>
+  <button id="next" aria-label="Next step">→</button>
+  <div class="bar" aria-hidden="true"><i id="prog"></i></div>
+  <button id="restart">↺ Restart</button>
+</div>
+<script>
+// DATA: the timeline. Edit times and text freely.
+const STEPS = [
+  { t:"04:00", who:"pipe",  msg:"Nightly device-lab run starts. Today, for the first time, the whole test suite also runs on real phones.", dots:{} },
+  { t:"05:10", who:"pipe",  msg:'Phone suite: <span class="hl">FAILED</span> on both phones. Summary log: "test server raised an exception: <span class="hl">Address already in use</span>"', dots:{phone:"red"},
+    callout:{c:"red", text:"A port collision on a lab machine. Every engineer's instinct: infrastructure, just re-run it."} },
+  { t:"07:02", who:"dog",   msg:"Watchdog wakes up. Phone suite red on main, less than 48 h old, not seen before → hand it to the agent with the log excerpt, run history and links to the lab's own log store.", dots:{dog:"amber"} },
+  { t:"07:16", who:"agent", msg:"Session starts. Rule #1 in its brief: download the lab evidence BEFORE deciding anything.", dots:{agent:"amber"} },
+  { t:"07:17", who:"lab",   msg:"Fetches 4 archives from the lab log store in parallel. Verifies sizes and checksums.", dots:{} },
+  { t:"07:19", who:"agent", msg:'"The attachments show more than the port error." 5,422 tests ran. <span class="hl">3 failed</span>, the same 3 on both phones:\n  PermissionDenied: Operation not permitted', dots:{},
+    callout:{text:"The port error was real, but harmless. The actual failure was hiding one click deeper, in a system ADO never sees."} },
+  { t:"07:21", who:"agent", msg:"Same 3 tests, 2 devices, debug + release → deterministic, not flaky. Each fails exactly where it starts a command-line tool as a child process.", dots:{} },
+  { t:"07:22", who:"agent", msg:'Diagnosis: phone apps are sandboxed and <span class="good">cannot start other processes</span>. The new phone suite and the new tests were each green on their own, and merged hours apart.', dots:{} },
+  { t:"07:23", who:"agent", msg:"Baseline: the same test passes on a desktop. The product code is fine; only how the test invokes it breaks.", dots:{} },
+  { t:"07:24", who:"agent", msg:'Fix: make the tool callable as a library function. Tests run it <span class="good">in-process</span> everywhere, and still as a real process where the platform allows. No test disabled. No assertion removed.', dots:{},
+    callout:{text:"The one-line way out was to ignore the 3 tests on phones. The agent kept every assertion instead."} },
+  { t:"07:28", who:"agent", msg:"36/36 crate tests pass · repo checks pass · lint clean · release build OK.", dots:{} },
+  { t:"07:30", who:"agent", msg:"Pushes the fix and queues the device-lab pipeline on its own branch: \"Do not treat local results as proof of device success.\"", dots:{agent:"green", pr:"amber"} },
+  { t:"08:39", who:"lab",   msg:'Lab run on the fix branch: <span class="good">every phone job green</span>.', dots:{phone:"green"} },
+  { t:"09:30", who:"human", msg:"Engineers arrive. A pull request is waiting with the root cause, the evidence and a green hardware run.", dots:{}, humans:2 },
+  { t:"13:02", who:"human", msg:'Two approvals. <span class="good">Merged as-is.</span> Next nightly on main: green.', dots:{pr:"green", dog:"green"}, humans:2, end:true },
+];
+const ACTORS = { pipe:["pipeline","a-pipe"], dog:["watchdog","a-dog"], agent:["agent","a-agent"], lab:["device lab","a-lab"], human:["humans","a-human"] };
+const term = document.getElementById("term"), clock = document.getElementById("clock"), phase = document.getElementById("phase");
+const prog = document.getElementById("prog"), playBtn = document.getElementById("play"), sky = document.getElementById("sky"), aside = document.getElementById("aside");
+let i = 0, timer = null;
+const els = STEPS.map(s => {
+  const wrap = document.createElement("div");
+  const [label, cls] = ACTORS[s.who];
+  wrap.innerHTML = `<div class="line"><span class="t">${s.t}</span><span class="actor ${cls}">${label}</span><span class="msg">${s.msg}</span></div>` +
+    (s.callout ? `<div class="callout ${s.callout.c||""}" hidden>${s.callout.text}</div>` : "");
+  term.appendChild(wrap); return wrap;
+});
+const endCard = document.createElement("div");
+endCard.className = "end";
+endCard.innerHTML = `<h2>Red at 05:10. Fixed at 07:29. Merged at 13:02.</h2>
+  <p>No human wrote a line of code. Humans reviewed and pressed merge.</p>
+  <div class="stats"><div><b>14 min</b><span>agent start → pushed fix</span></div><div><b>0</b><span>tests disabled</span></div><div><b>1</b><span>red herring ignored</span></div></div>
+  <p><b>The lesson:</b> the agent wasn't smarter than us. It was made to look at the evidence we usually skip.</p>`;
+term.appendChild(endCard);
+function render() {
+  els.forEach((el, k) => {
+    const line = el.querySelector(".line"), co = el.querySelector(".callout");
+    line.classList.toggle("show", k < i);
+    if (co) co.hidden = k >= i;
+  });
+  const dots = { phone:"", dog:"", agent:"", pr:"" }; let humans = 0;
+  for (let k = 0; k < i; k++) { Object.assign(dots, STEPS[k].dots); if (STEPS[k].humans) humans = STEPS[k].humans; }
+  for (const [k, v] of Object.entries(dots)) document.getElementById("d-" + k).className = "dot " + v;
+  const s = STEPS[Math.max(0, i - 1)];
+  const time = i ? s.t : "03:59";
+  const hour = parseInt(time, 10);
+  clock.firstChild.nodeValue = time;
+  phase.textContent = hour < 7 ? "everyone is asleep" : hour < 9 ? "humans still asleep" : hour < 12 ? "humans arriving" : "after lunch";
+  sky.textContent = hour < 6 ? "🌙" : hour < 9 ? "🌅" : "☀️";
+  aside.style.setProperty("--night", hour < 7 ? "100%" : hour < 9 ? "60%" : "10%");
+  document.getElementById("who").innerHTML = `Humans awake: <b>${humans}</b>`;
+  prog.style.width = (i / STEPS.length * 100) + "%";
+  endCard.classList.toggle("show", i === STEPS.length);
+  const last = i ? els[i - 1] : null;
+  if (last) (i === STEPS.length ? endCard : last).scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+function step(d) { i = Math.max(0, Math.min(STEPS.length, i + d)); render(); if (i === STEPS.length) stop(); }
+function play() { if (i === STEPS.length) i = 0; playBtn.textContent = "❚❚ Pause"; timer = setInterval(() => step(1), 2600); step(1); }
+function stop() { clearInterval(timer); timer = null; playBtn.textContent = "▶ Play"; }
+playBtn.onclick = () => timer ? stop() : play();
+document.getElementById("next").onclick = () => { stop(); step(1); };
+document.getElementById("prev").onclick = () => { stop(); step(-1); };
+document.getElementById("restart").onclick = () => { stop(); i = 0; render(); };
+document.addEventListener("keydown", e => {
+  if (e.key === " " || e.key === "ArrowRight") { e.preventDefault(); stop(); step(1); }
+  else if (e.key === "ArrowLeft") { stop(); step(-1); }
+  else if (e.key.toLowerCase() === "p") timer ? stop() : play();
+  else if (e.key.toLowerCase() === "r") { stop(); i = 0; render(); }
+});
+render();
+</script>
+</body>
+</html>

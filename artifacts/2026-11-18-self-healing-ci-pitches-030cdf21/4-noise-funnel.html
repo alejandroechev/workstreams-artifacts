@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal From Noise — self-healing CI by the numbers</title>
+<style>
+  :root { --bg:#0f0d0a; --panel:#18150f; --line:#2f2a20; --text:#f3eee6; --muted:#a59b8a; --gold:#e3b341; --ok:#3fb950; --grey:#5c5547; --bad:#f0883e; --blue:#58a6ff; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); font:18px/1.6 Georgia,"Iowan Old Style","Times New Roman",serif; }
+  header { position:sticky; top:0; z-index:5; display:flex; gap:14px; align-items:center; padding:12px 22px; background:rgba(15,13,10,.92); border-bottom:1px solid var(--line); font-family:-apple-system,sans-serif; backdrop-filter:blur(6px); }
+  header a { color:var(--muted); text-decoration:none; font-size:14px; }
+  header h1 { font-size:16px; margin:0; flex:1; letter-spacing:.04em; }
+  .layout { display:grid; grid-template-columns:1fr 1fr; max-width:1200px; margin:0 auto; }
+  .viz { position:sticky; top:56px; height:calc(100vh - 56px); display:flex; flex-direction:column; justify-content:center; padding:24px; }
+  .steps { padding:0 24px; }
+  .step { min-height:88vh; display:flex; flex-direction:column; justify-content:center; opacity:.25; transition:opacity .4s; }
+  .step.active { opacity:1; }
+  .step h2 { font-size:clamp(28px,3.4vw,44px); line-height:1.15; margin:0 0 14px; font-weight:700; }
+  .step p { color:#d7cfc1; margin:8px 0; }
+  .big { color:var(--gold); }
+  .hero { min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:0 24px; max-width:900px; margin:0 auto; }
+  .hero .k { font:700 12px/1 -apple-system,sans-serif; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; }
+  .hero h2 { font-size:clamp(40px,7vw,84px); line-height:1.02; margin:14px 0; }
+  .hero p { color:var(--muted); font-size:20px; max-width:640px; }
+  .scroll { margin-top:30px; color:var(--muted); font:14px -apple-system,sans-serif; animation:bob 1.6s infinite; }
+  @keyframes bob { 50% { transform:translateY(6px); } }
+  .counter { font:800 clamp(56px,8vw,110px)/1 -apple-system,sans-serif; letter-spacing:-.03em; color:var(--gold); transition:color .4s; }
+  .counter-label { font:600 15px -apple-system,sans-serif; color:var(--muted); margin:6px 0 24px; }
+  .bars { display:grid; gap:10px; font-family:-apple-system,sans-serif; }
+  .bar { display:grid; grid-template-columns:150px 1fr 44px; gap:10px; align-items:center; font-size:13.5px; color:var(--muted); transition:opacity .4s; }
+  .track { height:26px; background:#1d1912; border-radius:6px; overflow:hidden; }
+  .fill { height:100%; width:0; border-radius:6px; transition:width .9s cubic-bezier(.2,.8,.2,1), background .4s; }
+  .bar b { color:var(--text); text-align:right; font-variant-numeric:tabular-nums; }
+  .bar.dim { opacity:.3; }
+  .bar.cut .fill { background:repeating-linear-gradient(45deg,#3a3326 0 6px,#2a2419 6px 12px) !important; }
+  .stamp { font:800 15px -apple-system,sans-serif; letter-spacing:.12em; color:var(--ok); border:2px solid var(--ok); display:inline-block; padding:4px 10px; border-radius:6px; transform:rotate(-4deg); margin-top:18px; opacity:0; transition:opacity .4s; }
+  .stamp.show { opacity:1; }
+  .end { min-height:80vh; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:40px 24px; max-width:860px; margin:0 auto; }
+  .end h2 { font-size:clamp(34px,5vw,60px); line-height:1.08; margin:0 0 18px; }
+  .end ul { text-align:left; font-size:17px; color:#d7cfc1; }
+  .end li { margin:8px 0; }
+  .note { font:13px -apple-system,sans-serif; color:var(--muted); margin-top:22px; }
+  @media (max-width:860px) {
+    .layout { grid-template-columns:1fr; }
+    .viz { top:50px; height:auto; z-index:3; background:rgba(15,13,10,.96); border-bottom:1px solid var(--line); padding:12px 16px; }
+    .counter { font-size:46px; } .counter-label { margin-bottom:8px; }
+    .bar { grid-template-columns:104px 1fr 34px; font-size:12px; } .track { height:16px; }
+    .step { min-height:88vh; padding-top:250px; justify-content:flex-start; }
+    .stamp { margin-top:8px; font-size:12px; padding:2px 8px; }
+  }
+</style>
+</head>
+<body>
+<header><a href="./">← All prototypes</a><h1>SIGNAL FROM NOISE</h1></header>
+
+<section class="hero">
+  <span class="k">Two months of a self-healing CI</span>
+  <h2>Every red build woke an agent.<br>Most of them shouldn't have.</h2>
+  <p>A short story told with five numbers about turning an agent that cried wolf into one people actually read.</p>
+  <span class="scroll">Scroll ↓</span>
+</section>
+
+<div class="layout">
+  <div class="viz" aria-hidden="true">
+    <div class="counter" id="counter">180</div>
+    <div class="counter-label" id="clabel">agent jobs</div>
+    <div class="bars" id="bars"></div>
+    <div><span class="stamp" id="stamp">SAME 10 FIXES</span></div>
+  </div>
+  <div class="steps">
+    <article class="step" data-s="0">
+      <h2><span class="big">180</span> times the watchdog said "this is broken, fix it".</h2>
+      <p>Twice a day it reads the latest run of four pipelines. Anything red goes to a coding agent with the logs, the run history and links to the device lab's evidence.</p>
+    </article>
+    <article class="step" data-s="1">
+      <h2>Only <span class="big">10</span> of those became merged fixes.</h2>
+      <p>And 8 of the 10 were merged exactly as the agent wrote them. The fixes were good. The problem was everything around them.</p>
+    </article>
+    <article class="step" data-s="2">
+      <h2><span class="big">60</span> weren't failures at all.</h2>
+      <p>The build passed and the tests passed. A shared compliance step, inherited from a platform template, hung on Mac agents and marked the run "partially succeeded". The agent read it, made no change, and abandoned the PR. Sixty times.</p>
+    </article>
+    <article class="step" data-s="3">
+      <h2><span class="big">63</span> matched five exact fingerprints.</h2>
+      <p>Device lab blocked the test. Lab framework error. That same compliance step hanging hard enough to kill the machine. The system linker segfaulting. A pool with no machines in it. The agent called every single one infrastructure.</p>
+    </article>
+    <article class="step" data-s="4">
+      <h2><span class="big">47</span> are exactly what the agent is for.</h2>
+      <p>Timeouts, outages, a flaky lab. They look like bugs until someone reads the evidence. Two of the ten real fixes hid behind errors that looked exactly like these.</p>
+    </article>
+    <article class="step" data-s="5">
+      <h2>So we taught the watchdog to look before it barks.</h2>
+      <p>Partial successes are ignored. A run is skipped only when <em>every</em> failure matches a known fingerprint. Anything else, even one unknown line, still goes to the agent.</p>
+      <p>Replaying two months of history through the new rules: <span class="big">57</span> agent jobs instead of 180, and not one merged fix lost.</p>
+    </article>
+  </div>
+</div>
+
+<section class="end">
+  <h2>A third of the work.<br>All of the fixes.</h2>
+  <ul>
+    <li><b>Noise is the real cost.</b> An agent nobody reads fixes nothing.</li>
+    <li><b>Filter by exact fingerprint, never by vibe.</b> "Looks like infra" is how real bugs hide.</li>
+    <li><b>Prove it on history.</b> We replayed every past failure before shipping the filter.</li>
+    <li><b>Next:</b> tag every agent PR at creation so this scoreboard runs itself.</li>
+  </ul>
+  <p class="note">Figures are illustrative round counts from about two months of operation. Edit the <code>DATA</code> block to use your own.</p>
+</section>
+
+<script>
+// DATA
+const ROWS = [
+  { key:"partial", label:"Partial successes", n:60, color:"#5c5547" },
+  { key:"infra",   label:"Known infra",       n:63, color:"#7a6d55" },
+  { key:"judged",  label:"Agent judged infra",n:47, color:"#f0883e" },
+  { key:"fix",     label:"Merged fixes",      n:10, color:"#3fb950" },
+];
+const TOTAL = ROWS.reduce((a, r) => a + r.n, 0);
+// For each step: rows visible, rows cut, counter value and label.
+const STATES = [
+  { show:[], cut:[], counter:TOTAL, label:"agent jobs, all red runs" },
+  { show:["fix"], cut:[], counter:10, label:"merged fixes" },
+  { show:["partial","fix"], cut:[], counter:60, label:"weren't really failures" },
+  { show:["partial","infra","fix"], cut:[], counter:63, label:"known infrastructure fingerprints" },
+  { show:["partial","infra","judged","fix"], cut:[], counter:47, label:"needed an agent to tell" },
+  { show:["partial","infra","judged","fix"], cut:["partial","infra"], counter:57, label:"agent jobs with the new rules" },
+];
+const bars = document.getElementById("bars");
+ROWS.forEach(r => bars.insertAdjacentHTML("beforeend",
+  `<div class="bar dim" id="r-${r.key}"><span>${r.label}</span><div class="track"><div class="fill" style="background:${r.color}"></div></div><b>${r.n}</b></div>`));
+const counter = document.getElementById("counter"), clabel = document.getElementById("clabel"), stamp = document.getElementById("stamp");
+let shown = TOTAL, anim = null;
+function countTo(v) {
+  cancelAnimationFrame(anim); const from = shown, t0 = performance.now();
+  const go = t => { const p = Math.min(1, (t - t0) / 700); shown = Math.round(from + (v - from) * (1 - Math.pow(1 - p, 3))); counter.textContent = shown; if (p < 1) anim = requestAnimationFrame(go); };
+  anim = requestAnimationFrame(go);
+}
+function apply(s) {
+  const st = STATES[s];
+  ROWS.forEach(r => {
+    const el = document.getElementById("r-" + r.key), vis = s === 0 || st.show.includes(r.key);
+    el.classList.toggle("dim", !vis); el.classList.toggle("cut", st.cut.includes(r.key));
+    el.querySelector(".fill").style.width = vis ? (r.n / 63 * 100) + "%" : "0%";
+  });
+  countTo(st.counter); clabel.textContent = st.label;
+  counter.style.color = s === 1 ? "var(--ok)" : s === 5 ? "var(--blue)" : "var(--gold)";
+  stamp.classList.toggle("show", s === 5);
+}
+const steps = [...document.querySelectorAll(".step")];
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { steps.forEach(x => x.classList.remove("active")); e.target.classList.add("active"); apply(+e.target.dataset.s); } });
+}, { rootMargin:"-45% 0px -45% 0px" });
+steps.forEach(s => io.observe(s));
+apply(0);
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "PageDown") { const a = steps.findIndex(s => s.classList.contains("active")); const n = steps[Math.min(steps.length - 1, a + 1)]; if (n && a < steps.length - 1) { e.preventDefault(); n.scrollIntoView({ block:"center" }); } }
+});
+</script>
+</body>
+</html>

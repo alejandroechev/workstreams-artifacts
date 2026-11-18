@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Healing CI — Five Ways to Present It</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --soft:#1f2630; --line:#2c3440; --text:#e6edf3; --muted:#8b98a8; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --pink:#db61a2; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:radial-gradient(1200px 600px at 80% -10%, #1b2a44 0%, var(--bg) 55%); color:var(--text);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; min-height:100vh; }
+  main { max-width:1100px; margin:0 auto; padding:48px 22px 64px; }
+  .kicker { color:var(--accent); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:12px; }
+  h1 { font-size:clamp(30px,5vw,48px); line-height:1.1; margin:8px 0 12px; }
+  .lede { color:var(--muted); font-size:18px; max-width:760px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; margin-top:32px; }
+  a.card { display:flex; flex-direction:column; gap:8px; background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:20px 20px 18px; color:inherit; text-decoration:none; transition:transform .15s, border-color .15s; position:relative; overflow:hidden; }
+  a.card:hover, a.card:focus-visible { transform:translateY(-3px); border-color:var(--accent); outline:none; }
+  a.card::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--c); }
+  .num { font:800 13px/1 ui-monospace,Menlo,Consolas,monospace; color:var(--c); }
+  .card h2 { margin:0; font-size:21px; }
+  .card p { margin:0; color:var(--muted); font-size:15px; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:8px; }
+  .tag { font-size:12px; padding:2px 9px; border-radius:999px; background:var(--soft); color:var(--muted); }
+  .note { margin-top:36px; padding:14px 18px; border-left:3px solid var(--warn); background:rgba(210,153,34,.08); border-radius:0 10px 10px 0; color:var(--muted); font-size:14px; }
+  table { width:100%; border-collapse:collapse; margin-top:16px; font-size:14px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; }
+  h3 { margin:40px 0 4px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Demo day · prototypes</div>
+  <h1>Five ways to present a CI that fixes itself</h1>
+  <p class="lede">The same story, five presentation strategies: a pipeline watchdog notices red builds, hands the evidence to a coding agent, and the agent either ships a fix or explains why it's not our bug. Pick the one that fits the room.</p>
+
+  <div class="grid">
+    <a class="card" href="1-night-shift.html" style="--c:var(--accent)">
+      <span class="num">01 · STORY</span>
+      <h2>The Night Shift</h2>
+      <p>A live replay of one real overnight incident, minute by minute: red phone tests at 4 a.m., a misleading error, and a merged fix by lunch.</p>
+      <div class="tags"><span class="tag">narrative</span><span class="tag">auto-play</span><span class="tag">~4 min</span></div>
+    </a>
+    <a class="card" href="2-you-are-the-watchdog.html" style="--c:var(--ok)">
+      <span class="num">02 · GAME</span>
+      <h2>You Are the Watchdog</h2>
+      <p>The audience triages real failure logs: send to the agent, or skip as infrastructure? Two cards are traps that fooled humans too.</p>
+      <div class="tags"><span class="tag">interactive</span><span class="tag">audience vote</span><span class="tag">~5 min</span></div>
+    </a>
+    <a class="card" href="3-mission-control.html" style="--c:var(--pink)">
+      <span class="num">03 · SIMULATION</span>
+      <h2>Mission Control</h2>
+      <p>Watch a simulated month of pipelines turn red and green, with the watchdog routing each failure. Flip the filters on and see the noise vanish.</p>
+      <div class="tags"><span class="tag">live dashboard</span><span class="tag">before / after</span><span class="tag">~3 min</span></div>
+    </a>
+    <a class="card" href="4-noise-funnel.html" style="--c:var(--warn)">
+      <span class="num">04 · DATA STORY</span>
+      <h2>Signal From Noise</h2>
+      <p>A scroll-driven funnel: from every job the agent was handed down to the fixes that shipped, and how we cut the agent's workload by two thirds without losing one fix.</p>
+      <div class="tags"><span class="tag">scrollytelling</span><span class="tag">numbers</span><span class="tag">~4 min</span></div>
+    </a>
+    <a class="card" href="5-case-file.html" style="--c:var(--bad)">
+      <span class="num">05 · MYSTERY</span>
+      <h2>The Case of the Forbidden Process</h2>
+      <p>A detective case file. The room interrogates witnesses, weighs evidence and accuses a suspect before the agent's verdict is revealed.</p>
+      <div class="tags"><span class="tag">whodunit</span><span class="tag">audience accuses</span><span class="tag">~5 min</span></div>
+    </a>
+  </div>
+
+  <h3>Which one?</h3>
+  <table>
+    <tr><th>If the room…</th><th>Use</th><th>Memorable because</th></tr>
+    <tr><td>loves a good war story</td><td>01 The Night Shift</td><td>Timestamps make it real: "by breakfast it was fixed".</td></tr>
+    <tr><td>is engineers who think they'd do better</td><td>02 You Are the Watchdog</td><td>They lose to the trap cards, then see the agent didn't.</td></tr>
+    <tr><td>wants to see scale</td><td>03 Mission Control</td><td>The before/after toggle is a single, visible "aha".</td></tr>
+    <tr><td>is leadership or wants numbers</td><td>04 Signal From Noise</td><td>One funnel, one punchline: ⅓ of the work, 100% of the fixes.</td></tr>
+    <tr><td>is a big, playful crowd</td><td>05 Case of the Forbidden Process</td><td>Everyone votes, everyone remembers who "did it".</td></tr>
+  </table>
+
+  <p class="note">Public-safe version: project, tool and team names are generic, and figures are illustrative round counts from roughly two months of operation. Swap in your own numbers in the <code>DATA</code> block at the top of each prototype's script.</p>
+</main>
+</body>
+</html>

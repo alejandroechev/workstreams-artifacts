@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Control — self-healing CI simulation</title>
+<style>
+  :root { --bg:#090c10; --panel:#11161d; --soft:#1a212b; --line:#252e3a; --text:#e6edf3; --muted:#8b98a8; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --pink:#db61a2; --grey:#4b5563; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header { display:flex; align-items:center; gap:14px; padding:12px 20px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header a { color:var(--muted); text-decoration:none; font-size:14px; }
+  header h1 { font-size:18px; margin:0; flex:1; }
+  .wrap { padding:16px 20px 40px; max-width:1300px; margin:0 auto; }
+  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+  button { background:var(--soft); color:var(--text); border:1px solid var(--line); border-radius:8px; padding:9px 14px; font:600 14px/1 -apple-system,sans-serif; cursor:pointer; }
+  button:hover, button:focus-visible { border-color:var(--accent); outline:none; }
+  button.primary { background:var(--accent); color:#04121f; border-color:var(--accent); }
+  .toggle { display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+  .toggle button { border:0; border-radius:0; background:transparent; color:var(--muted); }
+  .toggle button[aria-pressed="true"] { background:var(--pink); color:#1a0612; }
+  label.speed { color:var(--muted); font-size:13px; display:flex; align-items:center; gap:6px; }
+  .day { margin-left:auto; font:700 14px ui-monospace,Menlo,monospace; color:var(--muted); }
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:14px; }
+  .kpi { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .kpi b { display:block; font:800 32px/1.05 ui-monospace,Menlo,monospace; transition:color .3s; }
+  .kpi span { color:var(--muted); font-size:12.5px; }
+  .kpi.red b { color:var(--bad); } .kpi.blue b { color:var(--accent); } .kpi.grey b { color:var(--muted); } .kpi.green b { color:var(--ok); } .kpi.amber b { color:var(--warn); }
+  .grid { display:grid; grid-template-columns:1.6fr 1fr; gap:14px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .panel h2 { font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin:0 0 10px; }
+  .lane { display:grid; grid-template-columns:110px 1fr; align-items:center; gap:8px; margin:6px 0; }
+  .lane .name { font-size:13px; color:var(--muted); }
+  .cells { display:grid; grid-template-columns:repeat(60,1fr); gap:2px; }
+  .cell { aspect-ratio:1; border-radius:2px; background:#161d26; transition:background .2s; }
+  .cell.g { background:#1f4d2b; } .cell.r { background:var(--bad); } .cell.p { background:var(--warn); }
+  .flow { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; margin-top:16px; }
+  .bin { border:1px dashed var(--line); border-radius:12px; padding:10px; min-height:86px; text-align:center; }
+  .bin h3 { margin:0 0 6px; font-size:13px; color:var(--muted); font-weight:600; }
+  .chips { display:flex; flex-wrap:wrap; gap:3px; justify-content:center; }
+  .chip { width:10px; height:10px; border-radius:2px; animation:drop .4s ease; }
+  @keyframes drop { from { transform:translateY(-8px) scale(.6); opacity:0; } to { transform:none; opacity:1; } }
+  .chip.merged { background:var(--ok); } .chip.aband { background:var(--grey); } .chip.skip { background:#2f3b4b; }
+  .dog { width:92px; height:92px; border-radius:50%; display:grid; place-items:center; font-size:40px; background:radial-gradient(circle,#2a1f05,#11161d); border:2px solid var(--warn); }
+  .dog.pulse { animation:pulse .4s ease; }
+  @keyframes pulse { 50% { transform:scale(1.12); box-shadow:0 0 24px var(--warn); } }
+  .feed { list-style:none; margin:0; padding:0; max-height:400px; overflow:hidden; font:12.5px/1.45 ui-monospace,Menlo,monospace; }
+  .feed li { padding:5px 0; border-bottom:1px solid #1a2230; animation:drop .3s ease; display:grid; grid-template-columns:48px 1fr; gap:6px; }
+  .feed .d { color:var(--muted); }
+  .tag { padding:0 5px; border-radius:3px; font-weight:700; }
+  .t-skip { background:#2f3b4b; color:#b6c2d1; } .t-agent { background:rgba(88,166,255,.2); color:var(--accent); } .t-merged { background:rgba(63,185,80,.2); color:var(--ok); } .t-aband { background:rgba(139,152,168,.2); color:var(--muted); }
+  .verdict { margin-top:14px; padding:14px 18px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(90deg,rgba(219,97,162,.12),transparent); display:none; }
+  .verdict.show { display:block; animation:drop .4s ease; }
+  .verdict b { color:var(--pink); }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:12.5px; margin-top:8px; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  @media (max-width:900px) { .grid { grid-template-columns:1fr; } .kpis { grid-template-columns:repeat(2,1fr); } .lane { grid-template-columns:76px 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <a href="./">← All prototypes</a>
+  <h1>Mission Control</h1>
+</header>
+<div class="wrap">
+  <div class="controls">
+    <button class="primary" id="run">▶ Run two months</button>
+    <div class="toggle" role="group" aria-label="Watchdog filters">
+      <button id="off" aria-pressed="true">Filters OFF (launch)</button>
+      <button id="on" aria-pressed="false">Filters ON (today)</button>
+    </div>
+    <label class="speed">Speed <input type="range" id="speed" min="1" max="10" value="6" aria-label="Simulation speed"></label>
+    <span class="day" id="day">Day 0 / 60</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi red"><b id="k-red">0</b><span>red runs seen</span></div>
+    <div class="kpi grey"><b id="k-skip">0</b><span>skipped as known infra</span></div>
+    <div class="kpi blue"><b id="k-agent">0</b><span>agent jobs started</span></div>
+    <div class="kpi amber"><b id="k-aband">0</b><span>PRs abandoned (noise)</span></div>
+    <div class="kpi green"><b id="k-merged">0</b><span>fixes merged</span></div>
+  </div>
+
+  <div class="grid">
+    <section class="panel" aria-label="Pipelines">
+      <h2>Pipelines on main, one cell per day</h2>
+      <div id="lanes"></div>
+      <div class="legend"><span><i style="background:#1f4d2b"></i>green</span><span><i style="background:var(--bad)"></i>failed</span><span><i style="background:var(--warn)"></i>partially succeeded</span></div>
+      <div class="flow">
+        <div class="bin"><h3>⏭ Skipped before dispatch</h3><div class="chips" id="b-skip"></div></div>
+        <div class="dog" id="dog" title="Watchdog" aria-hidden="true">🐕</div>
+        <div class="bin"><h3>🤖 Agent → pull request</h3><div class="chips" id="b-agent"></div></div>
+      </div>
+    </section>
+    <section class="panel" aria-label="Event feed">
+      <h2>Watchdog log</h2>
+      <ul class="feed" id="feed" aria-live="off"></ul>
+    </section>
+  </div>
+  <div class="verdict" id="verdict"></div>
+</div>
+<script>
+// DATA: illustrative mix over ~60 days. kind: partial | infra | judged | fix.
+// partial = run "partially succeeded" (shared compliance step hung)
+// infra   = matches a known infrastructure signature (lab blocked, linker crash, no agents...)
+// judged  = infra the agent had to read to recognize (timeouts, flaky lab, outages)
+// fix     = a real defect; a PR was merged
+const MIX = { partial:60, infra:63, judged:47, fix:10 };
+const PIPES = ["Build & Test", "Nightly", "Release", "Device lab"];
+const LABELS = {
+  partial: ["Build & Test", "shared SBOM step hung (partial success)"],
+  infra: [null, "known infra signature"],
+  judged: [null, "agent: infrastructure, no change"],
+  fix: [null, "agent: fix merged"],
+};
+const INFRA_TEXT = ["device lab blocked the tests", "device lab framework error", "SBOM step hung, worker timeout", "linker segfault", "no agents in pool"];
+const JUDGED_TEXT = ["job hit 60-minute limit", "flaky device test", "service outage", "feed network reset", "lab status timeout"];
+const FIX_TEXT = ["phone tests can't spawn processes", "missing Python dependency", "pipeline template not approved", "vector division precision", "lint rule broke nightly", "release agent missing python"];
+// Deterministic shuffle so both modes replay the same month.
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const events = [];
+for (const [kind, n] of Object.entries(MIX)) for (let k = 0; k < n; k++) {
+  const pipe = kind === "partial" ? 0 : kind === "infra" ? (k % 3 === 0 ? 0 : 3) : Math.floor(rnd() * 4);
+  const text = kind === "infra" ? INFRA_TEXT[k % 5] : kind === "judged" ? JUDGED_TEXT[k % 5] : kind === "fix" ? FIX_TEXT[k % 6] : LABELS.partial[1];
+  events.push({ kind, pipe, text, day: 0 });
+}
+events.sort(() => rnd() - .5);
+events.forEach((e, k) => e.day = Math.floor(k / events.length * 60));
+
+const lanes = document.getElementById("lanes");
+PIPES.forEach((p, k) => {
+  lanes.insertAdjacentHTML("beforeend", `<div class="lane"><span class="name">${p}</span><div class="cells" id="lane${k}">${'<i class="cell"></i>'.repeat(60)}</div></div>`);
+});
+let filters = false, running = null, pos = 0, day = 0, K = {};
+const $ = id => document.getElementById(id);
+function reset() {
+  clearInterval(running); running = null; pos = 0; day = 0; K = { red:0, skip:0, agent:0, aband:0, merged:0 };
+  document.querySelectorAll(".cell").forEach(c => c.className = "cell");
+  $("b-skip").innerHTML = ""; $("b-agent").innerHTML = ""; $("feed").innerHTML = ""; $("verdict").className = "verdict";
+  $("run").textContent = "▶ Run two months"; paint();
+}
+function paint() { for (const k in K) $("k-" + k).textContent = K[k]; $("day").textContent = `Day ${day} / 60`; }
+function log(e, tag, cls) {
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="d">d${String(e.day + 1).padStart(2, "0")}</span><span><span class="tag ${cls}">${tag}</span> ${PIPES[e.pipe]}: ${e.text}</span>`;
+  $("feed").prepend(li); while ($("feed").children.length > 40) $("feed").lastChild.remove();
+}
+function chip(bin, cls) { $(bin).insertAdjacentHTML("beforeend", `<i class="chip ${cls}"></i>`); }
+function tick() {
+  if (pos >= events.length) { finish(); return; }
+  const e = events[pos++]; day = e.day + 1;
+  for (let p = 0; p < 4; p++) { const c = $("lane" + p).children[e.day]; if (c.className === "cell") c.className = "cell g"; }
+  $("lane" + e.pipe).children[e.day].className = "cell " + (e.kind === "partial" ? "p" : "r");
+  K.red++;
+  const dog = $("dog"); dog.classList.remove("pulse"); void dog.offsetWidth; dog.classList.add("pulse");
+  const skipped = filters && (e.kind === "partial" || e.kind === "infra");
+  if (skipped) { K.skip++; chip("b-skip", "skip"); log(e, "SKIP", "t-skip"); }
+  else {
+    K.agent++;
+    if (e.kind === "fix") { K.merged++; chip("b-agent", "merged"); log(e, "MERGED", "t-merged"); }
+    else { K.aband++; chip("b-agent", "aband"); log(e, "ABANDONED", "t-aband"); }
+  }
+  paint();
+}
+function finish() {
+  clearInterval(running); running = null; day = 60; paint();
+  $("run").textContent = "↺ Run again";
+  const v = $("verdict"); v.className = "verdict show";
+  v.innerHTML = filters
+    ? `<b>Filters ON:</b> ${K.agent} agent jobs instead of ${events.length}. Same <b>${K.merged} merged fixes</b>. ${K.skip} red runs never cost an agent job or a pull request. Reviewers now see ${Math.round(K.merged / K.agent * 100)}% signal instead of ${Math.round(K.merged / events.length * 100)}%.`
+    : `<b>Filters OFF:</b> every red run became an agent job. ${K.merged} fixes merged, but ${K.aband} pull requests were opened only to be abandoned. That's ${Math.round(K.aband / K.agent * 100)}% noise. Now flip <b>Filters ON</b> and run it again.`;
+}
+function speed() { return 520 - $("speed").value * 50; }
+$("run").onclick = () => {
+  if (running) { clearInterval(running); running = null; $("run").textContent = "▶ Resume"; return; }
+  if (pos >= events.length) reset();
+  running = setInterval(tick, speed()); $("run").textContent = "❚❚ Pause";
+};
+$("speed").oninput = () => { if (running) { clearInterval(running); running = setInterval(tick, speed()); } };
+function setMode(on) { filters = on; $("on").setAttribute("aria-pressed", on); $("off").setAttribute("aria-pressed", !on); reset(); }
+$("on").onclick = () => setMode(true); $("off").onclick = () => setMode(false);
+reset();
+</script>
+</body>
+</html>

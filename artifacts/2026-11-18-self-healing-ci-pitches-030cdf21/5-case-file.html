@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Case of the Forbidden Process — a CI mystery</title>
+<style>
+  :root { --paper:#efe6d2; --paper2:#e6dbc2; --ink:#2b2418; --muted:#6f6350; --red:#a3261c; --pin:#c0392b; --board:#3b2d22; --green:#2f6b35; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--board) radial-gradient(circle at 20% 10%, #4a3a2c 0, transparent 50%); color:var(--ink);
+    font:17px/1.55 "Courier New",Courier,ui-monospace,monospace; min-height:100vh; }
+  header { display:flex; align-items:center; gap:14px; padding:12px 22px; color:#e8dcc4; flex-wrap:wrap; font-family:-apple-system,sans-serif; }
+  header a { color:#cbb995; text-decoration:none; font-size:14px; }
+  header h1 { font-size:18px; margin:0; flex:1; letter-spacing:.06em; }
+  nav { display:flex; gap:6px; padding:0 22px; flex-wrap:wrap; }
+  nav button { font:700 14px/1 "Courier New",monospace; padding:10px 14px; border:0; border-radius:8px 8px 0 0; background:#d8c9a8; color:var(--ink); cursor:pointer; letter-spacing:.06em; }
+  nav button[aria-selected="true"] { background:var(--paper); }
+  nav button:focus-visible { outline:2px solid #fff; }
+  .folder { background:var(--paper); margin:0 22px 40px; border-radius:0 12px 12px 12px; padding:28px clamp(18px,4vw,44px); box-shadow:0 18px 40px rgba(0,0,0,.4); min-height:70vh; position:relative; }
+  .folder::after { content:"CASE FILE #0418"; position:absolute; top:18px; right:24px; color:var(--red); font-weight:700; border:2px solid var(--red); padding:2px 8px; transform:rotate(4deg); font-size:13px; opacity:.75; }
+  section[hidden] { display:none; }
+  h2 { font-size:clamp(24px,3.4vw,34px); margin:0 0 6px; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:18px 0; }
+  .fact { background:var(--paper2); border:1px dashed #b9a97f; padding:12px 14px; border-radius:6px; }
+  .fact b { display:block; font-size:28px; color:var(--red); }
+  .polaroids { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; margin-top:16px; }
+  .pol { background:#fffdf7; padding:14px 14px 18px; box-shadow:0 6px 14px rgba(0,0,0,.25); transform:rotate(var(--r,0deg)); position:relative; cursor:pointer; border:0; text-align:left; font:inherit; color:inherit; transition:transform .2s; }
+  .pol:hover, .pol:focus-visible { transform:rotate(0) scale(1.03); outline:none; }
+  .pol::before { content:""; position:absolute; top:-8px; left:50%; width:16px; height:16px; border-radius:50%; background:var(--pin); box-shadow:0 2px 3px rgba(0,0,0,.4); }
+  .pol h3 { margin:4px 0 6px; font-size:18px; }
+  .pol .face { font-size:46px; text-align:center; background:#e9e2d0; padding:10px 0; margin-bottom:8px; }
+  .pol .said { display:none; font-size:14.5px; background:#f6efdc; padding:10px; border-left:3px solid var(--red); margin-top:8px; white-space:pre-wrap; }
+  .pol.open .said { display:block; }
+  .pol .hint { font:12px -apple-system,sans-serif; color:var(--muted); }
+  .clue { display:inline-block; background:#ffe58a; padding:0 4px; }
+  .suspects { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:16px; }
+  .sus { background:#fffdf7; border:2px solid transparent; padding:14px; border-radius:6px; box-shadow:0 6px 14px rgba(0,0,0,.2); }
+  .sus.accused { border-color:var(--red); }
+  .sus.guilty { border-color:var(--green); background:#eef7e8; }
+  .sus.cleared { opacity:.45; }
+  .sus .face { font-size:42px; }
+  .sus h3 { margin:6px 0; }
+  .sus p { font-size:14.5px; margin:4px 0 10px; }
+  .vote { display:flex; align-items:center; gap:8px; font-family:-apple-system,sans-serif; }
+  .vote button, .btn { font:700 14px -apple-system,sans-serif; padding:8px 12px; border-radius:6px; border:2px solid var(--ink); background:transparent; cursor:pointer; color:var(--ink); }
+  .vote button:hover, .btn:hover, .vote button:focus-visible, .btn:focus-visible { background:var(--ink); color:var(--paper); outline:none; }
+  .vote b { font-size:22px; min-width:28px; text-align:center; }
+  .btn.red { border-color:var(--red); color:var(--red); }
+  .btn.red:hover { background:var(--red); color:#fff; }
+  .verdict { display:none; margin-top:24px; background:#fffdf7; padding:20px 24px; box-shadow:0 6px 14px rgba(0,0,0,.25); border-top:6px solid var(--green); }
+  .verdict.show { display:block; animation:in .5s ease; }
+  @keyframes in { from { transform:translateY(10px); opacity:0; } to { transform:none; opacity:1; } }
+  .chain { counter-reset:c; list-style:none; padding:0; }
+  .chain li { counter-increment:c; margin:10px 0; padding-left:40px; position:relative; }
+  .chain li::before { content:counter(c); position:absolute; left:0; top:0; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); display:grid; place-items:center; font-weight:700; }
+  pre { background:#211b12; color:#efe6d2; padding:14px; border-radius:6px; font-size:13.5px; overflow-x:auto; white-space:pre-wrap; }
+  .add { color:#8fd18a; } .del { color:#f19a90; }
+  .lessons { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:18px; }
+  .lesson { background:var(--paper2); padding:14px 16px; border-radius:6px; border-left:4px solid var(--red); }
+  .lesson b { display:block; margin-bottom:4px; }
+  .nextnav { margin-top:26px; display:flex; justify-content:flex-end; }
+  @media (max-width:600px) { .folder { margin:0 8px 30px; } .folder::after { display:none; } nav { padding:0 8px; } nav button { font-size:12px; padding:9px 10px; } }
+</style>
+</head>
+<body>
+<header><a href="./">← All prototypes</a><h1>THE CASE OF THE FORBIDDEN PROCESS</h1></header>
+<nav role="tablist" aria-label="Case file">
+  <button role="tab" aria-selected="true" data-tab="crime">1 · THE CRIME</button>
+  <button role="tab" aria-selected="false" data-tab="witness">2 · WITNESSES</button>
+  <button role="tab" aria-selected="false" data-tab="suspects">3 · SUSPECTS</button>
+  <button role="tab" aria-selected="false" data-tab="sentence">4 · THE SENTENCE</button>
+</nav>
+<main class="folder">
+  <section id="crime" role="tabpanel">
+    <h2>05:10. The phone tests are dead.</h2>
+    <p class="sub">The first night a brand-new test suite runs on real phones, it comes back red. Both phones. Debug and release.</p>
+    <div class="facts">
+      <div class="fact"><b>5,422</b>tests ran on each phone</div>
+      <div class="fact"><b>3</b>failed, the same 3 on both</div>
+      <div class="fact"><b>0</b>humans awake</div>
+      <div class="fact"><b>1</b>coding agent assigned the case at 07:02</div>
+    </div>
+    <p>The agent has one rule from its captain: <em>"Collect the evidence before you name a suspect."</em> Your job tonight: beat the agent to the answer.</p>
+    <div class="nextnav"><button class="btn" data-go="witness">Interview the witnesses →</button></div>
+  </section>
+
+  <section id="witness" role="tabpanel" hidden>
+    <h2>Witness statements</h2>
+    <p class="sub">Tap each witness to hear what they saw. Highlighted words are clues.</p>
+    <div class="polaroids">
+      <button class="pol" style="--r:-2deg"><div class="face">📟</div><h3>The CI log</h3><span class="hint">first on the scene · tap to read</span>
+        <div class="said">"The test server crashed. <span class="clue">Address already in use.</span> Port collision on the lab machine, plain as day. Re-run it and go back to bed."</div></button>
+      <button class="pol" style="--r:1.5deg"><div class="face">🗄️</div><h3>The lab archive</h3><span class="hint">kept the full records · tap to read</span>
+        <div class="said">"5,406 passed, 13 skipped, 3 failed. All three: <span class="clue">PermissionDenied: Operation not permitted</span>, on the exact line where each test <span class="clue">starts a command-line tool</span>. Same three, same line, both phones."</div></button>
+      <button class="pol" style="--r:-1deg"><div class="face">🖥️</div><h3>The desktop</h3><span class="hint">ran the same test · tap to read</span>
+        <div class="said">"I ran one of those three tests this morning. <span class="clue">It passed.</span> The code it checks works fine on my machine."</div></button>
+      <button class="pol" style="--r:2deg"><div class="face">📅</div><h3>The calendar</h3><span class="hint">remembers everything · tap to read</span>
+        <div class="said">"The phone suite was green three days ago, before it merged. The three tests arrived <span class="clue">the day before</span>, through a different change. Each was green alone. <span class="clue">Nobody ran them together on a phone.</span>"</div></button>
+    </div>
+    <div class="nextnav"><button class="btn" data-go="suspects">Line up the suspects →</button></div>
+  </section>
+
+  <section id="suspects" role="tabpanel" hidden>
+    <h2>The line-up</h2>
+    <p class="sub">Room vote: tap + for each hand raised. Then reveal what the agent concluded.</p>
+    <div class="suspects" id="sus"></div>
+    <div class="nextnav"><button class="btn red" id="reveal">Reveal the agent's verdict</button></div>
+    <div class="verdict" id="verdict">
+      <h2>Verdict: the Sandbox Rule, with a test as accomplice.</h2>
+      <ol class="chain">
+        <li><b>Not the Lab.</b> The port error is real, but every one of 5,422 tests still ran and uploaded. A crime scene that keeps working isn't the crime.</li>
+        <li><b>Not the Flake.</b> Same 3 tests, same line, two devices, two builds. Flakes don't repeat that precisely.</li>
+        <li><b>Not the Code.</b> The desktop ran the same test and it passed. The product works.</li>
+        <li><b>The Sandbox Rule.</b> Phone apps may not start other processes. "Operation not permitted" at the exact line that spawns one. The calendar explains why nobody caught it: two green changes, merged hours apart.</li>
+      </ol>
+      <p><b>Time to verdict:</b> 7 minutes after the agent opened the case.</p>
+      <div class="nextnav"><button class="btn" data-go="sentence">Read the sentence →</button></div>
+    </div>
+  </section>
+
+  <section id="sentence" role="tabpanel" hidden>
+    <h2>The sentence</h2>
+    <p class="sub">The easy sentence was "ignore those 3 tests on phones". The agent refused it.</p>
+<pre><span class="del">- let result = Command::new(tool).args(args).output()?;   // spawn a process</span>
+<span class="add">+ for mode in EXECUTIONS {                                // in-process everywhere,</span>
+<span class="add">+     mode.run(Command::new(tool).args(args), tool::run_from)?; // + real process where allowed</span>
+<span class="add">+ }</span>
+  assert_eq!(output, expected);                          // every assertion kept</pre>
+    <div class="facts">
+      <div class="fact"><b>0</b>tests disabled</div>
+      <div class="fact"><b>14 min</b>from case opened to fix pushed</div>
+      <div class="fact"><b>✓</b>proven on the real phones, by the agent</div>
+      <div class="fact"><b>0</b>lines changed by humans before merge</div>
+    </div>
+    <h2 style="margin-top:28px">Lessons for the force</h2>
+    <div class="lessons">
+      <div class="lesson"><b>The loudest witness lies.</b>The CI log pointed at infrastructure. The truth was one system deeper.</div>
+      <div class="lesson"><b>Give detectives a warrant.</b>Before the agent could read the lab's archive, every case like this was closed as "infra".</div>
+      <div class="lesson"><b>Demand a confession.</b>The agent re-ran the failing pipeline on its fix. Local tests aren't proof.</div>
+      <div class="lesson"><b>Write the law down.</b>"Phones can't spawn processes" now lives in the guidance every test author and agent reads.</div>
+    </div>
+  </section>
+</main>
+<script>
+// DATA: suspects. guilty: true marks the agent's verdict.
+const SUSPECTS = [
+  { face:"🏭", name:"The Lab", alibi:"Machines collide on ports all the time. The CI log names it directly.", guilty:false },
+  { face:"🎲", name:"The Flake", alibi:"New suites are always flaky. Re-run and it'll pass.", guilty:false },
+  { face:"🐛", name:"The Code", alibi:"Three tests failed; surely the code they test is broken.", guilty:false },
+  { face:"🔒", name:"The Sandbox Rule", alibi:"A quiet platform rule nobody had written down.", guilty:true },
+];
+const sus = document.getElementById("sus");
+SUSPECTS.forEach((s, k) => sus.insertAdjacentHTML("beforeend", `<article class="sus" id="s${k}"><div class="face">${s.face}</div><h3>${s.name}</h3><p>${s.alibi}</p>
+  <div class="vote"><button aria-label="Remove a vote for ${s.name}" data-k="${k}" data-d="-1">−</button><b id="v${k}">0</b><button aria-label="Add a vote for ${s.name}" data-k="${k}" data-d="1">+</button></div></article>`));
+const votes = SUSPECTS.map(() => 0);
+sus.addEventListener("click", e => {
+  const b = e.target.closest("button[data-k]"); if (!b) return;
+  const k = +b.dataset.k; votes[k] = Math.max(0, votes[k] + +b.dataset.d);
+  document.getElementById("v" + k).textContent = votes[k];
+  const max = Math.max(...votes);
+  SUSPECTS.forEach((_, j) => document.getElementById("s" + j).classList.toggle("accused", max > 0 && votes[j] === max));
+});
+document.getElementById("reveal").onclick = () => {
+  SUSPECTS.forEach((s, j) => { const el = document.getElementById("s" + j); el.classList.toggle("guilty", s.guilty); el.classList.toggle("cleared", !s.guilty); });
+  const v = document.getElementById("verdict"); v.classList.add("show"); v.scrollIntoView({ behavior:"smooth", block:"start" });
+};
+document.querySelectorAll(".pol").forEach(p => p.onclick = () => p.classList.toggle("open"));
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function show(id) {
+  tabs.forEach(t => t.setAttribute("aria-selected", t.dataset.tab === id));
+  document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== id);
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+tabs.forEach(t => t.onclick = () => show(t.dataset.tab));
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go));
+</script>
+</body>
+</html>

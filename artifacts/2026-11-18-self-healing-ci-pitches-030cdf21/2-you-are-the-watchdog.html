@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You Are the Watchdog — triage game</title>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --soft:#1f2630; --line:#2c3440; --text:#e6edf3; --muted:#8b98a8; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922; --bad:#f85149; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header { display:flex; align-items:center; gap:14px; padding:14px 22px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header a { color:var(--muted); text-decoration:none; font-size:14px; }
+  header h1 { font-size:18px; margin:0; flex:1; }
+  .score { font:700 15px/1 ui-monospace,Menlo,monospace; display:flex; gap:14px; }
+  .score span b { color:var(--ok); } .score span.bad b { color:var(--bad); }
+  main { max-width:900px; margin:0 auto; padding:26px 20px 60px; }
+  .intro h2 { font-size:clamp(26px,4vw,38px); margin:0 0 8px; }
+  .intro p { color:var(--muted); font-size:17px; }
+  .rules { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:18px 0; }
+  .rule { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .rule h3 { margin:0 0 4px; font-size:16px; }
+  .rule p { margin:0; color:var(--muted); font-size:14.5px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; animation:slide .35s ease; }
+  @keyframes slide { from { transform:translateX(20px); opacity:0; } to { transform:none; opacity:1; } }
+  .meta { display:flex; justify-content:space-between; color:var(--muted); font-size:13px; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
+  .pipe { font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.08em; }
+  pre { background:#0a0e13; border:1px solid var(--line); border-radius:10px; padding:14px 16px; font:14px/1.55 ui-monospace,Menlo,Consolas,monospace; white-space:pre-wrap; word-break:break-word; margin:0 0 16px; color:#d1dae4; }
+  .err { color:var(--bad); }
+  .choices { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  button { font:700 16px/1.2 -apple-system,sans-serif; border-radius:12px; padding:16px; cursor:pointer; border:2px solid var(--line); background:var(--soft); color:var(--text); }
+  button:hover, button:focus-visible { outline:none; border-color:var(--accent); }
+  button.agent { border-color:rgba(88,166,255,.5); } button.skip { border-color:rgba(139,152,168,.5); }
+  button .sub { display:block; font-weight:500; font-size:13px; color:var(--muted); margin-top:4px; }
+  button:disabled { opacity:.45; cursor:default; }
+  button.picked { opacity:1; border-color:var(--text); }
+  .reveal { margin-top:16px; border-radius:12px; padding:16px 18px; display:none; }
+  .reveal.show { display:block; animation:slide .35s ease; }
+  .reveal.right { background:rgba(63,185,80,.1); border:1px solid rgba(63,185,80,.4); }
+  .reveal.wrong { background:rgba(248,81,73,.1); border:1px solid rgba(248,81,73,.4); }
+  .reveal h3 { margin:0 0 6px; }
+  .reveal p { margin:6px 0; color:#c9d6e3; }
+  .trap { display:inline-block; font-size:12px; font-weight:800; letter-spacing:.08em; padding:2px 8px; border-radius:4px; background:var(--warn); color:#1a1300; margin-left:8px; vertical-align:2px; }
+  .next { margin-top:14px; width:100%; background:var(--accent); color:#04121f; border-color:var(--accent); }
+  .progress { display:flex; gap:6px; margin:0 0 16px; }
+  .progress i { flex:1; height:6px; border-radius:3px; background:var(--line); }
+  .progress i.r { background:var(--ok); } .progress i.w { background:var(--bad); } .progress i.c { background:var(--accent); }
+  .final { text-align:center; }
+  .final .big { font-size:72px; font-weight:800; line-height:1; margin:10px 0; }
+  .final table { width:100%; border-collapse:collapse; text-align:left; margin:20px 0; font-size:14.5px; }
+  .final td, .final th { padding:8px 10px; border-bottom:1px solid var(--line); }
+  .final th { color:var(--muted); font-weight:600; }
+  .takeaways { text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 20px; }
+  .takeaways li { margin:6px 0; }
+  .start { width:100%; background:var(--ok); color:#04170a; border-color:var(--ok); font-size:18px; }
+  @media (max-width:640px) { .choices, .rules { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <a href="./">← All prototypes</a>
+  <h1>You Are the Watchdog</h1>
+  <div class="score" aria-live="polite"><span>Right <b id="right">0</b></span><span class="bad">Wrong <b id="wrong">0</b></span></div>
+</header>
+<main id="main"></main>
+<script>
+// DATA: each card is a real kind of failure the watchdog saw. answer: "agent" or "skip".
+const CARDS = [
+  { pipe:"Device lab · Android", when:"Tuesday 05:12",
+    log:'Summary [ 1978s] 1 tests run: 0 passed, 1 failed\ncase.testResult: <span class="err">Blocked</span>\ncase.reason: <span class="err">The test was blocked by system.</span>',
+    answer:"skip", title:"Infrastructure: the lab refused to run it.",
+    why:"The device lab's own scheduler blocked the test before any of our code ran. The agent looked at this pattern 25 times and called it infrastructure 25 times. It's now skipped automatically." },
+  { pipe:"Build & Test · macOS", when:"Wednesday 14:40",
+    log:'error: linking with `cc` failed: exit status: 1\nclang: error: unable to execute command: <span class="err">Segmentation fault: 11</span>\nclang: error: linker command failed due to signal\nerror: could not compile `pest_derive` due to 1 previous error',
+    answer:"skip", title:"Infrastructure: the system linker crashed.",
+    why:"The linker itself segfaulted, on a different crate every time, and it passes on retry. No code change can fix a crashing toolchain." },
+  { pipe:"Device lab · Phones", when:"Monday 05:10",
+    log:'Summary [ 602s] 1 tests run: 0 passed, 1 failed\n"errors": "test server raised an unhandled exception\n  OSError: [Errno 48] <span class="err">Address already in use</span>"',
+    answer:"agent", trap:true, title:"It looked like infrastructure, but it was a real bug.",
+    why:"The port error was real but harmless. Inside the lab's archives: 3 of 5,422 tests failed identically on two phones with \"Operation not permitted\". Phone apps can't start child processes. The agent fixed the tests to run in-process and the fix was merged untouched." },
+  { pipe:"Build & Test · macOS", when:"Thursday 03:01",
+    log:'🛡 Generate Software Bill of Materials\n  <span class="err">Step cancelled due to worker timeout</span>\nJob macos_debug: <span class="err">Job cancelled due to worker timeout.</span>',
+    answer:"skip", title:"Infrastructure: a shared compliance step hung.",
+    why:"A step inherited from a shared pipeline template hangs on Mac agents until the machine times out. Other teams are fixing it upstream; we skip it so the agent doesn't." },
+  { pipe:"Release", when:"Tuesday 06:20",
+    log:'Pipeline governance pre-job checks\n<span class="err">⚠ Non-Standard Template Detected (intermittent block — retrigger to unblock)</span>\nTHIS BUILD WAS BLOCKED to bring attention to the above policy violation.',
+    answer:"agent", trap:true, title:"The message says \"retrigger\", but there was a real fix.",
+    why:"Retriggering only postpones it. The agent switched the release pipeline to the approved template, so the block can never come back. That pull request was merged." },
+  { pipe:"Nightly · Linux x86_64", when:"Wednesday 04:44",
+    log:'test rust_and_native_results_match ... FAILED\nthread panicked at tests/parity.rs:\n  repeated division: expected 4, got <span class="err">3.9999979</span>',
+    answer:"agent", title:"Our bug: a numerics difference.",
+    why:"Fast-math turned vector division into an approximate reciprocal. The agent found the root cause; a human finished the compiler flag. Merged, and nightly went green." },
+  { pipe:"Build & Test · all Macs", when:"Friday 09:15",
+    log:'The pool mac-xcode <span class="err">doesn\'t allow agent updates</span>. Agent version 5.281.1 is required\nand <span class="err">no agents with that version are registered</span>.',
+    answer:"skip", title:"Infrastructure: no machines to run on.",
+    why:"No job ever started. An administrator has to update the pool; nothing in the repository can change it." },
+];
+let idx = -1, right = 0, wrong = 0, results = [];
+const main = document.getElementById("main");
+const esc = s => s;
+function scores() { document.getElementById("right").textContent = right; document.getElementById("wrong").textContent = wrong; }
+function progress() { return `<div class="progress" aria-hidden="true">${CARDS.map((_, k) => `<i class="${results[k] === true ? "r" : results[k] === false ? "w" : k === idx ? "c" : ""}"></i>`).join("")}</div>`; }
+function intro() {
+  main.innerHTML = `<div class="intro">
+    <h2>A pipeline just went red. Do you wake the agent?</h2>
+    <p>Every red pipeline costs an agent job and a pull request. Waste them on flaky infrastructure and nobody reads the PRs. Skip a real bug and main stays broken. You'll see ${CARDS.length} real kinds of failure. Decide each in five seconds, like the watchdog has to.</p>
+    <div class="rules">
+      <div class="rule"><h3>🤖 Send to the agent</h3><p>Our code or our pipeline is wrong. A pull request can fix it.</p></div>
+      <div class="rule"><h3>⏭ Skip: infrastructure</h3><p>Machines, labs, shared tooling. Re-running fixes it; code can't.</p></div>
+    </div>
+    <button class="start" id="go">Start triage</button></div>`;
+  document.getElementById("go").onclick = () => { idx = 0; card(); };
+}
+function card() {
+  const c = CARDS[idx];
+  main.innerHTML = `${progress()}<article class="card">
+    <div class="meta"><span class="pipe">${c.pipe}</span><span>Card ${idx + 1} of ${CARDS.length} · ${c.when}</span></div>
+    <pre>${c.log}</pre>
+    <div class="choices">
+      <button class="agent" data-a="agent">🤖 Send to the agent<span class="sub">this is our bug</span></button>
+      <button class="skip" data-a="skip">⏭ Skip: infrastructure<span class="sub">re-run, don't fix</span></button>
+    </div>
+    <div class="reveal" id="rev"></div></article>`;
+  main.querySelectorAll(".choices button").forEach(b => b.onclick = () => answer(b));
+  main.querySelector(".choices button").focus();
+}
+function answer(btn) {
+  const c = CARDS[idx], ok = btn.dataset.a === c.answer;
+  main.querySelectorAll(".choices button").forEach(b => { b.disabled = true; });
+  btn.classList.add("picked");
+  results[idx] = ok; ok ? right++ : wrong++; scores();
+  const rev = document.getElementById("rev");
+  rev.className = "reveal show " + (ok ? "right" : "wrong");
+  rev.innerHTML = `<h3>${ok ? "✅ Correct." : "❌ Not quite."} ${c.title}${c.trap ? '<span class="trap">TRAP CARD</span>' : ""}</h3><p>${c.why}</p>
+    <button class="next" id="nx">${idx + 1 < CARDS.length ? "Next failure →" : "See how the watchdog did →"}</button>`;
+  main.querySelector(".progress").outerHTML = progress();
+  document.getElementById("nx").focus();
+  document.getElementById("nx").onclick = () => { idx++; idx < CARDS.length ? card() : final(); };
+}
+function final() {
+  const traps = CARDS.map((c, k) => c.trap && results[k] === false).filter(Boolean).length;
+  main.innerHTML = `${progress()}<section class="final">
+    <p>You scored</p><div class="big">${right} / ${CARDS.length}</div>
+    <p>${traps ? `The trap cards got you ${traps === 1 ? "once" : "twice"}. They got most humans too.` : "You dodged both traps. Most people don't."}</p>
+    <table>
+      <tr><th>Who</th><th>Strategy</th><th>Result</th></tr>
+      <tr><td>Instinct</td><td>"Looks like infra, re-run it"</td><td>Misses both trap bugs</td></tr>
+      <tr><td>Agent, early days</td><td>Investigated everything</td><td>Right, but drowned in noise: most jobs ended "infra, no change"</td></tr>
+      <tr><td>Watchdog today</td><td>Skips only exact known-infra signatures; everything else goes to the agent, which must read the evidence first</td><td>Catches every trap, ⅓ of the noise</td></tr>
+    </table>
+    <div class="takeaways"><b>Three rules we learned the hard way</b><ul>
+      <li><b>The visible error lies.</b> The real failure is often one system deeper than the CI log.</li>
+      <li><b>Skip by exact signature, never by vibe.</b> "Looks like infra" is how real bugs get ignored.</li>
+      <li><b>Make the agent prove it.</b> Evidence first, then a decision, then a green run on the failing pipeline.</li>
+    </ul></div>
+    <p><button id="again" class="next">Play again</button></p></section>`;
+  document.getElementById("again").onclick = () => { idx = -1; right = wrong = 0; results = []; scores(); intro(); };
+}
+intro();
+</script>
+</body>
+</html>
