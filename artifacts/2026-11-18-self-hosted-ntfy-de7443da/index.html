@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-hosted ntfy for your apps — architecture and flows</title>
+<style>
+:root{--bg:#11111b;--panel:#1e1e2e;--panel2:#181825;--line:#313244;--line2:#45475a;--text:#cdd6f4;--sub:#a6adc8;--dim:#6c7086;--mauve:#cba6f7;--blue:#89b4fa;--green:#a6e3a1;--yellow:#f9e2af;--peach:#fab387;--red:#f38ba8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,"Segoe UI",system-ui,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:32px 18px 70px}
+h1{font-size:28px;margin:0 0 6px;line-height:1.2}
+h2{font-size:20px;margin:40px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
+h3{font-size:16px;margin:18px 0 6px}
+p{margin:8px 0} a{color:var(--blue)}
+.lede{color:var(--sub);font-size:16px}
+.meta{color:var(--dim);font-size:13px}
+code{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+.tldr{background:linear-gradient(135deg,#2a2340,#1e1e2e);border:1px solid #4b3f6b;border-radius:12px;padding:16px 20px;margin:20px 0}
+.tldr ol{margin:6px 0 0;padding-left:22px} .tldr li{margin:5px 0}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card h3{margin-top:0}
+.scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px}
+svg{display:block;width:100%;height:auto;font-family:-apple-system,"Segoe UI",system-ui,sans-serif}
+svg.arch{min-width:720px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.tabs button{background:var(--panel2);color:var(--sub);border:1px solid var(--line2);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:#3a2f4f;color:var(--mauve);border-color:var(--mauve)}
+.panel[hidden]{display:none}
+.code{background:var(--panel2);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+.codebar{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);font-size:12px;color:var(--dim)}
+.copy{background:var(--panel);color:var(--sub);border:1px solid var(--line2);border-radius:6px;padding:2px 10px;font:inherit;font-size:12px;cursor:pointer}
+pre{margin:0;padding:12px 14px;overflow-x:auto} pre code{background:none;border:0;padding:0;color:var(--sub);font-size:12.5px;line-height:1.5}
+table{width:100%;border-collapse:collapse;font-size:14px} th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--sub);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.tablewrap{overflow-x:auto}
+.ok{color:var(--green)} .warn{color:var(--yellow)} .bad{color:var(--red)}
+.steps{counter-reset:s;list-style:none;padding:0} .steps li{counter-increment:s;position:relative;padding:8px 0 8px 40px;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:26px;height:26px;border-radius:50%;background:#3a2f4f;color:var(--mauve);display:grid;place-items:center;font-weight:700;font-size:13px}
+footer{margin-top:40px;color:var(--dim);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
+@media (max-width:600px){h1{font-size:23px} main{padding:22px 12px 60px}}
+</style>
+</head>
+<body>
+<main>
+<p class="meta">Design note · 18 November 2026 · placeholders like <code>ntfy.example.com</code> and <code>$NTFY_TOKEN</code> stand in for your own values</p>
+<h1>Self-hosted ntfy: notifications that always arrive</h1>
+<p class="lede">How your own apps (Workstreams companion, the medical app, any script) can send you notifications that show up like WhatsApp or email, even with the apps closed, without Firebase or code changes on the phone.</p>
+
+<div class="tldr"><b>In one minute</b>
+<ol>
+<li><b>On your server:</b> one small Docker container (<code>binwiederhier/ntfy</code>) behind HTTPS, with users and access tokens.</li>
+<li><b>On your phone:</b> install the <b>ntfy</b> app (Play Store or F-Droid), point it at your server, log in, subscribe to topics such as <code>ws</code> and <code>medical</code>. <b>Nothing is installed in your own apps.</b></li>
+<li><b>How it delivers:</b> the ntfy app keeps <b>one connection open</b> from the phone to your server (a background service). When a message arrives, the server pushes it down that connection and the app shows an Android notification. Self-hosted servers don't use Firebase for this.</li>
+<li><b>How your apps integrate:</b> anything that can make an HTTPS request sends a notification: <code>POST https://ntfy.example.com/&lt;topic&gt;</code> with a token. The <code>Click</code> header makes a tap open your app.</li>
+</ol></div>
+
+<h2>1. Architecture</h2>
+<div class="scroll"><svg class="arch" viewBox="0 0 980 560" role="img" aria-label="Architecture: senders post over HTTPS to a self-hosted ntfy server, which pushes to the ntfy Android app over a connection the phone keeps open" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cdd6f4"/></marker>
+<marker id="aad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f849c"/></marker></defs>
+<!-- zones -->
+<rect x="14" y="40" width="270" height="420" rx="14" fill="#181825" stroke="#313244"/>
+<text x="30" y="66" fill="#a6adc8" font-size="13" font-weight="600">SENDERS — they only make HTTPS requests</text>
+<rect x="345" y="40" width="290" height="420" rx="14" fill="#181825" stroke="#4b3f6b"/>
+<text x="361" y="66" fill="#cba6f7" font-size="13" font-weight="600">YOUR VPS (self-hosted)</text>
+<rect x="696" y="40" width="270" height="420" rx="14" fill="#181825" stroke="#313244"/>
+<text x="712" y="66" fill="#a6e3a1" font-size="13" font-weight="600">YOUR ANDROID PHONE</text>
+<!-- senders -->
+<g font-size="12.5">
+<rect x="34" y="90" width="230" height="74" rx="10" fill="#1e1e2e" stroke="#89b4fa"/><text x="50" y="114" fill="#89b4fa" font-weight="600">Workstreams desktop (Mac)</text><text x="50" y="134" fill="#a6adc8" font-size="11.5">agent results, "needs you",</text><text x="50" y="150" fill="#a6adc8" font-size="11.5">pipeline failures</text>
+<rect x="34" y="184" width="230" height="74" rx="10" fill="#1e1e2e" stroke="#fab387"/><text x="50" y="208" fill="#fab387" font-weight="600">Supabase (medical app)</text><text x="50" y="228" fill="#a6adc8" font-size="11.5">pg_cron + Edge Function,</text><text x="50" y="244" fill="#a6adc8" font-size="11.5">daily pickup reminders</text>
+<rect x="34" y="278" width="230" height="74" rx="10" fill="#1e1e2e" stroke="#f9e2af"/><text x="50" y="302" fill="#f9e2af" font-weight="600">Any script or agent</text><text x="50" y="322" fill="#a6adc8" font-size="11.5">curl -H "Authorization: …"</text><text x="50" y="338" fill="#a6adc8" font-size="11.5">-d "Backup done" …/topic</text>
+<text x="34" y="390" fill="#6c7086" font-size="11.5">Nothing is installed in them for ntfy:</text><text x="34" y="406" fill="#6c7086" font-size="11.5">one HTTP POST with a write-only token.</text>
+</g>
+<!-- server -->
+<g font-size="12.5">
+<rect x="365" y="90" width="250" height="60" rx="10" fill="#1e1e2e" stroke="#89dceb"/><text x="381" y="114" fill="#89dceb" font-weight="600">Caddy (reverse proxy)</text><text x="381" y="134" fill="#a6adc8" font-size="11.5">HTTPS for ntfy.example.com</text>
+<rect x="365" y="170" width="250" height="200" rx="10" fill="#1e1e2e" stroke="#cba6f7" stroke-width="1.6"/><text x="381" y="194" fill="#cba6f7" font-weight="600">ntfy server (Docker)</text>
+<text x="381" y="218" fill="#cdd6f4" font-size="11.5">• topics: ws, medical</text>
+<text x="381" y="238" fill="#cdd6f4" font-size="11.5">• users + ACL, deny-all default</text>
+<text x="381" y="258" fill="#cdd6f4" font-size="11.5">• tokens for senders</text>
+<text x="381" y="278" fill="#cdd6f4" font-size="11.5">• message cache (SQLite, 12 h)</text>
+<text x="381" y="298" fill="#cdd6f4" font-size="11.5">• scheduled messages (X-At)</text>
+<text x="381" y="318" fill="#cdd6f4" font-size="11.5">• fans out to open connections</text>
+<text x="381" y="348" fill="#6c7086" font-size="11">~15 MB RAM; one small container</text>
+<line x1="490" y1="150" x2="490" y2="168" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#aa)"/>
+</g>
+<!-- phone -->
+<g font-size="12.5">
+<rect x="716" y="90" width="230" height="110" rx="10" fill="#1e1e2e" stroke="#a6e3a1" stroke-width="1.6"/><text x="732" y="114" fill="#a6e3a1" font-weight="600">ntfy app (Play / F-Droid)</text><text x="732" y="136" fill="#cdd6f4" font-size="11.5">background service keeps one</text><text x="732" y="152" fill="#cdd6f4" font-size="11.5">WebSocket open to your server</text><text x="732" y="172" fill="#a6adc8" font-size="11.5">("instant delivery")</text><text x="732" y="188" fill="#6c7086" font-size="11">logged in as user "phone"</text>
+<rect x="716" y="222" width="230" height="64" rx="10" fill="#1e1e2e" stroke="#585b70"/><text x="732" y="246" fill="#cdd6f4" font-weight="600">Android notification</text><text x="732" y="266" fill="#a6adc8" font-size="11.5">sound, lock screen, icon dot</text>
+<rect x="716" y="308" width="230" height="64" rx="10" fill="#1e1e2e" stroke="#94e2d5"/><text x="732" y="332" fill="#94e2d5" font-weight="600">Your app opens</text><text x="732" y="352" fill="#a6adc8" font-size="11.5">tap → Click URL / deep link</text>
+<line x1="831" y1="200" x2="831" y2="220" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#aa)"/>
+<line x1="831" y1="286" x2="831" y2="306" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#aa)"/>
+</g>
+<!-- flows -->
+<path d="M264,127 C 310,127 320,120 363,120" fill="none" stroke="#cdd6f4" stroke-width="1.5" marker-end="url(#aa)"/>
+<path d="M264,221 C 315,221 320,130 363,124" fill="none" stroke="#cdd6f4" stroke-width="1.5" marker-end="url(#aa)"/>
+<path d="M264,315 C 320,315 322,140 363,128" fill="none" stroke="#cdd6f4" stroke-width="1.5" marker-end="url(#aa)"/>
+<text x="290" y="88" fill="#cdd6f4" font-size="11.5">① POST over HTTPS</text>
+<path d="M714,135 C 670,135 660,240 617,240" fill="none" stroke="#a6e3a1" stroke-width="1.5" marker-end="url(#aa)"/>
+<path d="M617,262 C 665,262 670,150 714,150" fill="none" stroke="#cba6f7" stroke-width="1.8" marker-end="url(#aa)"/>
+<text x="640" y="200" fill="#a6e3a1" font-size="11">② phone dials out</text>
+<text x="640" y="214" fill="#a6e3a1" font-size="11">(kept open)</text>
+<text x="622" y="300" fill="#cba6f7" font-size="11">③ server pushes</text>
+<text x="622" y="314" fill="#cba6f7" font-size="11">down that link</text>
+<!-- optional upstream -->
+<rect x="365" y="488" width="250" height="56" rx="10" fill="#11111b" stroke="#585b70" stroke-dasharray="5 4"/><text x="381" y="511" fill="#a6adc8" font-weight="600" font-size="12.5">Optional: ntfy.sh + Firebase</text><text x="381" y="530" fill="#6c7086" font-size="11">wake-up ping only (ID + hash), no content</text>
+<path d="M490,370 L490,486" fill="none" stroke="#7f849c" stroke-dasharray="5 4" stroke-width="1.3" marker-end="url(#aad)"/>
+<path d="M617,516 C 700,516 760,470 800,374" fill="none" stroke="#7f849c" stroke-dasharray="5 4" stroke-width="1.3" marker-end="url(#aad)"/>
+<text x="20" y="28" fill="#cdd6f4" font-size="15" font-weight="700">Self-hosted ntfy — who talks to whom</text>
+</svg></div>
+<p class="meta">On a phone, scroll the diagram sideways. Solid lines happen on every message; dashed lines are the optional Firebase wake-up path.</p>
+
+<h2>2. What goes where</h2>
+<div class="grid">
+<div class="card"><h3 style="color:var(--mauve)">Server (once)</h3><p>ntfy in Docker plus a reverse proxy (Caddy) for HTTPS. It can live on the same small VPS as other things you host, using about 15 MB of RAM. Set <code>auth-default-access: deny-all</code> so only your users and tokens can read or write.</p></div>
+<div class="card"><h3 style="color:var(--green)">Phone (once)</h3><p>Install the <b>ntfy</b> app. Add your server URL, log in as your read-only user, and subscribe to your topics. Allow its notifications and turn off battery optimization for it. ntfy shows a quiet permanent "listening" notification; you can hide that one channel in Android settings.</p></div>
+<div class="card"><h3 style="color:var(--blue)">Your apps (per sender)</h3><p>No SDK and no phone-side change. The <b>sender</b> makes one HTTPS <code>POST</code> with a write-only token: Workstreams on the Mac, a Supabase function for the medical app, or a shell script. Add <code>Click</code> so a tap opens your app.</p></div>
+</div>
+
+<h2>3. Sequence diagrams</h2>
+<div class="tabs" role="tablist" aria-label="Sequence diagrams">
+<button role="tab" id="t-setup" aria-controls="p-setup" aria-selected="true">One-time setup</button>
+<button role="tab" id="t-ws" aria-controls="p-ws" aria-selected="false">Agent result → phone</button>
+<button role="tab" id="t-med" aria-controls="p-med" aria-selected="false">Medical reminder</button>
+<button role="tab" id="t-up" aria-controls="p-up" aria-selected="false">Optional wake-up</button>
+</div>
+<div class="panel" id="p-setup" role="tabpanel" aria-labelledby="t-setup"><div class="scroll"><svg class="seq" viewBox="0 0 760 508" role="img" aria-label="One-time setup" xmlns="http://www.w3.org/2000/svg" style="min-width:684px">
+<defs><marker id="s1ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cdd6f4"/></marker><marker id="s1ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f849c"/></marker></defs>
+<line x1="95" y1="88" x2="95" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="20.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#f9e2af" stroke-width="1.5"/>
+<text x="95" y="58" text-anchor="middle" fill="#f9e2af" font-size="12.5" font-weight="600">You</text>
+<text x="95" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">(once)</text>
+<line x1="285" y1="88" x2="285" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="210.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#89dceb" stroke-width="1.5"/>
+<text x="285" y="58" text-anchor="middle" fill="#89dceb" font-size="12.5" font-weight="600">Caddy</text>
+<text x="285" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">TLS on :443</text>
+<line x1="475" y1="88" x2="475" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="400.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#cba6f7" stroke-width="1.5"/>
+<text x="475" y="58" text-anchor="middle" fill="#cba6f7" font-size="12.5" font-weight="600">ntfy server</text>
+<text x="475" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">your VPS, HTTPS</text>
+<line x1="665" y1="88" x2="665" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="590.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#a6e3a1" stroke-width="1.5"/>
+<text x="665" y="58" text-anchor="middle" fill="#a6e3a1" font-size="12.5" font-weight="600">ntfy app</text>
+<text x="665" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">Android phone</text>
+<line x1="95" y1="120" x2="469" y2="120" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="285.0" y="114" text-anchor="middle" fill="#cdd6f4" font-size="11.5">docker compose up -d</text>
+<line x1="95" y1="166" x2="279" y2="166" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="190.0" y="160" text-anchor="middle" fill="#cdd6f4" font-size="11.5">DNS ntfy.example.com → VPS; Caddy gets a cert</text>
+<line x1="95" y1="212" x2="469" y2="212" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="285.0" y="206" text-anchor="middle" fill="#cdd6f4" font-size="11.5">ntfy user add phone / ntfy user add bots</text>
+<line x1="95" y1="258" x2="469" y2="258" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="285.0" y="252" text-anchor="middle" fill="#cdd6f4" font-size="11.5">ntfy access phone &#x27;ws,medical&#x27; ro · bots rw</text>
+<line x1="95" y1="304" x2="469" y2="304" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="285.0" y="298" text-anchor="middle" fill="#cdd6f4" font-size="11.5">ntfy token add bots → token for senders</text>
+<line x1="95" y1="350" x2="659" y2="350" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="380.0" y="344" text-anchor="middle" fill="#cdd6f4" font-size="11.5">Install ntfy; add server; log in as phone</text>
+<line x1="665" y1="396" x2="481" y2="396" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s1ah)"/>
+<text x="570.0" y="390" text-anchor="middle" fill="#cdd6f4" font-size="11.5">Subscribe ws and medical (WebSocket over HTTPS)</text>
+<rect x="415" y="426" width="310" height="26" rx="5" fill="#2a2340" stroke="#4b3f6b"/>
+<text x="570.0" y="443" text-anchor="middle" fill="#cdd6f4" font-size="11.5">Connection stays open: instant delivery, no Firebase</text>
+</svg></div><p class="meta">On a phone, scroll the diagram sideways.</p>
+<p>After setup, the phone holds an open, encrypted connection to your server. There's nothing to poll and nothing to schedule on the phone.</p></div>
+<div class="panel" id="p-ws" role="tabpanel" aria-labelledby="t-ws" hidden><div class="scroll"><svg class="seq" viewBox="0 0 890 508" role="img" aria-label="Agent result to your phone" xmlns="http://www.w3.org/2000/svg" style="min-width:801px">
+<defs><marker id="s2ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cdd6f4"/></marker><marker id="s2ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f849c"/></marker></defs>
+<line x1="95" y1="88" x2="95" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="20.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#f5c2e7" stroke-width="1.5"/>
+<text x="95" y="58" text-anchor="middle" fill="#f5c2e7" font-size="12.5" font-weight="600">Copilot agent</text>
+<text x="95" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">in a session</text>
+<line x1="270" y1="88" x2="270" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="195.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#89b4fa" stroke-width="1.5"/>
+<text x="270" y="58" text-anchor="middle" fill="#89b4fa" font-size="12.5" font-weight="600">Workstreams</text>
+<text x="270" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">desktop (Mac)</text>
+<line x1="445" y1="88" x2="445" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="370.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#cba6f7" stroke-width="1.5"/>
+<text x="445" y="58" text-anchor="middle" fill="#cba6f7" font-size="12.5" font-weight="600">ntfy server</text>
+<text x="445" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">your VPS, HTTPS</text>
+<line x1="620" y1="88" x2="620" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="545.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#a6e3a1" stroke-width="1.5"/>
+<text x="620" y="58" text-anchor="middle" fill="#a6e3a1" font-size="12.5" font-weight="600">ntfy app</text>
+<text x="620" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">Android phone</text>
+<line x1="795" y1="88" x2="795" y2="494" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="720.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#94e2d5" stroke-width="1.5"/>
+<text x="795" y="58" text-anchor="middle" fill="#94e2d5" font-size="12.5" font-weight="600">Companion app</text>
+<text x="795" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">on the phone</text>
+<line x1="95" y1="120" x2="264" y2="120" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s2ah)"/>
+<text x="182.5" y="114" text-anchor="middle" fill="#cdd6f4" font-size="11.5">companion.send kind=result (local socket)</text>
+<path d="M270,160 h40 v16 h-38" fill="none" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#s2ah)"/>
+<text x="316" y="170" fill="#cdd6f4" font-size="11.5">store message; is the phone on?</text>
+<line x1="270" y1="212" x2="439" y2="212" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s2ah)"/>
+<text x="357.5" y="206" text-anchor="middle" fill="#cdd6f4" font-size="11.5">POST /ws  (token, Title, Click, Markdown)</text>
+<path d="M445,252 h40 v16 h-38" fill="none" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#s2ah)"/>
+<text x="491" y="262" fill="#cdd6f4" font-size="11.5">check ACL, cache 12 h</text>
+<line x1="445" y1="304" x2="614" y2="304" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s2ah)"/>
+<text x="532.5" y="298" text-anchor="middle" fill="#cdd6f4" font-size="11.5">push over the open connection</text>
+<path d="M620,344 h40 v16 h-38" fill="none" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#s2ah)"/>
+<text x="666" y="354" fill="#cdd6f4" font-size="11.5">Android notification + icon dot</text>
+<line x1="620" y1="396" x2="789" y2="396" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s2ah)"/>
+<text x="707.5" y="390" text-anchor="middle" fill="#cdd6f4" font-size="11.5">tap → wscompanion://session/&lt;id&gt;</text>
+<line x1="795" y1="442" x2="276" y2="442" stroke="#7f849c" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#s2ahd)"/>
+<text x="532.5" y="436" text-anchor="middle" fill="#a6adc8" font-size="11.5">load the session (existing sync relay)</text>
+</svg></div>
+<p>Workstreams already receives <code>companion.send</code> from agents. It would gain one setting (server URL, topic, token) and a POST to ntfy. The companion would gain a deep-link scheme (for example <code>wscompanion://</code>) so a tap opens the right session. Without one, use an <code>https://</code> link, or leave <code>Click</code> out and open the app by hand.</p></div>
+<div class="panel" id="p-med" role="tabpanel" aria-labelledby="t-med" hidden><div class="scroll"><svg class="seq" viewBox="0 0 890 462" role="img" aria-label="Medical pickup reminder" xmlns="http://www.w3.org/2000/svg" style="min-width:801px">
+<defs><marker id="s3ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cdd6f4"/></marker><marker id="s3ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f849c"/></marker></defs>
+<line x1="95" y1="88" x2="95" y2="448" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="20.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#fab387" stroke-width="1.5"/>
+<text x="95" y="58" text-anchor="middle" fill="#fab387" font-size="12.5" font-weight="600">Supabase</text>
+<text x="95" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">pg_cron 09:00</text>
+<line x1="270" y1="88" x2="270" y2="448" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="195.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#fab387" stroke-width="1.5"/>
+<text x="270" y="58" text-anchor="middle" fill="#fab387" font-size="12.5" font-weight="600">Edge Function</text>
+<text x="270" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">reminders</text>
+<line x1="445" y1="88" x2="445" y2="448" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="370.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#cba6f7" stroke-width="1.5"/>
+<text x="445" y="58" text-anchor="middle" fill="#cba6f7" font-size="12.5" font-weight="600">ntfy server</text>
+<text x="445" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">your VPS, HTTPS</text>
+<line x1="620" y1="88" x2="620" y2="448" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="545.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#a6e3a1" stroke-width="1.5"/>
+<text x="620" y="58" text-anchor="middle" fill="#a6e3a1" font-size="12.5" font-weight="600">ntfy app</text>
+<text x="620" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">Android phone</text>
+<line x1="795" y1="88" x2="795" y2="448" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="720.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#94e2d5" stroke-width="1.5"/>
+<text x="795" y="58" text-anchor="middle" fill="#94e2d5" font-size="12.5" font-weight="600">Medical app</text>
+<text x="795" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">on the phone</text>
+<line x1="95" y1="120" x2="264" y2="120" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s3ah)"/>
+<text x="182.5" y="114" text-anchor="middle" fill="#cdd6f4" font-size="11.5">every day at 09:00 (Chile time)</text>
+<path d="M270,160 h40 v16 h-38" fill="none" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#s3ah)"/>
+<text x="316" y="170" fill="#cdd6f4" font-size="11.5">query pickups: in 3 days / today / overdue</text>
+<line x1="270" y1="212" x2="439" y2="212" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s3ah)"/>
+<text x="357.5" y="206" text-anchor="middle" fill="#cdd6f4" font-size="11.5">POST /medical per pickup (token)</text>
+<line x1="445" y1="258" x2="614" y2="258" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s3ah)"/>
+<text x="532.5" y="252" text-anchor="middle" fill="#cdd6f4" font-size="11.5">push over the open connection</text>
+<path d="M620,298 h40 v16 h-38" fill="none" stroke="#cdd6f4" stroke-width="1.4" marker-end="url(#s3ah)"/>
+<text x="666" y="308" fill="#cdd6f4" font-size="11.5">Android notification</text>
+<line x1="620" y1="350" x2="789" y2="350" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s3ah)"/>
+<text x="707.5" y="344" text-anchor="middle" fill="#cdd6f4" font-size="11.5">tap → opens the medical app</text>
+<rect x="35" y="380" width="470" height="26" rx="5" fill="#2a2340" stroke="#4b3f6b"/>
+<text x="270.0" y="397" text-anchor="middle" fill="#cdd6f4" font-size="11.5">Data changes are picked up the next day; nothing to cancel</text>
+</svg></div>
+<p>Reminders must be sent by something that is always on, not by the phone app. A daily Supabase job reads the pickups and posts them. If a date changes, tomorrow's run simply sees the new date. Alternative: post with <code>At: tomorrow, 9am</code> when a pickup is saved, and ntfy holds the message (up to 3 days by default). But a scheduled message can't easily be cancelled if the pickup moves.</p></div>
+<div class="panel" id="p-up" role="tabpanel" aria-labelledby="t-up" hidden><div class="scroll"><svg class="seq" viewBox="0 0 790 370" role="img" aria-label="Optional wake-up via upstream" xmlns="http://www.w3.org/2000/svg" style="min-width:711px">
+<defs><marker id="s4ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cdd6f4"/></marker><marker id="s4ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7f849c"/></marker></defs>
+<line x1="95" y1="88" x2="95" y2="356" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="20.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#89b4fa" stroke-width="1.5"/>
+<text x="95" y="58" text-anchor="middle" fill="#89b4fa" font-size="12.5" font-weight="600">Workstreams</text>
+<text x="95" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">desktop (Mac)</text>
+<line x1="295" y1="88" x2="295" y2="356" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="220.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#cba6f7" stroke-width="1.5"/>
+<text x="295" y="58" text-anchor="middle" fill="#cba6f7" font-size="12.5" font-weight="600">ntfy server</text>
+<text x="295" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">your VPS, HTTPS</text>
+<line x1="495" y1="88" x2="495" y2="356" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="420.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#6c7086" stroke-width="1.5"/>
+<text x="495" y="58" text-anchor="middle" fill="#6c7086" font-size="12.5" font-weight="600">ntfy.sh</text>
+<text x="495" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">+ Firebase</text>
+<line x1="695" y1="88" x2="695" y2="356" stroke="#45475a" stroke-dasharray="4 4"/>
+<rect x="620.0" y="40" width="150" height="50" rx="8" fill="#181825" stroke="#a6e3a1" stroke-width="1.5"/>
+<text x="695" y="58" text-anchor="middle" fill="#a6e3a1" font-size="12.5" font-weight="600">ntfy app</text>
+<text x="695" y="73" text-anchor="middle" fill="#a6adc8" font-size="11" font-weight="400">Android phone</text>
+<line x1="95" y1="120" x2="289" y2="120" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s4ah)"/>
+<text x="195.0" y="114" text-anchor="middle" fill="#cdd6f4" font-size="11.5">POST /ws  (full message)</text>
+<line x1="295" y1="166" x2="489" y2="166" stroke="#7f849c" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#s4ahd)"/>
+<text x="395.0" y="160" text-anchor="middle" fill="#a6adc8" font-size="11.5">poll_request: message ID + topic hash only</text>
+<line x1="495" y1="212" x2="689" y2="212" stroke="#7f849c" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#s4ahd)"/>
+<text x="595.0" y="206" text-anchor="middle" fill="#a6adc8" font-size="11.5">Firebase wake-up (no content)</text>
+<line x1="695" y1="258" x2="301" y2="258" stroke="#cdd6f4" stroke-width="1.4"  marker-end="url(#s4ah)"/>
+<text x="495.0" y="252" text-anchor="middle" fill="#cdd6f4" font-size="11.5">fetch the message from your server</text>
+<rect x="235" y="288" width="520" height="26" rx="5" fill="#2a2340" stroke="#4b3f6b"/>
+<text x="495.0" y="305" text-anchor="middle" fill="#cdd6f4" font-size="11.5">Content never leaves your server</text>
+</svg></div>
+<p>Only needed if notifications arrive late, for example on phones that kill background services aggressively, or on iOS. Your server sends ntfy.sh only a message ID and a hash of the topic. The phone then fetches the real message from your server.</p></div>
+
+<h2>4. How ntfy actually delivers</h2>
+<ol class="steps">
+<li><b>The phone dials out.</b> The ntfy app runs an Android background (foreground) service that opens a WebSocket to <code>https://ntfy.example.com/ws,medical/ws</code>. The phone starts the connection, so your server needs no access to the phone and no inbound port on it.</li>
+<li><b>A sender publishes.</b> <code>POST /ws</code> with a token. ntfy checks the access list, stores the message in its cache (12 hours here) and pushes it to every open subscription for that topic.</li>
+<li><b>Android shows it.</b> The ntfy app receives the message and posts a normal Android notification: sound, lock screen, priority, and the dot or count on the ntfy icon.</li>
+<li><b>Nothing is lost on a bad connection.</b> When the phone reconnects (after the subway, airplane mode or a reboot), the app asks for messages since the last one it saw, and the server replays them from its cache.</li>
+<li><b>A tap opens your app.</b> The <code>Click</code> URL opens a web page or your app's deep link. <code>Actions</code> can add buttons such as "Open session" or "Mark done".</li>
+</ol>
+
+<h2>5. Integration recipes</h2>
+<h3>Server</h3>
+<div class="code"><div class="codebar"><span>docker-compose.yml</span><button type="button" class="copy" aria-label="Copy docker-compose.yml">Copy</button></div><pre><code>services:
+  ntfy:
+    image: binwiederhier/ntfy
+    command: serve
+    restart: unless-stopped
+    volumes:
+      - ./server.yml:/etc/ntfy/server.yml:ro
+      - ./data:/var/lib/ntfy
+    ports:
+      - &quot;127.0.0.1:2586:80&quot;   # only Caddy reaches it</code></pre></div>
+<div class="code"><div class="codebar"><span>server.yml</span><button type="button" class="copy" aria-label="Copy server.yml">Copy</button></div><pre><code>base-url: &quot;https://ntfy.example.com&quot;
+behind-proxy: true
+cache-file: &quot;/var/lib/ntfy/cache.db&quot;
+cache-duration: &quot;12h&quot;
+auth-file: &quot;/var/lib/ntfy/user.db&quot;
+auth-default-access: &quot;deny-all&quot;     # nobody without a user/token
+# Optional: faster wake-up (iOS mostly). Sends only an ID + hash upstream.
+# upstream-base-url: &quot;https://ntfy.sh&quot;</code></pre></div>
+<div class="code"><div class="codebar"><span>Caddyfile</span><button type="button" class="copy" aria-label="Copy Caddyfile">Copy</button></div><pre><code>ntfy.example.com {
+    reverse_proxy 127.0.0.1:2586
+}</code></pre></div>
+<div class="code"><div class="codebar"><span>Users, access and a token</span><button type="button" class="copy" aria-label="Copy Users, access and a token">Copy</button></div><pre><code>docker compose exec ntfy ntfy user add phone        # you, on the phone
+docker compose exec ntfy ntfy user add bots         # the senders
+docker compose exec ntfy ntfy access phone ws ro
+docker compose exec ntfy ntfy access phone medical ro
+docker compose exec ntfy ntfy access bots  ws wo
+docker compose exec ntfy ntfy access bots  medical wo
+docker compose exec ntfy ntfy token add bots        # → token for the senders</code></pre></div>
+<h3>Any sender (try it first)</h3>
+<div class="code"><div class="codebar"><span>curl</span><button type="button" class="copy" aria-label="Copy curl">Copy</button></div><pre><code>curl https://ntfy.example.com/ws \
+  -H &quot;Authorization: Bearer $NTFY_TOKEN&quot; \
+  -H &quot;Title: Tests passed on media_components&quot; \
+  -H &quot;Priority: high&quot; \
+  -H &quot;Tags: white_check_mark&quot; \
+  -H &quot;Click: wscompanion://session/abc123&quot; \
+  -H &quot;Markdown: yes&quot; \
+  -d &quot;**412 passed**, ready for review&quot;</code></pre></div>
+<h3>Workstreams desktop</h3>
+<div class="code"><div class="codebar"><span>Rust — notify_phone()</span><button type="button" class="copy" aria-label="Copy Rust — notify_phone()">Copy</button></div><pre><code>// Workstreams desktop (Rust, reqwest): one POST, no SDK.
+fn notify_phone(cfg: &amp;NtfyConfig, title: &amp;str, body: &amp;str, click: &amp;str) -&gt; Result&lt;(), String&gt; {
+    reqwest::blocking::Client::new()
+        .post(format!(&quot;{}/{}&quot;, cfg.server, cfg.topic))   // https://ntfy.example.com/ws
+        .bearer_auth(&amp;cfg.token)                          // from the keychain, never in code
+        .header(&quot;Title&quot;, title)
+        .header(&quot;Click&quot;, click)                           // deep link into the companion
+        .header(&quot;Markdown&quot;, &quot;yes&quot;)
+        .body(body.to_owned())
+        .timeout(std::time::Duration::from_secs(10))
+        .send()
+        .and_then(|r| r.error_for_status())
+        .map(|_| ())
+        .map_err(|e| e.to_string())                       // caller retries later; never blocks the UI
+}</code></pre></div>
+<h3>Medical app (Supabase)</h3>
+<div class="code"><div class="codebar"><span>Edge Function — reminders</span><button type="button" class="copy" aria-label="Copy Edge Function — reminders">Copy</button></div><pre><code>// Supabase Edge Function &quot;reminders&quot; (Deno), run daily by pg_cron.
+Deno.serve(async () =&gt; {
+  const due = await pickupsDue();          // your query: in 3 days / today / overdue
+  for (const p of due) {
+    await fetch(`${Deno.env.get(&quot;NTFY_URL&quot;)}/medical`, {
+      method: &quot;POST&quot;,
+      headers: {
+        Authorization: `Bearer ${Deno.env.get(&quot;NTFY_TOKEN&quot;)}`,   // Supabase secret
+        Title: p.title,                    // e.g. &quot;Pickup today&quot;
+        Tags: &quot;pill&quot;,
+        Click: &quot;https://medical-app.example.com/&quot;,  // or the app&#x27;s deep link
+      },
+      body: p.body,                        // keep health details minimal
+    });
+  }
+  return new Response(&quot;ok&quot;);
+});</code></pre></div>
+<div class="code"><div class="codebar"><span>pg_cron schedule</span><button type="button" class="copy" aria-label="Copy pg_cron schedule">Copy</button></div><pre><code>-- in Supabase SQL: call the function every day at 12:00 UTC (09:00 Chile)
+select cron.schedule(&#x27;pickup-reminders&#x27;, &#x27;0 12 * * *&#x27;, $$
+  select net.http_post(
+    url := &#x27;https://&lt;project&gt;.functions.supabase.co/reminders&#x27;,
+    headers := jsonb_build_object(&#x27;Authorization&#x27;, &#x27;Bearer &#x27; || &#x27;&lt;service key from vault&gt;&#x27;)
+  ) $$);</code></pre></div>
+
+<h3>Headers you'll use</h3>
+<div class="tablewrap"><table>
+<tr><th>Header</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>Authorization</code></td><td>Write-only token for the sender</td><td><code>Bearer $NTFY_TOKEN</code></td></tr>
+<tr><td><code>Title</code></td><td>Bold first line</td><td><code>Pickup today</code></td></tr>
+<tr><td><code>Priority</code></td><td><code>min</code>…<code>max</code> (1–5); high and max vibrate and pop up</td><td><code>high</code></td></tr>
+<tr><td><code>Tags</code></td><td>Emoji shortcodes shown as icons</td><td><code>pill,warning</code></td></tr>
+<tr><td><code>Click</code></td><td>What a tap opens</td><td><code>wscompanion://session/abc</code></td></tr>
+<tr><td><code>Actions</code></td><td>Up to 3 buttons (open a URL, or an HTTP call back to your server)</td><td><code>view, Open, https://…</code></td></tr>
+<tr><td><code>Markdown</code></td><td>Render the body as Markdown</td><td><code>yes</code></td></tr>
+<tr><td><code>At</code> / <code>Delay</code></td><td>Deliver later (held by the server)</td><td><code>tomorrow, 9am</code></td></tr>
+</table></div>
+
+<h2>6. Trade-offs</h2>
+<div class="tablewrap"><table>
+<tr><th>Topic</th><th>Self-hosted ntfy</th><th>FCM inside each app</th></tr>
+<tr><td>Arrives with apps closed</td><td class="ok">Yes</td><td class="ok">Yes</td></tr>
+<tr><td>Work in your apps</td><td class="ok">None on the phone; one POST per sender</td><td class="warn">Plugin, Firebase project and token handling per app</td></tr>
+<tr><td>Google involved</td><td class="ok">No (unless you enable the wake-up)</td><td class="warn">Yes, every message goes through Firebase</td></tr>
+<tr><td>Notification shows as</td><td class="warn">"ntfy", with your title and tags</td><td class="ok">Your app, with its icon and badge</td></tr>
+<tr><td>Battery</td><td class="warn">One idle connection, small but not zero</td><td class="ok">Shared with all apps</td></tr>
+<tr><td>Phones that kill background apps</td><td class="warn">Disable battery optimization for ntfy, or add the wake-up</td><td class="ok">Handled by Google Play services</td></tr>
+<tr><td>Privacy</td><td class="ok">Content stays on your server</td><td class="warn">Passes Google (can be encrypted end to end)</td></tr>
+<tr><td>If your server is down</td><td class="bad">Nothing arrives; senders should retry</td><td class="ok">Google's uptime</td></tr>
+</table></div>
+
+<h3>Later: notifications as your own app (UnifiedPush)</h3>
+<p>The ntfy app can also act as a <b>UnifiedPush distributor</b>. An app that includes the UnifiedPush connector library gets its own endpoint on your ntfy server, and messages arrive <i>in that app</i>, with its icon and its own unread number. That needs a small native (Kotlin) plugin in each Tauri app, so treat it as phase 2 once plain ntfy proves itself.</p>
+
+<h2>7. Checklist</h2>
+<ol class="steps">
+<li>Point a DNS name at your VPS; run <code>docker compose up -d</code> with the files above.</li>
+<li>Create the <code>phone</code> and <code>bots</code> users, the access rules, and a token for <code>bots</code>.</li>
+<li>Install ntfy on the phone, add the server, log in, subscribe to <code>ws</code> and <code>medical</code>, and turn off battery optimization for it.</li>
+<li>Send the <code>curl</code> test with the phone locked and the app swiped away. It should arrive within a second or two.</li>
+<li>Workstreams: add the ntfy setting and post on <code>companion.send</code>. Optionally add a companion deep link.</li>
+<li>Medical app: add the Edge Function and a daily <code>pg_cron</code> job. Keep message bodies short, without health details.</li>
+</ol>
+
+<footer>Based on the ntfy documentation (self-hosting, access control, publishing and the Android app) as of November 2026. ntfy is open source (Apache 2.0 / GPLv2). Hostnames, tokens and keys here are placeholders.</footer>
+</main>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(t){tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);document.getElementById(x.getAttribute('aria-controls')).hidden=!on;});}
+  tabs.forEach(function(t,i){t.addEventListener('click',function(){show(t);});t.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){var n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n);}});});
+  [].forEach.call(document.querySelectorAll('.copy'),function(b){b.addEventListener('click',function(){var t=b.closest('.code').querySelector('code').textContent;var done=function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy';},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){b.textContent='Select and copy';});}else{b.textContent='Select and copy';}});});
+})();
+</script>
+</body>
+</html>
