@@ -87,7 +87,7 @@
     <div class="sky" id="sky" aria-hidden="true">🌙</div>
     <div class="clock" id="clock">03:59<small id="phase">everyone is asleep</small></div>
     <div class="status" aria-label="Pipeline status">
-      <div class="pill">Phone test suite <span class="dot" id="d-phone"></span></div>
+      <div class="pill">CIFX phone suite <span class="dot" id="d-phone"></span></div>
       <div class="pill">Watchdog <span class="dot" id="d-dog"></span></div>
       <div class="pill">Coding agent <span class="dot" id="d-agent"></span></div>
       <div class="pill">Pull request <span class="dot" id="d-pr"></span></div>
@@ -107,7 +107,7 @@
             <div><b>🧪 Build &amp; Test</b>Guards every pull request and every merge: builds, lints and tests on every platform, about sixty jobs at a time.</div>
             <div><b>🌙 Nightly</b>The long run: deeper tests, fuzzing with sanitizers, and checks that the Rust and native C++ engines agree to the last decimal.</div>
             <div><b>📦 Release</b>Packages and publishes the crates other teams build on. Only from main, and only when everything is green.</div>
-            <div><b>📱 Device lab</b>Ships our tests to real phones and PCs in an external lab every night. When it fails, the evidence stays in the lab's own log store.</div>
+            <div><b>📱 CIFX</b>Ships our tests to real phones and PCs in the CIFX device lab every night. When it fails, the evidence stays in BRB, the lab's own log store.</div>
           </div>
         </div>
         <div class="role" style="--c:var(--bad)">
@@ -117,17 +117,17 @@
         </div>
         <div class="role" style="--c:var(--warn)">
           <div class="who"><span aria-hidden="true">🐕</span><div><h3>The Watchdog</h3>the dispatcher</div></div>
-          <p>Wakes at 07:00 and 19:00 and checks the latest run of every pipeline on main. Anything newly red gets packed up: the failing log, the last five runs, and the links to the lab's evidence.</p>
+          <p>Wakes at 07:00 and 19:00 and checks the latest run of every pipeline on main. Anything newly red gets packed up: the failing log, the last five runs, and the links to the BRB logs.</p>
           <p class="quote">"Red, recent, and nobody's on it? Wake the agent."</p>
         </div>
         <div class="role" style="--c:var(--accent)">
           <div class="who"><span aria-hidden="true">🤖</span><div><h3>The Coding Agent</h3>the detective</div></div>
-          <p>Gets a fresh cloud machine, a clean checkout and the case file. It can read logs, download lab evidence, run the repo's checks and queue pipelines on its own branch. Its brief: evidence first, smallest fix, prove it on the failing pipeline, never merge.</p>
+          <p>Gets a fresh cloud machine, a clean checkout and the case file. It can read logs, download BRB logs, run the repo's checks and queue pipelines on its own branch. Its brief: evidence first, smallest fix, prove it on the failing pipeline, never merge.</p>
           <p class="quote">"If it's infrastructure, I say so and close the case."</p>
         </div>
         <div class="role" style="--c:#a371f7">
-          <div class="who"><span aria-hidden="true">🗄️</span><div><h3>The Device Lab</h3>the witness</div></div>
-          <p>An external service with racks of real phones and PCs. It runs our tests and keeps the full records: device logs, results for every test, archives. The pipeline log only gets a summary.</p>
+          <div class="who"><span aria-hidden="true">🗄️</span><div><h3>The CIFX Device Lab</h3>the witness</div></div>
+          <p>An external service with racks of real phones and PCs. It runs our tests and keeps the full records in BRB: device logs, results for every test, zipped archives. The pipeline log only gets a summary and a few BRB links.</p>
           <p class="quote">"I saw everything. Nobody ever asks me."</p>
         </div>
         <div class="role" style="--c:var(--ok)">
@@ -150,26 +150,26 @@
 <script>
 // DATA: the timeline. Edit times and text freely.
 const STEPS = [
-  { t:"04:00", who:"pipe",  msg:"Nightly device-lab run starts. Today, for the first time, the whole test suite also runs on real phones.", dots:{} },
+  { t:"04:00", who:"pipe",  msg:"Nightly CIFX run starts in the device lab. Today, for the first time, the whole test suite also runs on real phones.", dots:{} },
   { t:"05:10", who:"pipe",  msg:'Phone suite: <span class="hl">FAILED</span> on both phones. Summary log: "test server raised an exception: <span class="hl">Address already in use</span>"', dots:{phone:"red"},
-    callout:{c:"red", text:"A port collision on a lab machine. Every engineer's instinct: infrastructure, just re-run it."} },
-  { t:"07:02", who:"dog",   msg:"Watchdog wakes up. Phone suite red on main, less than 48 h old, not seen before → hand it to the agent with the log excerpt, run history and links to the lab's own log store.", dots:{dog:"amber"} },
-  { t:"07:16", who:"agent", msg:"Session starts. Rule #1 in its brief: download the lab evidence BEFORE deciding anything.", dots:{agent:"amber"} },
-  { t:"07:17", who:"lab",   msg:"Fetches 4 archives from the lab log store in parallel. Verifies sizes and checksums.", dots:{} },
-  { t:"07:19", who:"agent", msg:'"The attachments show more than the port error." 5,422 tests ran. <span class="hl">3 failed</span>, the same 3 on both phones:\n  PermissionDenied: Operation not permitted', dots:{},
-    callout:{text:"The port error was real, but harmless. The actual failure was hiding one click deeper, in a system ADO never sees."} },
+    callout:{c:"red", text:"A port collision on a CIFX lab machine. Every engineer's instinct: infrastructure, just re-run it."} },
+  { t:"07:02", who:"dog",   msg:"Watchdog wakes up. Phone suite red on main, less than 48 h old, not seen before → hand it to the agent with the log excerpt, run history and links to the BRB logs.", dots:{dog:"amber"} },
+  { t:"07:16", who:"agent", msg:"Session starts. Rule #1 in its brief: download the BRB logs BEFORE deciding anything.", dots:{agent:"amber"} },
+  { t:"07:17", who:"lab",   msg:"Fetches 4 BRB logs in parallel: a test archive and a test log from each phone. Verifies sizes and checksums.", dots:{} },
+  { t:"07:19", who:"agent", msg:'"The BRB logs show more than the port error." 5,422 tests ran. <span class="hl">3 failed</span>, the same 3 on both phones:\n  PermissionDenied: Operation not permitted', dots:{},
+    callout:{text:"The port error was real, but harmless. The actual failure was hiding one click deeper, in BRB logs the pipeline never shows."} },
   { t:"07:21", who:"agent", msg:"Same 3 tests, 2 devices, debug + release → deterministic, not flaky. Each fails exactly where it starts a command-line tool as a child process.", dots:{} },
   { t:"07:22", who:"agent", msg:'Diagnosis: phone apps are sandboxed and <span class="good">cannot start other processes</span>. The new phone suite and the new tests were each green on their own, and merged hours apart.', dots:{} },
   { t:"07:23", who:"agent", msg:"Baseline: the same test passes on a desktop. The product code is fine; only how the test invokes it breaks.", dots:{} },
   { t:"07:24", who:"agent", msg:'Fix: make the tool callable as a library function. Tests run it <span class="good">in-process</span> everywhere, and still as a real process where the platform allows. No test disabled. No assertion removed.', dots:{},
     callout:{text:"The one-line way out was to ignore the 3 tests on phones. The agent kept every assertion instead."} },
   { t:"07:28", who:"agent", msg:"36/36 crate tests pass · repo checks pass · lint clean · release build OK.", dots:{} },
-  { t:"07:30", who:"agent", msg:"Pushes the fix and queues the device-lab pipeline on its own branch: \"Do not treat local results as proof of device success.\"", dots:{agent:"green", pr:"amber"} },
-  { t:"08:39", who:"lab",   msg:'Lab run on the fix branch: <span class="good">every phone job green</span>.', dots:{phone:"green"} },
+  { t:"07:30", who:"agent", msg:"Pushes the fix and queues the CIFX pipeline on its own branch: \"Do not treat local results as proof of device success.\"", dots:{agent:"green", pr:"amber"} },
+  { t:"08:39", who:"lab",   msg:'CIFX run on the fix branch: <span class="good">every phone job green</span>.', dots:{phone:"green"} },
   { t:"09:30", who:"human", msg:"Engineers arrive. A pull request is waiting with the root cause, the evidence and a green hardware run.", dots:{}, humans:2 },
   { t:"13:02", who:"human", msg:'Two approvals. <span class="good">Merged as-is.</span> Next nightly on main: green.', dots:{pr:"green", dog:"green"}, humans:2, end:true },
 ];
-const ACTORS = { pipe:["pipeline","a-pipe"], dog:["watchdog","a-dog"], agent:["agent","a-agent"], lab:["device lab","a-lab"], human:["humans","a-human"] };
+const ACTORS = { pipe:["pipeline","a-pipe"], dog:["watchdog","a-dog"], agent:["agent","a-agent"], lab:["CIFX","a-lab"], human:["humans","a-human"] };
 const term = document.getElementById("term"), clock = document.getElementById("clock"), phase = document.getElementById("phase");
 const prog = document.getElementById("prog"), playBtn = document.getElementById("play"), sky = document.getElementById("sky"), aside = document.getElementById("aside");
 let i = 0, timer = null;
@@ -185,7 +185,7 @@ endCard.className = "end";
 endCard.innerHTML = `<h2>Red at 05:10. Fixed at 07:29. Merged at 13:02.</h2>
   <p>No human wrote a line of code. Humans reviewed and pressed merge.</p>
   <div class="stats"><div><b>14 min</b><span>agent start → pushed fix</span></div><div><b>0</b><span>tests disabled</span></div><div><b>1</b><span>red herring ignored</span></div></div>
-  <p><b>The lesson:</b> the agent wasn't smarter than us. It was made to look at the evidence we usually skip.</p>`;
+  <p><b>The lesson:</b> the agent wasn't smarter than us. It was made to read the BRB logs we usually skip.</p>`;
 term.appendChild(endCard);
 const cast = document.getElementById("cast");
 function render() {
