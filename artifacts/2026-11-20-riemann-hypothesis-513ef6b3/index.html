@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#122f32">
+<meta name="description" content="A college-level interactive journey from primes and complex numbers to the Riemann hypothesis, the explicit formula, and the consequences of a proof.">
+<title>The Hidden Rhythm of Primes — An Interactive Riemann Hypothesis</title>
+<style>
+:root{--paper:#f5f2e9;--ink:#203b3d;--muted:#546768;--line:#d6dbd1;--green:#006f61;--lime:#c8ed9c;--coral:#bd5137;--night:#122f32;--blue:#87c7ef;--gold:#ffca81}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.75 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--green);text-underline-offset:4px}button,input,select{font:inherit}button,select{cursor:pointer}button{border:1px solid var(--line);border-radius:8px;padding:10px 16px;background:#fff;color:var(--ink);font-weight:650;min-height:44px}button:hover{border-color:var(--green)}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #d88a26;outline-offset:4px}button[aria-pressed=true]{background:var(--green);color:white;border-color:var(--green)}h1,h2,h3{line-height:1.13;letter-spacing:-.04em}h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(3.2rem,7.7vw,7.4rem);max-width:950px;margin:22px 0 30px}h2{font-family:Georgia,serif;font-weight:400;font-size:clamp(2rem,4vw,3.3rem);margin:10px 0 28px}h3{font-size:1.15rem;letter-spacing:-.02em;margin-top:30px}p{margin:0 0 20px}strong{font-weight:720}sup,sub{line-height:0}figure{margin:0}figcaption,.small{font-size:.84rem;line-height:1.6;color:var(--muted)}header{background:var(--night);color:#f4f4e8;padding:38px max(6vw,24px) 65px;position:relative;overflow:hidden}.topline{display:flex;justify-content:space-between;gap:20px;align-items:center;font-size:.75rem;letter-spacing:.13em;text-transform:uppercase}.topline a{color:var(--lime)}.pill{border:1px solid #63817d;border-radius:20px;padding:5px 12px;white-space:nowrap}.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.16em;font-weight:750;color:var(--green)}header .eyebrow{color:var(--lime);margin-top:70px}header h1 em{color:var(--lime);font-style:italic}.lead{font-size:1.18rem;line-height:1.7;max-width:770px;color:#d4e0d9}.hero-formula{border-top:1px solid #496362;margin-top:36px;padding-top:24px;display:flex;gap:32px;align-items:center;justify-content:space-between}.hero-formula .math{font-size:clamp(1.3rem,3vw,2rem);margin:0;background:transparent;border:0;padding:0;color:#f5f2e9}.hero-formula p{max-width:370px;color:#c0d0ca;font-size:.87rem;margin:0}.layout{display:grid;grid-template-columns:235px minmax(0,900px);max-width:1270px;gap:65px;margin:auto;padding:0 30px}.sidebar{position:sticky;top:24px;align-self:start;padding:40px 0 20px;font-size:.81rem;max-height:calc(100vh - 40px);overflow:auto}.sidebar nav{display:grid;gap:5px}.sidebar a{text-decoration:none;display:block;padding:7px 10px;color:var(--muted);border-left:2px solid transparent}.sidebar a.active{border-color:var(--green);color:var(--green);background:#e8ecdf;font-weight:700}.sidebar .eyebrow{margin-bottom:18px}.progress{height:3px;background:var(--line);margin:24px 10px 8px}.progress span{display:block;background:var(--green);height:100%;width:0}.sidebar .small{padding:0 10px;font-size:.72rem}main{min-width:0;padding-bottom:80px}section{padding:68px 0;border-bottom:1px solid var(--line);scroll-margin-top:10px}.intro-grid,.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}.card{padding:24px;background:#eaece1;border-radius:12px}.card p:last-child{margin-bottom:0}.math{font-family:Georgia,"Times New Roman",serif;font-size:1.25rem;line-height:1.9;background:#eeeee3;padding:18px 22px;margin:24px 0;border-left:3px solid var(--green);overflow-x:auto}.math .condition{font-family:system-ui,sans-serif;font-size:.78rem;color:var(--muted);display:block}.note{border-left:3px solid var(--coral);padding:4px 0 4px 20px;margin:26px 0}.note p:last-child{margin:0}.lab{background:var(--night);border-radius:16px;padding:26px;color:#eff4e9;margin:32px 0}.lab h3{margin:0 0 12px;color:#f0f3e7}.lab p,.lab figcaption{color:#bdcfca}.lab .eyebrow{color:var(--lime);margin:0 0 8px;font-size:.68rem}.lab label{font-size:.86rem;color:#deeadf;display:block}.lab input[type=range]{width:100%;accent-color:var(--lime);min-height:38px;display:block}.controls{display:grid;grid-template-columns:1fr 1fr;gap:15px 25px;margin:20px 0}.controls.one{grid-template-columns:1fr}.lab output{color:var(--lime);font-variant-numeric:tabular-nums;font-weight:700;float:right}.lab button{background:#264347;border-color:#587270;color:#eff4e9;font-size:.8rem;padding:8px 12px}.lab button[aria-pressed=true]{background:var(--lime);color:var(--night);border-color:var(--lime)}.lab .buttons{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.chart{width:100%;height:auto;display:block;aspect-ratio:740/330}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.76rem;margin:10px 0;color:#d7e1d8}.legend span::before{content:"";display:inline-block;width:18px;height:3px;background:var(--c);vertical-align:middle;margin-right:6px}.readout{border-top:1px solid #49605c;margin:18px 0 0;padding-top:16px;font-size:.88rem;min-height:2em;color:#e3eddd!important}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.metric{border:1px solid #42605b;padding:12px;border-radius:8px;font-size:.72rem;color:#bfcec6}.metric b{display:block;font:1.45rem/1.6 Georgia,serif;color:var(--lime);overflow-wrap:anywhere}.number-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;margin:20px 0}.number-grid span{background:#203e40;color:#829c95;text-align:center;padding:6px 0;border-radius:4px;font-size:.75rem}.number-grid .included{background:#c8ed9c;color:#14332b;font-weight:700}.number-grid .unit{outline:1px solid #c8ed9c}details{border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:24px 0}summary{cursor:pointer;font-weight:700;line-height:1.5}details[open] summary{margin-bottom:20px}details p:last-child{margin-bottom:0}ul,ol{padding-left:23px}li{margin:8px 0}.status{font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor;border-radius:4px;padding:3px 6px;vertical-align:middle;margin-left:8px;color:var(--green)}.status.open{color:var(--coral)}.table-wrap{overflow-x:auto}table{border-collapse:collapse;font-size:.87rem;width:100%;margin:20px 0}th,td{text-align:left;vertical-align:top;padding:15px 12px;border-bottom:1px solid var(--line)}th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}td:first-child{font-weight:650;min-width:140px}.quiz{padding:24px 0;border-bottom:1px solid var(--line)}.quiz p{margin-bottom:12px}.quiz .answers{display:flex;gap:10px;flex-wrap:wrap}.quiz button{text-align:left;font-size:.88rem}.feedback{margin-top:14px!important;font-size:.9rem;min-height:1.7em}.feedback:empty{display:none}.glossary{display:grid;grid-template-columns:110px 1fr;gap:12px 20px;font-size:.9rem}.glossary dt{font-family:Georgia,serif;font-size:1.2rem}.glossary dd{margin:0}.sources{font-size:.88rem}.endmark{font-family:Georgia,serif;font-size:2rem;color:var(--green);margin:30px 0}.skip{position:absolute;left:20px;top:-100px;background:white;padding:10px;z-index:99}.skip:focus{top:10px}.mobile-nav{display:none}.proof-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:24px 0}.proof-chain div{padding:15px;background:#e5e9dd;font-size:.8rem;border-radius:7px}.proof-chain b{display:block;color:var(--green);font-size:1rem;margin-bottom:8px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}footer{background:var(--night);color:#becfc7;text-align:center;padding:35px;font-size:.8rem}footer a{color:var(--lime)}
+@media(max-width:1050px){.layout{gap:30px;grid-template-columns:185px minmax(0,1fr)}.sidebar{font-size:.74rem}.proof-chain{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){body{font-size:16px}.layout{display:block;padding:0 22px}.sidebar{display:none}header{padding:25px 24px 40px}header .eyebrow{margin-top:40px}.topline{font-size:.62rem}.hero-formula{display:block}.hero-formula p{margin-top:18px}.lead{font-size:1.02rem}.mobile-nav{display:block;position:sticky;top:0;z-index:5;padding:10px 20px;background:#f5f2e9f5;border-bottom:1px solid var(--line)}.mobile-nav select{background:transparent;color:var(--ink);border:0;width:100%;padding:8px;min-height:44px;font-size:.87rem}html{scroll-padding-top:78px}section{padding:44px 0;scroll-margin-top:5px}.two,.intro-grid{grid-template-columns:1fr}.lab{padding:19px;margin:26px -6px}.math{font-size:1.1rem;padding:14px}.controls{gap:10px 18px}.metrics{gap:7px}.metric{padding:8px;font-size:.65rem}.metric b{font-size:1.1rem}.chart{aspect-ratio:740/400}.number-grid{grid-template-columns:repeat(10,1fr)}.number-grid span{font-size:.7rem}.glossary{grid-template-columns:75px 1fr;gap:10px}.card{padding:20px}.hero-formula .math{font-size:1.25rem}.pill{padding:4px 7px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.sidebar,.mobile-nav,.controls,button,.progress{display:none}.layout{display:block;max-width:none}.lab{break-inside:avoid}header{padding:25px}section{padding:25px 0}body{font-size:11pt}details{display:block}a{color:inherit}}
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the lesson</a>
+<header>
+  <div class="topline"><span>A mathematical field guide · No. 01</span><span class="pill">Still unproved</span></div>
+  <p class="eyebrow">The Riemann hypothesis / an interactive deep dive</p>
+  <h1>The hidden<br><em>rhythm of primes.</em></h1>
+  <p class="lead">Prime numbers look irregular. A function of a complex variable encodes that irregularity as a collection of waves. Riemann’s hypothesis says something extraordinarily precise about the size of every one of those waves.</p>
+  <div class="hero-formula">
+    <div class="math">ζ(ρ) = 0, &nbsp;0 &lt; Re(ρ) &lt; 1 &nbsp; ⇒ &nbsp; Re(ρ) = ½</div>
+    <p>We will earn this sentence, not just memorize it. Start with calculus, algebra, and curiosity. No complex analysis or number theory assumed.</p>
+  </div>
+</header>
+<div class="mobile-nav"><label class="sr-only" for="chapter">Jump to chapter</label><select id="chapter"></select></div>
+<div class="layout">
+<aside class="sidebar">
+  <p class="eyebrow">The route to understanding</p>
+  <nav aria-label="Chapters">
+    <a href="#start">00 &nbsp; The map</a><a href="#primes">01 &nbsp; Counting primes</a><a href="#complex">02 &nbsp; Complex waves</a><a href="#series">03 &nbsp; Infinite sums</a><a href="#euler">04 &nbsp; Euler’s bridge</a><a href="#continuation">05 &nbsp; Beyond the series</a><a href="#symmetry">06 &nbsp; Why one half?</a><a href="#zeros">07 &nbsp; Meet a zero</a><a href="#explicit">08 &nbsp; Primes from zeros</a><a href="#implications">09 &nbsp; If we proved it</a><a href="#frontier">10 &nbsp; What remains hard</a><a href="#check">11 &nbsp; Test your model</a><a href="#references">12 &nbsp; Reference desk</a>
+  </nav>
+  <div class="progress"><span id="progress"></span></div><p class="small">Read in order, or jump back to a missing link. About 50–70 minutes with experiments.</p>
+</aside>
+<main>
+<section id="start">
+  <p class="eyebrow">00 / The map</p><h2>A statement about zeros.<br>A consequence about primes.</h2>
+  <p>A <strong>prime</strong> is an integer greater than 1 divisible only by itself and 1. A <strong>zero</strong> of a function is an input where its output is zero. At first these have nothing to do with one another. The entire story is the bridge between them.</p>
+  <div class="proof-chain"><div><b>Integers → primes</b>Unique factorization builds an infinite product.</div><div><b>Primes → ζ(s)</b>The product equals a sum over all integers.</div><div><b>ζ(s) → zeros</b>Complex analysis extends the function and reveals its zeros.</div><div><b>Zeros → error</b>Each zero contributes an oscillation to prime counting.</div></div>
+  <div class="intro-grid"><div class="card"><h3 style="margin-top:0">What you need coming in</h3><p>Algebra; logarithms and exponentials; basic derivatives and integrals; the idea of a limit. We will develop convergence, complex numbers, analytic continuation, and asymptotic notation as we go.</p></div><div class="card"><h3 style="margin-top:0">The central mental model</h3><p>A zero ρ = β + iγ contributes a term involving x<sup>β</sup> cos(γ log x). <strong>β controls growth; γ controls oscillation.</strong> RH says every nontrivial zero has β = ½.</p></div></div>
+  <p class="note"><strong>Epistemic ground rules.</strong> Theorem means proved; hypothesis means not proved. Every numerical experiment here is finite, approximate, and illustrative. None establishes RH. Hypothetical off-line zeros are explicitly labeled and never presented as discoveries.</p>
+</section>
+<section id="primes">
+  <p class="eyebrow">01 / Arithmetic meets calculus</p><h2>How many primes<br>are there up to x?</h2>
+  <p>Write <strong>π(x)</strong> for the number of primes at most x. Here π is a counting function, not the circle constant. For example, π(10) = 4 because the primes are 2, 3, 5, 7. The graph is a staircase: every prime adds one step.</p>
+  <p>The <strong>prime number theorem</strong> (PNT), proved independently by Hadamard and de la Vallée Poussin in 1896, says:</p>
+  <div class="math">π(x) ∼ x / log x <span class="condition">The symbol ∼ means that π(x) / (x / log x) tends to 1 as x → ∞. All logarithms in this lesson are natural.</span></div>
+  <p>Near a large x, a useful average prime density is 1/log x. Integrating a density gives a cumulative count, suggesting the more accurate smooth approximation <strong>Li(x) = ∫<sub>2</sub><sup>x</sup> dt/log t</strong>. It is a heuristic motivation for an approximation, not a proof that primes are independently random.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 01 / Count, then approximate</p><h3>The staircase and its smooth shadows</h3>
+    <div class="controls one"><label for="prime-x">Upper limit x <output id="prime-x-out"></output><input id="prime-x" type="range" min="20" max="10000" step="1" value="200"></label></div>
+    <figure><canvas id="prime-chart" class="chart" role="img" aria-label="Exact prime count staircase compared with x divided by log x and the logarithmic integral"></canvas><div class="legend"><span style="--c:var(--lime)">Exact π(x)</span><span style="--c:var(--gold)">Li(x), integral from 2</span><span style="--c:var(--blue)">x / log x</span></div><figcaption>The primes are computed by a sieve, not a random model. At large ranges the staircase steps are smaller than a pixel.</figcaption></figure>
+    <div class="metrics"><div class="metric">Exact π(x)<b id="prime-count"></b></div><div class="metric">Li(x)<b id="prime-li"></b></div><div class="metric">π(x) − Li(x)<b id="prime-error"></b></div></div>
+    <p class="readout" id="prime-readout" aria-live="polite"></p>
+  </div>
+  <p><strong>PNT concerns relative accuracy; RH concerns the size of the remaining error.</strong> Knowing that an error is small compared with x/log x still leaves room for enormous absolute discrepancies. RH would give a much tighter, square-root-scale estimate, with logarithmic factors.</p>
+  <details><summary>Calculus checkpoint: why Li(x), rather than just x/log x?</summary><p>Differentiating x/log x gives 1/log x − 1/(log x)². It misses a term. Integration by parts gives</p><div class="math">Li(x) = x/log x − 2/log 2 + ∫<sub>2</sub><sup>x</sup> dt/(log t)².</div><p>Further integrations yield an asymptotic expansion beginning x/log x + x/(log x)² + 2x/(log x)³ + ⋯. The second term alone eventually dwarfs √x log x. So replacing Li(x) with x/log x in the RH error estimate would make the statement false.</p><p>Another common convention is li(x) = PV ∫<sub>0</sub><sup>x</sup> dt/log t, where PV is a symmetric limiting procedure around the singularity at 1. Our Li(x) differs by the constant li(2) ≈ 1.04516. This constant does not affect the asymptotic RH statements.</p></details>
+</section>
+<section id="complex">
+  <p class="eyebrow">02 / The language of oscillation</p><h2>A complex exponent<br>is a shrinking, rotating arrow.</h2>
+  <p>A complex number is s = σ + it, with i² = −1. Its real part σ is a horizontal coordinate; its imaginary part t is a vertical coordinate. Multiplication by e<sup>iθ</sup> rotates a vector through angle θ because <strong>e<sup>iθ</sup> = cos θ + i sin θ</strong>.</p>
+  <p>For a positive integer n, there is no logarithm-branch ambiguity: define n<sup>−s</sup> using the real log n. Then:</p>
+  <div class="math">n<sup>−s</sup> = e<sup>−s log n</sup> = n<sup>−σ</sup> [cos(t log n) − i sin(t log n)].<span class="condition">Length: n<sup>−σ</sup>. Angle: −t log n. Increasing σ shortens later arrows; increasing t changes their relative phases.</span></div>
+  <p>Adding complex numbers means adding arrows tip to tail. A sum can become small because the arrows cancel, even when none is small individually. This makes complex numbers a natural language for interference.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 02 / Make cancellation visible</p><h3>Add the first N arrows n<sup>−s</sup></h3>
+    <div class="controls">
+      <label for="phasor-sigma">Real part σ <output id="phasor-sigma-out"></output><input id="phasor-sigma" type="range" min=".4" max="2.5" step=".05" value="1.5"></label>
+      <label for="phasor-t">Imaginary part t <output id="phasor-t-out"></output><input id="phasor-t" type="range" min="0" max="20" step=".1" value="7"></label>
+      <label for="phasor-n">Number of terms N <output id="phasor-n-out"></output><input id="phasor-n" type="range" min="2" max="100" step="1" value="35"></label>
+    </div>
+    <figure><canvas id="phasor-chart" class="chart" role="img" aria-label="Tip-to-tail partial sums of complex reciprocal powers; horizontal real and vertical imaginary coordinates"></canvas><figcaption>Origin → first term → second term → … → gold endpoint. The axes automatically rescale. This is a finite partial sum, not an analytic-continuation algorithm.</figcaption></figure>
+    <p class="readout" id="phasor-readout" aria-live="polite"></p>
+  </div>
+  <p><strong>Try t = 0:</strong> every term is positive real, so there is no cancellation. Then raise t. The path bends as differently sized arrows rotate through different angles. A zero of the continued zeta function will require both its real and imaginary parts to vanish, not merely one of them.</p>
+</section>
+<section id="series">
+  <p class="eyebrow">03 / A function built from all integers</p><h2>Meet zeta. Respect<br>its domain.</h2>
+  <div class="math">ζ(s) = ∑<sub>n=1</sub><sup>∞</sup> n<sup>−s</sup> = 1 + 2<sup>−s</sup> + 3<sup>−s</sup> + ⋯, &nbsp; Re(s) &gt; 1.</div>
+  <p>An infinite sum is a limit of finite partial sums. It is not automatically a meaningful number. For this sum, |n<sup>−s</sup>| = n<sup>−σ</sup>, so the p-series test guarantees <strong>absolute convergence when σ &gt; 1</strong>. Absolute convergence allows rearrangement and multiplication of these series without changing their values.</p>
+  <p>The integral test gives a concrete error estimate in this region:</p>
+  <div class="math">|ζ(s) − ∑<sub>n=1</sub><sup>N</sup> n<sup>−s</sup>| ≤ ∑<sub>n&gt;N</sub> n<sup>−σ</sup> ≤ N<sup>1−σ</sup> / (σ − 1).<span class="condition">A valid upper bound, not usually the actual error. It becomes expensive to approximate ζ by raw summation near σ = 1.</span></div>
+  <p>At s = 2, ζ(2) = π²/6 ≈ 1.644934. At s = 1, the series is the divergent harmonic series. In fact, the defining Dirichlet series does not converge anywhere with Re(s) ≤ 1. <strong>But the RH zeros are in 0 &lt; Re(s) &lt; 1.</strong> We therefore need a new representation of the same function—not a license to pretend divergent sums converge.</p>
+  <details><summary>A small dose of complex analysis: holomorphic, pole, zero</summary><p>A function is <strong>holomorphic</strong> on an open region if its complex derivative exists there. Unlike real differentiability, complex differentiability must give the same answer when approached from every direction. This is a very strong restriction: holomorphic functions locally equal convergent power series.</p><p>A <strong>pole</strong> is a controlled blow-up, like 1/(s−1). A function holomorphic except for isolated poles is <strong>meromorphic</strong>. A <strong>zero of multiplicity m</strong> has local form (s−ρ)<sup>m</sup>g(s), with g(ρ) ≠ 0. Consequently its logarithmic derivative f′/f behaves like m/(s−ρ), a fact we will use to extract primes from zeros.</p><p>A nonzero holomorphic function has isolated zeros; they cannot accumulate at an interior point. This does not forbid infinitely many zeros extending upward to unbounded imaginary height.</p></details>
+</section>
+<section id="euler">
+  <p class="eyebrow">04 / The arithmetic bridge</p><h2>Every integer is<br>a product of primes.</h2>
+  <p>The fundamental theorem of arithmetic says every integer n &gt; 1 has a unique factorization n = p<sub>1</sub><sup>a₁</sup>⋯p<sub>k</sub><sup>aₖ</sup>. For each prime, a geometric series enumerates its powers:</p>
+  <div class="math">(1 − p<sup>−s</sup>)<sup>−1</sup> = 1 + p<sup>−s</sup> + p<sup>−2s</sup> + ⋯.<br>ζ(s) = ∏<sub>p prime</sub> (1 − p<sup>−s</sup>)<sup>−1</sup>, &nbsp; Re(s) &gt; 1.</div>
+  <p>When you multiply the factors, choose one power of each prime. Every resulting term is n<sup>−s</sup>, and unique factorization ensures each integer appears exactly once. Absolute convergence justifies passing from finite products to the infinite <strong>Euler product</strong>.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 03 / Assemble the integers</p><h3>Which integers can your primes generate?</h3>
+    <p class="small">Toggle the allowed prime factors. Highlighted integers up to 60 use only your selection. Each factor includes <em>all powers</em> of its prime.</p>
+    <div class="buttons" id="prime-toggles" aria-label="Allowed prime factors"></div>
+    <div id="integer-grid" class="number-grid" aria-label="Integers generated by the selected primes"></div>
+    <div class="metrics"><div class="metric">Finite prime product, s = 2<b id="product-value"></b></div><div class="metric">Full ζ(2) = π²/6<b>1.644934</b></div><div class="metric">Generated integers ≤ 60<b id="product-count"></b></div></div>
+    <p class="readout" id="product-readout" aria-live="polite"></p>
+  </div>
+  <p>Thus ζ is not merely a function that happens to correlate with primes: its multiplication structure <em>is made out of primes</em>. The Euler product also implies ζ(s) ≠ 0 for Re(s) &gt; 1. This needs the convergence of the product, not just the observation that each individual factor is nonzero: a limit of nonzero products can otherwise be zero.</p>
+  <details><summary>The key derivative that exposes prime powers</summary><p>For Re(s) &gt; 1, take a locally consistent logarithm of the Euler product and use −log(1−z) = ∑<sub>k≥1</sub> z<sup>k</sup>/k. Differentiate the absolutely convergent expansion:</p><div class="math">log ζ(s) = ∑<sub>p</sub> ∑<sub>k≥1</sub> p<sup>−ks</sup>/k,<br>−ζ′(s)/ζ(s) = ∑<sub>p</sub> ∑<sub>k≥1</sub> (log p) p<sup>−ks</sup> = ∑<sub>n≥1</sub> Λ(n)n<sup>−s</sup>.</div><p>The <strong>von Mangoldt function</strong> Λ(n) is log p if n = p<sup>k</sup> for a prime p and integer k ≥ 1, and 0 otherwise. For example, Λ(8) = log 2, Λ(9) = log 3, and Λ(12) = 0. This is why the cleanest explicit formula counts weighted prime powers rather than just primes.</p></details>
+</section>
+<section id="continuation">
+  <p class="eyebrow">05 / The necessary conceptual leap</p><h2>The function is bigger<br>than its first formula.</h2>
+  <p>Start with something familiar: 1 + z + z² + ⋯ = 1/(1−z), but only for |z| &lt; 1. The expression on the right still defines a function at z = −2, where it equals 1/3. The series on the left diverges there.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 04 / Formula versus function</p><h3>Leave the disk of convergence</h3>
+    <div class="controls one"><label for="geo-z">Real input z <output id="geo-z-out"></output><input id="geo-z" type="range" min="-2" max=".9" step=".05" value="-.5"></label></div>
+    <figure><canvas id="geo-chart" class="chart" role="img" aria-label="First twenty-one partial sums of the geometric series compared to the continued function one divided by one minus z"></canvas><div class="legend"><span style="--c:var(--lime)">Partial sum Sₙ, n = 0…20</span><span style="--c:var(--gold)">Continued value 1/(1−z)</span></div></figure>
+    <p class="readout" id="geo-readout" aria-live="polite"></p>
+  </div>
+  <p><strong>Analytic continuation</strong> extends a holomorphic function through overlapping regions where other formulas make sense. The <strong>identity theorem</strong> supplies uniqueness: two holomorphic functions on a connected domain that agree on an open subset agree throughout that domain. You do not get to pick arbitrary new values.</p>
+  <p>For ζ, one route begins with the alternating eta series:</p>
+  <div class="math">η(s) = 1 − 2<sup>−s</sup> + 3<sup>−s</sup> − 4<sup>−s</sup> + ⋯,<br>η(s) = (1 − 2<sup>1−s</sup>) ζ(s).<span class="condition">The identity is first derived for Re(s) &gt; 1. The eta series converges for Re(s) &gt; 0 and supplies a continuation into the critical strip.</span></div>
+  <p>Where the denominator is nonzero, ζ(s) = η(s)/(1−2<sup>1−s</sup>). In the open strip 0 &lt; Re(s) &lt; 1 the denominator never vanishes. On Re(s) = 1 it vanishes at 1 + 2πik/log 2: the nonzero-k singularities of this quotient are removable, whereas s = 1 is the genuine pole. Other formulas continue ζ further.</p>
+  <p>The result is a unique meromorphic function on the entire complex plane, with one simple pole at s = 1 and residue 1: near 1, ζ(s) = 1/(s−1) + a holomorphic remainder.</p>
+  <div class="note"><strong>Not ordinary summation.</strong> The continued value ζ(−1) = −1/12 does <em>not</em> mean the positive series 1 + 2 + 3 + ⋯ converges to a negative number. That series diverges. Analytic continuation is an extension of a function, not a redefinition of ordinary limits.</div>
+  <details><summary>Why does the alternating series work even for complex s?</summary><p>For complex inputs, the real alternating-series test alone is not enough. Instead pair terms: (2n−1)<sup>−s</sup> − (2n)<sup>−s</sup> = ∫<sub>2n−1</sub><sup>2n</sup> s u<sup>−s−1</sup> du. On a compact subset of Re(s) &gt; 0, these paired terms have a summable uniform bound proportional to n<sup>−1−δ</sup> for some δ &gt; 0. The unpaired final term tends to zero.</p><p>This proves locally uniform convergence there, which preserves holomorphy. Splitting odd and even terms in the original absolutely convergent ζ series proves the eta identity for Re(s) &gt; 1; uniqueness then gives the continuation.</p></details>
+</section>
+<section id="symmetry">
+  <p class="eyebrow">06 / The geometry of the conjecture</p><h2>Why the line<br>Re(s) = ½?</h2>
+  <p>The <strong>functional equation</strong> links ζ(s) with ζ(1−s). One form is:</p>
+  <div class="math">ζ(s) = 2<sup>s</sup> π<sup>s−1</sup> sin(πs/2) Γ(1−s) ζ(1−s).<span class="condition">Read as a meromorphic identity, using limits at apparent singularities. Here π is the circle constant.</span></div>
+  <p>The <strong>gamma function</strong> extends factorials: Γ(z) = ∫<sub>0</sub><sup>∞</sup> u<sup>z−1</sup>e<sup>−u</sup> du for Re(z) &gt; 0, with Γ(n) = (n−1)!. It too has a meromorphic continuation. At s = −2, −4, −6, …, the sine factor vanishes while the other factors are finite and nonzero: these are the <strong>trivial zeros</strong>.</p>
+  <p>All other zeros lie in the <strong>critical strip</strong> 0 &lt; Re(s) &lt; 1. The Euler product excludes the right-hand half-plane Re(s) &gt; 1, a deeper theorem excludes Re(s) = 1, and the functional equation handles the reflected side. The statement that the line Re(s) = 1 is zero-free is already enough to prove the prime number theorem.</p>
+  <p>A cleaner symmetric object is the completed function:</p>
+  <div class="math">ξ(s) = ½s(s−1)π<sup>−s/2</sup>Γ(s/2)ζ(s), &nbsp; ξ(s) = ξ(1−s).</div>
+  <p>The factors cancel the pole and the trivial zeros; ξ is <strong>entire</strong> (holomorphic everywhere) and its zeros are precisely the nontrivial zeros of ζ, with multiplicity. Also ζ(s̄) = ζ(s)̄, where the bar means complex conjugation. Thus a nontrivial zero β + iγ comes with reflections β − iγ, (1−β) + iγ, and (1−β) − iγ.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 05 / Symmetry is not a proof</p><h3>A symmetric set need not sit on its axis</h3>
+    <div class="controls one"><label for="ghost-beta">Real part β of a hypothetical zero <output id="ghost-beta-out"></output><input id="ghost-beta" type="range" min=".15" max=".85" step=".01" value=".7"></label></div>
+    <figure><canvas id="strip-chart" class="chart" role="img" aria-label="Critical strip showing actual low zeros on the central line and a separately labeled hypothetical quartet off that line"></canvas><div class="legend"><span style="--c:var(--lime)">First five actual zero pairs</span><span style="--c:var(--gold)">Hypothetical quartet (not actual zeros)</span></div><figcaption>Horizontal coordinate: Re(s). Vertical coordinate: Im(s). The gold points at heights ±10 are a schematic counterexample to the symmetry argument, not zeros of ζ.</figcaption></figure>
+    <p class="readout" id="ghost-readout" aria-live="polite"></p>
+  </div>
+  <p><strong>RH asserts that every nontrivial zero is on the symmetry axis itself.</strong> Reflection symmetry explains why ½ is special, but does not force any individual zero onto the line. Moving the hypothetical points off the line respects every displayed symmetry and violates RH.</p>
+  <details><summary>Where does the functional equation come from?</summary><p>A useful route is the theta function θ(t) = ∑<sub>n∈ℤ</sub> e<sup>−πn²t</sup>, for t &gt; 0. The Fourier transform of a Gaussian is another Gaussian; Poisson summation gives θ(t) = t<sup>−1/2</sup>θ(1/t).</p><p>A Mellin transform (an integral against powers t<sup>s/2</sup>) gives, initially for Re(s) &gt; 1:</p><div class="math">π<sup>−s/2</sup>Γ(s/2)ζ(s) = ½ ∫<sub>0</sub><sup>∞</sup> [θ(t)−1] t<sup>s/2−1</sup> dt.</div><p>Split at t = 1 and use the theta transformation on the lower half. If Λ<sub>ζ</sub>(s) denotes the left side (not the von Mangoldt function), this becomes</p><div class="math">Λ<sub>ζ</sub>(s) = −1/s + 1/(s−1)<br>+ ½ ∫<sub>1</sub><sup>∞</sup> [θ(t)−1] [t<sup>s/2−1</sup> + t<sup>(1−s)/2−1</sup>] dt.</div><p>The integral converges for every complex s because θ(t)−1 decays exponentially. The right side is invariant under s ↔ 1−s. Multiplying by s(s−1)/2 removes its poles and produces ξ. This is a proof route for the symmetry—not a proof that all its zeros are central.</p></details>
+</section>
+<section id="zeros">
+  <p class="eyebrow">07 / A computational microscope</p><h2>Watch both components<br>vanish together.</h2>
+  <p>The first positive-height nontrivial zero is approximately <strong>½ + 14.1347251417i</strong>. “Zero” refers to the complex output ζ(s), not the imaginary coordinate of the input. Its conjugate at negative height is also a zero.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 06 / Evaluate the actual function</p><h3>Probe ζ(σ + it)</h3>
+    <div class="controls">
+      <label for="zeta-sigma">Real coordinate σ <output id="zeta-sigma-out"></output><input id="zeta-sigma" type="range" min=".1" max=".9" step=".01" value=".5"></label>
+      <label for="zeta-t">Height t <output id="zeta-t-out"></output><input id="zeta-t" type="range" min="10" max="50" step=".000001" value="14.134725"></label>
+    </div>
+    <div class="buttons" id="zero-buttons" aria-label="Jump to known zeros"></div>
+    <figure><canvas id="zeta-chart" class="chart" role="img" aria-label="Real and imaginary parts of the analytically continued zeta function versus height from 10 to 50 at the selected real coordinate"></canvas><div class="legend"><span style="--c:var(--lime)">Re ζ(σ + it)</span><span style="--c:var(--blue)">Im ζ(σ + it)</span><span style="--c:var(--gold)">Your chosen t</span></div><figcaption>Computed by an Euler–Maclaurin continuation, not a divergent raw sum. Fixed horizontal window 10 ≤ t ≤ 50. Use the buttons to land accurately near a known zero.</figcaption></figure>
+    <div class="metrics"><div class="metric">Re ζ(s)<b id="zeta-real"></b></div><div class="metric">Im ζ(s)<b id="zeta-imag"></b></div><div class="metric">Magnitude |ζ(s)|<b id="zeta-abs"></b></div></div>
+    <p class="readout" id="zeta-readout" aria-live="polite"></p>
+  </div>
+  <p><strong>Try this:</strong> select zero 1, then move σ away from ½ while keeping t fixed. The output is no longer near zero. Return to the line and pick a different zero. Vanishing of just the green or blue component is not sufficient; they must both vanish at the same input.</p>
+  <p>Finding many zeros on the line cannot rule out other zeros off the line. Even checking <em>every</em> zero up to a gigantic height leaves infinitely much of the strip unexplored. Rigorous finite verification needs certified error bounds and a zero-counting argument; this browser plot has neither.</p>
+</section>
+<section id="explicit">
+  <p class="eyebrow">08 / The payoff</p><h2>Zeros reconstruct<br>the prime staircase.</h2>
+  <p>To make the bridge exact, replace π(x) with a weighted count of prime powers:</p>
+  <div class="math">ψ(x) = ∑<sub>n≤x</sub> Λ(n) = ∑<sub>p<sup>k</sup>≤x</sub> log p.<span class="condition">Each prime power p<sup>k</sup> contributes log p. At 2, 4, 8, 16, … the jump is always log 2, not log(p<sup>k</sup>).</span></div>
+  <p>At x = 10, ψ(10) = log 2 + log 3 + log 2 + log 5 + log 7 + log 2 + log 3 ≈ 7.832. It has jumps at 2, 3, 4, 5, 7, 8, 9. The prime number theorem is equivalent to ψ(x) ∼ x.</p>
+  <p>The <strong>explicit formula</strong> expresses this arithmetic staircase in terms of the zeros:</p>
+  <div class="math">ψ₀(x) = x − ∑<sub>ρ</sub> x<sup>ρ</sup>/ρ − log(2π) − ½ log(1 − x<sup>−2</sup>), &nbsp; x &gt; 1.<span class="condition">ψ₀ uses the midpoint of each jump. The zero sum includes multiplicities and means the symmetric limit over |Im ρ| ≤ T as T → ∞; it is not an arbitrarily reordered, absolutely convergent sum.</span></div>
+  <p>The pole at 1 generates the main term x. The nontrivial zeros generate the oscillatory error. The trivial zeros and the behavior at 0 generate the two smaller corrections. This is an exact theorem, not an assumption of RH.</p>
+  <p>For a conjugate pair ρ = β ± iγ, its combined contribution to the error is real:</p>
+  <div class="math">−2 Re(x<sup>β+iγ</sup>/(β+iγ))<br>= −2x<sup>β</sup> [β cos(γ log x) + γ sin(γ log x)] / (β² + γ²).</div>
+  <p>Now the slogan is an equation: <strong>β controls amplitude growth; γ controls frequency in log x.</strong> Large γ adds finer detail; its coefficient is suppressed roughly by 1/γ. These are not ordinary equally spaced Fourier harmonics, but the reconstruction has a similar wave-superposition flavor.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 07 / Turn on the harmonics</p><h3>Rebuild ψ(x) with the first K zero pairs</h3>
+    <div class="controls">
+      <label for="zero-count">Zero pairs K <output id="zero-count-out"></output><input id="zero-count" type="range" min="0" max="60" step="1" value="0"></label>
+      <label for="psi-x">Probe x <output id="psi-x-out"></output><input id="psi-x" type="range" min="2" max="100" step=".1" value="25"></label>
+    </div>
+    <div class="buttons"><button id="psi-mode" type="button" aria-pressed="false">Show error ψ(x) − x</button><button id="psi-fill" type="button">Add all 60 pairs</button></div>
+    <figure><canvas id="psi-chart" class="chart" role="img" aria-label="Exact weighted prime-power staircase compared with a truncated explicit-formula reconstruction"></canvas><div class="legend"><span style="--c:var(--lime)">Exact arithmetic staircase</span><span style="--c:var(--gold)">Truncated zero reconstruction</span></div><figcaption>Only the first 60 known positive heights and their conjugates are available here. Their locations on the line are known independently of RH. More terms do not improve every point monotonically; ringing near jumps is expected.</figcaption></figure>
+    <div class="metrics"><div class="metric">Exact ψ₀(x)<b id="psi-exact"></b></div><div class="metric">Reconstruction<b id="psi-reconstructed"></b></div><div class="metric">Difference<b id="psi-difference"></b></div></div>
+    <p class="readout" id="psi-readout" aria-live="polite"></p>
+  </div>
+  <p>Start at K = 0: a smooth trend with small corrections. Add zeros and see the staircase emerge. Switch to the error view to remove the large main term x. At a jump, the full symmetric series tends to the midpoint, just as a Fourier series does at a discontinuity.</p>
+  <details><summary>Derivation sketch: the inverse transform and its residues</summary><p>Recall −ζ′/ζ = ∑ Λ(n)n<sup>−s</sup> for Re(s) &gt; 1. Perron inversion turns this encoding back into a count. For c &gt; 1, with the appropriate symmetric limit,</p><div class="math">ψ₀(x) = (1/(2πi)) ∫<sub>c−i∞</sub><sup>c+i∞</sup> [−ζ′(s)/ζ(s)] x<sup>s</sup>/s ds.</div><p>The kernel integrates (x/n)<sup>s</sup>/s to 1 when n &lt; x, 0 when n &gt; x, and ½ when n = x. That recovers the weighted count. To evaluate the integral, shift the vertical contour left. The residue theorem says the change equals 2πi times the sum of coefficients of (s−a)<sup>−1</sup> at the crossed singularities.</p><ul><li>At s = 1, ζ has a pole; −ζ′/ζ has residue +1, producing x.</li><li>At a zero ρ of multiplicity m, −ζ′/ζ has residue −m, producing −m x<sup>ρ</sup>/ρ.</li><li>At s = 0, the factor 1/s contributes −ζ′(0)/ζ(0) = −log(2π).</li><li>The trivial zeros −2n contribute ∑<sub>n≥1</sub> x<sup>−2n</sup>/(2n) = −½ log(1−x<sup>−2</sup>).</li></ul><p>Controlling the horizontal and distant contour pieces and taking the symmetric limit requires estimates; the formal residue calculation alone is not the whole proof. But it exposes exactly why zeros govern arithmetic.</p></details>
+  <details><summary>Why square-root-sized individual waves are not yet a proof of the RH error bound</summary><p>Assuming RH makes each factor |x<sup>ρ</sup>| = √x. But the sum over all zeros is not absolutely convergent; you cannot multiply √x by “the number of zeros.” One first truncates at height T and controls the remainder.</p><p>The number N(T) of zeros with 0 &lt; Im ρ ≤ T, counting multiplicity, satisfies N(T) = (T/(2π))log(T/(2π)) − T/(2π) + O(log T). This implies ∑<sub>0&lt;γ≤T</sub> 1/γ = O((log T)²). Bounding the truncated zero sum and treating the truncation carefully yields O(√x (log x)²). The logarithms encode real analytical work, not decorative corrections.</p></details>
+</section>
+<section id="implications">
+  <p class="eyebrow">09 / What a proof would buy us</p><h2>Control of the error.<br>Not a formula for everything.</h2>
+  <p>The most direct consequence is also an equivalent formulation:</p>
+  <div class="math">RH &nbsp; ⇔ &nbsp; ψ(x) = x + O(√x (log x)²)<br>RH &nbsp; ⇔ &nbsp; π(x) = Li(x) + O(√x log x).<span class="condition">These are asymptotic statements as x → ∞. A proof of either estimate would prove RH, not merely follow from it.</span></div>
+  <p><strong>Big O</strong> means there exist constants C and x₀ such that the absolute error is at most C times the displayed expression for every x ≥ x₀. It does not specify C, assert equality, or say the actual error always nearly attains the bound. The square-root <em>exponent</em> is the central feature; RH does not determine the sharpest possible logarithmic factors.</p>
+  <p>An equivalent exponent-focused version is ψ(x) = x + O<sub>ε</sub>(x<sup>1/2+ε</sup>) for <em>every</em> ε &gt; 0, where the constant may depend on ε. By contrast PNT gives only ψ(x) = x + o(x), meaning (ψ(x)−x)/x → 0.</p>
+  <div class="lab">
+    <p class="eyebrow">Experiment 08 / The cost of an off-line zero</p><h3>A small shift in exponent eventually matters enormously</h3>
+    <div class="controls">
+      <label for="growth-beta">Hypothetical β ≥ ½ <output id="growth-beta-out"></output><input id="growth-beta" type="range" min=".5" max=".9" step=".01" value=".65"></label>
+      <label for="growth-power">Scale x = 10<sup>k</sup>, choose k <output id="growth-power-out"></output><input id="growth-power" type="range" min="4" max="24" step="1" value="12"></label>
+    </div>
+    <figure><canvas id="growth-chart" class="chart" role="img" aria-label="Logarithmic growth of x to the one-half and x to a hypothetical beta as x ranges from ten to the fourth to ten to the twenty-fourth"></canvas><div class="legend"><span style="--c:var(--lime)">log₁₀(x<sup>1/2</sup>)</span><span style="--c:var(--gold)">log₁₀(x<sup>β</sup>), hypothetical</span></div><figcaption>This compares the growth factors only, not a full error bound or an actual prime-counting error. The oscillatory factor and the coefficient 1/ρ are deliberately omitted.</figcaption></figure>
+    <div class="metrics"><div class="metric">x<sup>β</sup> / √x<b id="growth-ratio"></b></div><div class="metric">RH π-error scale √x log x<b id="growth-bound"></b></div><div class="metric">Scale / (x/log x)<b id="growth-relative"></b></div></div>
+    <p class="readout" id="growth-readout" aria-live="polite"></p>
+  </div>
+  <p>An off-line zero has a reflected partner with β &gt; ½. Its growth factor exceeds √x by x<sup>β−1/2</sup>, eventually beating any fixed power of log x. One cannot rule out cancellation just by staring at one term, but analytic arguments make the equivalence rigorous: the RH error estimates exclude zeros to the right of ½.</p>
+  <details><summary>Why the error estimate conversely forces the zeros onto the line</summary><p>For Re(s) &gt; 1, partial summation gives −ζ′(s)/ζ(s) = s∫<sub>1</sub><sup>∞</sup> ψ(x)x<sup>−s−1</sup> dx. Substitute ψ(x) = x + E(x):</p><div class="math">−ζ′(s)/ζ(s) = s/(s−1) + s∫<sub>1</sub><sup>∞</sup> E(x)x<sup>−s−1</sup> dx.</div><p>If E(x) = O(√x (log x)²), this integral defines a holomorphic function for Re(s) &gt; ½. Apart from the known pole at 1, the right side has no poles there. A zero of ζ would create a pole of −ζ′/ζ, so no such zero can exist to the right of ½. Reflection then excludes zeros to the left of ½ inside the strip. This is the conceptual core of the reverse implication.</p></details>
+  <h3>What would actually change?</h3>
+  <div class="table-wrap"><table><thead><tr><th>Area</th><th>What proving RH gives</th><th>What it does not give</th></tr></thead><tbody>
+    <tr><td>Prime counts</td><td>Proved near-square-root error estimates around Li(x), uniformly for sufficiently large x; explicit versions can give concrete bounds.</td><td>Exact prime locations from an easy closed-form rule, or a claim that the error is zero.</td></tr>
+    <tr><td>Prime gaps</td><td>A consequence is p<sub>n+1</sub> − p<sub>n</sub> = O(√p<sub>n</sub> log p<sub>n</sub>), so sufficiently long intervals on this scale must contain a prime.</td><td>The twin-prime conjecture, Goldbach’s conjecture, or the much sharper conjectural O((log p)²) maximum-gap scale.</td></tr>
+    <tr><td>Existing conditional results</td><td>Statements whose only unproved assumption is ordinary RH become unconditional.</td><td>Automatic proofs of results that assume the generalized Riemann hypothesis for other L-functions.</td></tr>
+    <tr><td>Algorithms and cryptography</td><td>Sharper guarantees for some number-theoretic estimates and procedures that really depend on RH.</td><td>No known automatic fast factoring algorithm, no automatic break of RSA, and no resolution of P versus NP. Primality testing is already deterministic polynomial time without RH.</td></tr>
+    <tr><td>Mathematical methods</td><td>A new proof might introduce powerful ideas applicable elsewhere. This could be as important as the theorem.</td><td>The form of those ideas, or their practical impact, cannot be predicted from the statement alone.</td></tr>
+  </tbody></table></div>
+  <p><strong>RH versus GRH.</strong> Dirichlet L-functions L(s,χ) = ∑ χ(n)n<sup>−s</sup> encode primes in residue classes, such as numbers congruent to a modulo q. The generalized Riemann hypothesis asserts analogous critical-line behavior for this larger family. Ordinary RH concerns ζ alone and does not prove GRH. Many widely quoted computational consequences actually assume GRH.</p>
+  <p><strong>If RH were disproved:</strong> one rigorously certified nontrivial zero off the line would suffice. The equivalent RH error bounds would fail, but PNT and the explicit formula would remain true. A theorem of the form “if RH, then X” would remain a valid implication; its conclusion X would not automatically become false. Mathematics would not collapse—the conjectured precision would change.</p>
+</section>
+<section id="frontier">
+  <p class="eyebrow">10 / Evidence, not closure</p><h2>Why isn’t this<br>already settled?</h2>
+  <p>We have an exact function, exact symmetries, exact formulas tying it to primes, and enormous computational evidence. The missing step is a <strong>global reason that excludes every off-line zero at every height</strong>.</p>
+  <div class="two"><div class="card"><h3 style="margin-top:0">What is known <span class="status">Theorems</span></h3><p>There are infinitely many nontrivial zeros; infinitely many lie on the critical line. All nontrivial zeros are in the open critical strip and have the reflection symmetries described above. Large finite height ranges have been rigorously checked.</p></div><div class="card"><h3 style="margin-top:0">What is missing <span class="status open">Open</span></h3><p>“Infinitely many on the line” is not “all on the line.” A very sparse infinite set of off-line zeros—or even one quartet—would defeat RH. The pole, the Euler product, and symmetry alone do not rule that out.</p></div></div>
+  <h3>Three tempting, incomplete arguments</h3>
+  <p><strong>“The graph looks right.”</strong> A finite graph cannot establish an unbounded universal statement. Numerical plots can miss roots, and rounding near zero is not exact vanishing.</p>
+  <p><strong>“The symmetry forces the zeros to the center.”</strong> Symmetric pairs off the center are just as symmetric. You constructed them in experiment 05.</p>
+  <p><strong>“Prime randomness should imply square-root cancellation.”</strong> Randomness is a heuristic here, not a proved model of primes. Controlling all correlations with enough precision is the hard part, not something the analogy supplies for free.</p>
+  <details><summary>Two research directions, and what they would need to prove</summary><p><strong>Spectral ideas (Hilbert–Pólya).</strong> If one could construct an appropriate self-adjoint operator whose eigenvalues correspond exactly to the numbers γ in zeros ½+iγ—and prove the correspondence captures all nontrivial zeros—then the reality of the spectrum would force the critical line. No such established construction currently proves RH. Similarity to quantum energy levels is inspiration, not a completed argument.</p><p><strong>Positivity and equivalent criteria.</strong> RH has many reformulations as positivity conditions or arithmetic inequalities. These can move the difficulty to a more approachable-looking domain, but a universal positivity condition still needs a proof. Rephrasing the conjecture does not remove its content.</p><p>Analogous hypotheses have been proved for zeta functions associated with varieties over finite fields. Those successes motivate structural approaches, but do not by themselves prove the classical statement about the integers.</p></details>
+  <p class="note"><strong>Status.</strong> RH is listed as unsolved by the Clay Mathematics Institute, with a US$1 million Millennium Prize attached under its prize rules. This lesson’s sources were consulted on 20 November 2026. A claimed proof is not the same thing as an accepted proof.</p>
+</section>
+<section id="check">
+  <p class="eyebrow">11 / Can you explain the bridge?</p><h2>Test your mental model.</h2>
+  <p>Choose an answer before opening the derivations above again. Feedback explains the reason, not just the verdict.</p>
+  <div id="quizzes"></div>
+  <p id="quiz-score" class="note" aria-live="polite">0 of 6 concepts answered correctly.</p>
+  <div class="card"><h3 style="margin-top:0">The one-minute version you should now be able to give</h3><p>Unique factorization makes the zeta function an Euler product over primes. Analytic continuation extends it into the critical strip, where it has infinitely many zeros. A contour-integral formula expresses the error in a weighted prime count as a sum of contributions x<sup>ρ</sup>/ρ from those zeros. The real part of each ρ controls growth. RH says all these real parts are ½, which is equivalent to near-square-root control of the prime-counting error. Symmetry and finite computations support the picture but do not prove the universal claim.</p></div>
+</section>
+<section id="references">
+  <p class="eyebrow">12 / Reference desk</p><h2>Keep the symbols straight.</h2>
+  <dl class="glossary">
+    <dt>s = σ + it</dt><dd>A general complex input; σ and t are real numbers.</dd>
+    <dt>ρ = β + iγ</dt><dd>A nontrivial zero of ζ. RH asserts β = ½ for every such ρ.</dd>
+    <dt>ζ(s)</dt><dd>The Riemann zeta function: an integer series for Re(s) &gt; 1, continued meromorphically elsewhere.</dd>
+    <dt>ξ(s)</dt><dd>The completed entire function with ξ(s) = ξ(1−s), having exactly the nontrivial zeros.</dd>
+    <dt>π(x)</dt><dd>Number of primes ≤ x. Distinct from the constant π ≈ 3.14159.</dd>
+    <dt>Li(x)</dt><dd>In this lesson, ∫<sub>2</sub><sup>x</sup> dt/log t. Changing to the principal-value li(x) adds a constant.</dd>
+    <dt>Λ(n)</dt><dd>log p at prime powers n = p<sup>k</sup>; zero otherwise.</dd>
+    <dt>ψ(x), ψ₀(x)</dt><dd>Weighted prime-power count; ψ₀ takes the midpoint at jumps.</dd>
+    <dt>O(g(x))</dt><dd>Bounded in absolute value by some constant times g(x), eventually.</dd>
+    <dt>o(g(x)), ∼</dt><dd>f = o(g) means f/g → 0; f ∼ g means f/g → 1.</dd>
+  </dl>
+  <h3>Sources and a route to deeper study</h3>
+  <ol class="sources">
+    <li><a href="https://www.claymath.org/millennium/riemann-hypothesis/">Clay Mathematics Institute: Riemann Hypothesis</a> — official problem and status; its advanced material links the formal problem description.</li>
+    <li><a href="https://dlmf.nist.gov/25.2">NIST Digital Library of Mathematical Functions, §25.2</a> — definition, continuation, Euler product, and Euler–Maclaurin representations.</li>
+    <li><a href="https://dlmf.nist.gov/25.4">NIST DLMF, §25.4</a> — functional equation and completed ξ-function.</li>
+    <li><a href="https://dlmf.nist.gov/25.10">NIST DLMF, §25.10</a> — critical strip, zeros, and RH.</li>
+    <li><a href="https://dlmf.nist.gov/25.16">NIST DLMF, §25.16</a> — Chebyshev’s function, the connection to zeros, PNT, and an equivalent RH error statement.</li>
+    <li><a href="https://www.claymath.org/library/historical/riemann/english/20.pdf">Riemann’s 1859 paper (English translation hosted by Clay)</a> — the original source of the vision, translated by David R. Wilkins.</li>
+  </ol>
+  <p class="small">For a first textbook treatment: Tom M. Apostol, <em>Introduction to Analytic Number Theory</em>. For historical development and the explicit formula: H. M. Edwards, <em>Riemann’s Zeta Function</em>. For a deeper analytic treatment: E. C. Titchmarsh, revised by D. R. Heath-Brown, <em>The Theory of the Riemann Zeta-Function</em>.</p>
+  <details><summary>Numerical methods, limits, and reproducibility</summary><p>Prime counts and ψ are computed directly with a sieve up to 10,000. Li(x) is evaluated as Ei(log x)−Ei(log 2), using the convergent expansion Ei(u) = γ<sub>E</sub> + log u + ∑<sub>k≥1</sub> u<sup>k</sup>/(k·k!) for u &gt; 0. Here γ<sub>E</sub> is Euler’s constant, not a zero height.</p><p>The zeta probe uses Euler–Maclaurin summation with N = 64 and eight Bernoulli correction terms. It is restricted to 0.1 ≤ σ ≤ 0.9 and 10 ≤ t ≤ 50, a modest window where this truncation is accurate. The browser uses ordinary double-precision arithmetic, not interval arithmetic. Values shown as small are approximate, not certificates.</p><p>The 60 positive zero heights are embedded rounded reference values computed using mpmath at 25 decimal-digit working precision. The reconstruction pairs each with its complex conjugate. No uncomputed zeros are assumed absent. A finite truncation can ring, overshoot, and perform unevenly near prime powers.</p><p>All plots are calculated locally. There are no external scripts, fonts, trackers, accounts, or network-dependent calculations. Downloading this HTML file preserves the complete lesson. Charts have text descriptions and numerical readouts; all controls work with keyboard input. The lesson does not store or transmit your answers.</p></details>
+  <p class="endmark">The mystery is not whether primes have structure.<br>It is how precisely that structure constrains their irregularity.</p>
+</section>
+</main></div>
+<footer>Built to explore, not to certify a conjecture. &nbsp; <a href="#start">Return to the beginning ↑</a></footer>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const colors = {green:'#c8ed9c',gold:'#ffca81',blue:'#87c7ef',grid:'#365154',text:'#c5d5cf'};
+const zeros = [14.134725141734695,21.022039638771556,25.01085758014569,30.424876125859512,32.93506158773919,37.586178158825675,40.9187190121475,43.327073280915,48.00515088116716,49.7738324776723,52.970321477714464,56.44624769706339,59.34704400260235,60.83177852460981,65.1125440480816,67.07981052949417,69.54640171117398,72.0671576744819,75.70469069908393,77.1448400688748,79.33737502024937,82.91038085408603,84.73549298051705,87.42527461312523,88.80911120763446,92.49189927055849,94.65134404051989,95.87063422824531,98.83119421819369,101.31785100573138,103.72553804047834,105.44662305232609,107.1686111842764,111.02953554316967,111.87465917699264,114.32022091545271,116.22668032085755,118.79078286597621,121.37012500242065,122.94682929355258,124.25681855434577,127.5166838795965,129.57870419995606,131.08768853093267,133.4977372029976,134.75650975337388,138.11604205453344,139.7362089521214,141.12370740402113,143.11184580762063,146.0009824867655,147.42276534255961,150.05352042078488,150.92525761224147,153.0246938111989,156.11290929423788,157.59759181759406,158.8499881714205,161.18896413759603,163.030709687182];
+const limit = 10000, composite = new Uint8Array(limit+1), primeCounts = new Uint32Array(limit+1), mangoldt = new Float64Array(limit+1), psi = new Float64Array(limit+1), primes = [];
+for(let n=2;n<=limit;n++){
+  if(!composite[n]){
+    primes.push(n);
+    for(let k=n*n;k<=limit;k+=n) composite[k]=1;
+    for(let k=n;k<=limit;k*=n) mangoldt[k]=Math.log(n);
+  }
+  primeCounts[n]=primes.length;
+  psi[n]=psi[n-1]+mangoldt[n];
+}
+function eiPositive(u){let term=u,sum=u;for(let k=2;k<200;k++){term*=u/k;const add=term/k;sum+=add;if(Math.abs(add)<1e-16*Math.abs(sum))break;}return .5772156649015329+Math.log(u)+sum;}
+const li2=eiPositive(Math.log(2));
+function li(x){return eiPositive(Math.log(x))-li2;}
+function fmt(x,d=3){return x.toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d});}
+function compact(x){if(x===0)return '0';if(Math.abs(x)>=1e5||Math.abs(x)<.001)return x.toExponential(2);return fmt(x,Math.abs(x)<10?2:0);}
+function val(id){return Number($(id).value);}
+function out(id,d=2){$(id+'-out').textContent=fmt(val(id),d);}
+function bind(ids,fn){ids.forEach(id=>$(id).addEventListener('input',fn));fn();}
+function chart(id,xmin,xmax,ymin,ymax,xlabel,ylabel){
+  const c=$(id),w=Math.max(280,c.getBoundingClientRect().width),h=w<500?Math.max(235,w*.62):w*330/740,dpr=window.devicePixelRatio||1;
+  c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);c.style.height=h+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  const L=53,R=17,T=29,B=42,X=x=>L+(x-xmin)/(xmax-xmin)*(w-L-R),Y=y=>h-B-(y-ymin)/(ymax-ymin)*(h-T-B);
+  ctx.font='11px system-ui';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const yy=ymin+(ymax-ymin)*i/4,y=Y(yy);ctx.strokeStyle=colors.grid;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.fillStyle=colors.text;ctx.textAlign='right';ctx.fillText(compact(yy),L-8,y+4);
+    const xx=xmin+(xmax-xmin)*i/4,x=X(xx);ctx.textAlign='center';ctx.fillText(compact(xx),x,h-B+19);
+  }
+  ctx.fillStyle=colors.text;ctx.textAlign='left';ctx.fillText(ylabel,L,15);ctx.textAlign='right';ctx.fillText(xlabel,w-R,h-4);
+  if(ymin<0&&ymax>0){ctx.strokeStyle='#6b8580';ctx.beginPath();ctx.moveTo(L,Y(0));ctx.lineTo(w-R,Y(0));ctx.stroke();}
+  function line(points,color,width=2,dash=[]){ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();ctx.beginPath();points.forEach((p,i)=>{if(i===0)ctx.moveTo(X(p[0]),Y(p[1]));else ctx.lineTo(X(p[0]),Y(p[1]));});ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.stroke();ctx.restore();}
+  function dot(x,y,color,r=4){ctx.fillStyle=color;ctx.beginPath();ctx.arc(X(x),Y(y),r,0,Math.PI*2);ctx.fill();}
+  return {ctx,X,Y,line,dot,L,R,T,B,w,h};
+}
+function sample(a,b,n,fn){return Array.from({length:n+1},(_,i)=>{const x=a+(b-a)*i/n;return [x,fn(x)];});}
+function drawPrimes(){
+  const x=val('prime-x');out('prime-x',0);const c=chart('prime-chart',2,x,0,Math.max(li(x),primeCounts[x])*1.1,'x','prime count');
+  const points=[[2,0]];let count=0;for(const p of primes){if(p>x)break;points.push([p,count],[p,++count]);}points.push([x,count]);
+  c.line(sample(2,x,400,li),colors.gold,2);c.line(sample(2,x,400,n=>n/Math.log(n)),colors.blue,2,[5,4]);c.line(points,colors.green,2);
+  $('prime-count').textContent=fmt(count,0);$('prime-li').textContent=fmt(li(x),2);$('prime-error').textContent=fmt(count-li(x),2);
+  $('prime-readout').textContent=`At x = ${fmt(x,0)}, x/log x = ${fmt(x/Math.log(x),2)}. The ratio π(x)/(x/log x) is ${fmt(count/(x/Math.log(x)),4)}; PNT predicts its limit is 1, not that it equals 1 now.`;
+}
+function drawPhasors(){
+  const s=val('phasor-sigma'),t=val('phasor-t'),n=val('phasor-n');out('phasor-sigma');out('phasor-t',1);out('phasor-n',0);
+  let re=0,im=0;const points=[[0,0]];for(let k=1;k<=n;k++){const a=k**(-s),theta=-t*Math.log(k);re+=a*Math.cos(theta);im+=a*Math.sin(theta);points.push([re,im]);}
+  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),a=Math.min(...xs),b=Math.max(...xs),c=Math.min(...ys),d=Math.max(...ys),pad=Math.max(b-a,d-c,.3)*.12;
+  const ch=chart('phasor-chart',a-pad,b+pad,c-pad,d+pad,'real coordinate','imaginary coordinate');ch.line(points,colors.green,1.8);points.forEach(p=>ch.dot(p[0],p[1],colors.green,1.8));ch.dot(0,0,colors.blue,4);ch.dot(re,im,colors.gold,5);
+  $('phasor-readout').textContent=`Partial sum = ${fmt(re,4)} ${im<0?'−':'+'} ${fmt(Math.abs(im),4)}i. `+(s>1?`Absolute tail bound: ${fmt(n**(1-s)/(s-1),4)}. The bound can be much larger than the true error.`:'σ ≤ 1: the infinite raw series does not converge here. This endpoint is NOT ζ(s).');
+}
+const allowed=new Set([2,3]), choices=[2,3,5,7,11,13];
+for(const p of choices){const b=document.createElement('button');b.type='button';b.textContent=p;b.setAttribute('aria-label','Use prime '+p);b.addEventListener('click',()=>{allowed.has(p)?allowed.delete(p):allowed.add(p);drawProduct();});$('prime-toggles').append(b);}
+function drawProduct(){
+  [...$('prime-toggles').children].forEach((b,i)=>b.setAttribute('aria-pressed',String(allowed.has(choices[i]))));
+  const grid=$('integer-grid');grid.replaceChildren();let count=0;
+  for(let n=1;n<=60;n++){let remainder=n;for(const p of allowed)while(remainder%p===0)remainder/=p;const included=remainder===1,span=document.createElement('span');span.textContent=n;span.className=(included?'included ':'')+(n===1?'unit':'');span.title=included?'Generated by selected primes':'Requires an unselected prime';span.setAttribute('aria-label',`${n}: ${included?'generated':'not generated'}`);grid.append(span);if(included)count++;}
+  let product=1;for(const p of allowed)product/=1-1/(p*p);
+  $('product-value').textContent=fmt(product,6);$('product-count').textContent=count;
+  $('product-readout').textContent=`Allowed primes: ${[...allowed].sort((a,b)=>a-b).join(', ')||'none'}. The product includes generated integers above 60 too, so it is not just the sum over this grid. The integer 1 comes from choosing the zeroth power of every prime.`;
+}
+function drawGeometric(){
+  const z=val('geo-z');out('geo-z');const target=1/(1-z);let sum=0;const points=[];for(let k=0;k<=20;k++){sum+=z**k;points.push([k,sum]);}const ys=[target,...points.map(p=>p[1])],a=Math.min(0,...ys),b=Math.max(...ys),pad=(b-a)*.12;
+  const ch=chart('geo-chart',0,20,a-pad,b+pad,'partial sum index n','value (auto-scaled)');ch.line([[0,target],[20,target]],colors.gold,2,[6,4]);ch.line(points,colors.green,2);points.forEach(p=>ch.dot(p[0],p[1],colors.green,2.4));
+  $('geo-readout').textContent=`Continued value 1/(1−z) = ${fmt(target,5)}. `+(Math.abs(z)<1?'Inside |z| < 1, the partial sums converge to it as n grows.':'Outside |z| < 1, these partial sums do not converge. The rational function is still defined here, but it is NOT the ordinary sum of the divergent series.');
+}
+function drawStrip(){
+  const b=val('ghost-beta');out('ghost-beta');const ch=chart('strip-chart',-.1,1.1,-38,38,'real part σ','imaginary part t');
+  ch.ctx.fillStyle='#c8ed9c09';ch.ctx.fillRect(ch.X(0),ch.Y(38),ch.X(1)-ch.X(0),ch.Y(-38)-ch.Y(38));
+  ch.line([[0,-38],[0,38]],colors.text,1,[3,5]);ch.line([[1,-38],[1,38]],colors.text,1,[3,5]);ch.line([[.5,-38],[.5,38]],colors.green,1.5,[5,4]);
+  for(const g of zeros.slice(0,5)){ch.dot(.5,g,colors.green);ch.dot(.5,-g,colors.green);}
+  for(const beta of [b,1-b])for(const g of [10,-10]){ch.ctx.strokeStyle=colors.gold;ch.ctx.lineWidth=2;ch.ctx.strokeRect(ch.X(beta)-4,ch.Y(g)-4,8,8);}
+  $('ghost-readout').textContent=Math.abs(b-.5)<1e-8?'At β = ½ the reflected quartet collapses into a conjugate pair on the line. This is the arrangement RH requires for actual nontrivial zeros.':`The hypothetical points at β = ${fmt(b,2)} and 1−β = ${fmt(1-b,2)}, with heights ±10, obey both symmetries but lie off the line. Symmetry alone is insufficient.`;
+}
+function mul(a,b){return [a[0]*b[0]-a[1]*b[1],a[0]*b[1]+a[1]*b[0]];}
+function power(n,re,im){const mag=Math.exp(re*Math.log(n)),angle=im*Math.log(n);return [mag*Math.cos(angle),mag*Math.sin(angle)];}
+function zeta(s,t){
+  const N=64;let re=0,im=0;
+  for(let n=1;n<N;n++){const z=power(n,-s,-t);re+=z[0];im+=z[1];}
+  const p=power(N,1-s,-t),den=(s-1)**2+t*t,q=power(N,-s,-t);
+  re+=(p[0]*(s-1)+p[1]*t)/den+.5*q[0];im+=(p[1]*(s-1)-p[0]*t)/den+.5*q[1];
+  const coeff=[1/12,-1/720,1/30240,-1/1209600,1/47900160,-691/1307674368000,7/523069747200,-3617/10670622842880000];
+  let rising=[s,t];
+  for(let k=1;k<=coeff.length;k++){if(k>1){rising=mul(rising,[s+2*k-3,t]);rising=mul(rising,[s+2*k-2,t]);}const term=mul(rising,power(N,-s-2*k+1,-t));re+=coeff[k-1]*term[0];im+=coeff[k-1]*term[1];}
+  return [re,im];
+}
+let cachedSigma=null,cachedZeta=[];
+function drawZeta(){
+  const s=val('zeta-sigma'),t=val('zeta-t');out('zeta-sigma');out('zeta-t',6);
+  if(s!==cachedSigma){cachedSigma=s;cachedZeta=Array.from({length:801},(_,i)=>{const x=10+i*.05;return [x,...zeta(s,x)];});}
+  const min=Math.min(-.4,...cachedZeta.flatMap(p=>p.slice(1))),max=Math.max(.4,...cachedZeta.flatMap(p=>p.slice(1))),pad=(max-min)*.08;
+  const ch=chart('zeta-chart',10,50,min-pad,max+pad,'height t','complex output components');ch.line(cachedZeta.map(p=>[p[0],p[1]]),colors.green,2);ch.line(cachedZeta.map(p=>[p[0],p[2]]),colors.blue,2,[5,3]);ch.line([[t,min-pad],[t,max+pad]],colors.gold,1);
+  const z=zeta(s,t);ch.dot(t,z[0],colors.green,4);ch.dot(t,z[1],colors.blue,4);
+  $('zeta-real').textContent=z[0].toExponential(3);$('zeta-imag').textContent=z[1].toExponential(3);$('zeta-abs').textContent=Math.hypot(...z).toExponential(3);
+  $('zeta-readout').textContent=`s = ${fmt(s,2)} + ${fmt(t,6)}i. `+(Math.hypot(...z)<1e-5?'Both components are very small near this known zero. The nonzero numerical residual reflects finite input precision and floating-point approximation.':'A zero requires BOTH output components to vanish. A crossing of just one curve through zero is not enough.');
+}
+zeros.slice(0,5).forEach((g,i)=>{const b=document.createElement('button');b.type='button';b.textContent=`Zero ${i+1} · ${g.toFixed(3)}`;b.addEventListener('click',()=>{$('zeta-sigma').value='.5';$('zeta-t').value=g.toFixed(6);drawZeta();});$('zero-buttons').append(b);});
+function psiMidpoint(x){const nearest=Math.round(x);return psi[Math.floor(x)]-(Math.abs(x-nearest)<1e-9?mangoldt[nearest]/2:0);}
+function reconstruct(x,k){let value=x-Math.log(2*Math.PI)-.5*Math.log1p(-1/(x*x));const lx=Math.log(x),root=Math.sqrt(x);for(let i=0;i<k;i++){const g=zeros[i];value-=2*root*(.5*Math.cos(g*lx)+g*Math.sin(g*lx))/(.25+g*g);}return value;}
+let psiError=false;
+function drawPsi(){
+  const k=val('zero-count'),x=val('psi-x');out('zero-count',0);out('psi-x',1);
+  const exact=[];for(let n=2;n<=100;n++){exact.push([n,psi[n-1]-(psiError?n:0)],[n,psi[n]-(psiError?n:0)]);}
+  const approx=sample(2,100,1500,v=>reconstruct(v,k)-(psiError?v:0)),ys=[...exact,...approx].map(p=>p[1]),a=Math.min(0,...ys),b=Math.max(...ys),pad=(b-a)*.1,ch=chart('psi-chart',2,100,a-pad,b+pad,'x',psiError?'weighted count minus x':'weighted prime-power count');
+  ch.line(exact,colors.green,1.8);ch.line(approx,colors.gold,1.8);ch.line([[x,a-pad],[x,b+pad]],'#8ea69f',1,[4,4]);
+  const truth=psiMidpoint(x),estimate=reconstruct(x,k);ch.dot(x,truth-(psiError?x:0),colors.green,4);ch.dot(x,estimate-(psiError?x:0),colors.gold,4);
+  $('psi-exact').textContent=fmt(truth,4);$('psi-reconstructed').textContent=fmt(estimate,4);$('psi-difference').textContent=fmt(estimate-truth,4);
+  const atJump=Math.abs(x-Math.round(x))<1e-9&&mangoldt[Math.round(x)]>0;
+  $('psi-readout').textContent=`${k} conjugate pairs = ${2*k} zeros. `+(atJump?`x = ${x} is a prime power: the exact readout and dot use the midpoint of the jump, while the green line shows the full staircase.`:'Away from jumps, ψ₀(x) = ψ(x). The readouts show full counts even when the chart displays the error.');
+}
+$('psi-mode').addEventListener('click',()=>{psiError=!psiError;$('psi-mode').setAttribute('aria-pressed',String(psiError));$('psi-mode').textContent=psiError?'Return to full ψ(x)':'Show error ψ(x) − x';drawPsi();});
+$('psi-fill').addEventListener('click',()=>{$('zero-count').value='60';drawPsi();});
+function drawGrowth(){
+  const b=val('growth-beta'),k=val('growth-power');out('growth-beta');out('growth-power',0);
+  const ch=chart('growth-chart',4,24,0,23,'k = log₁₀ x','log₁₀ growth factor');ch.line([[4,2],[24,12]],colors.green,2);ch.line([[4,4*b],[24,24*b]],colors.gold,2);ch.line([[k,0],[k,23]],'#8ea69f',1,[3,4]);ch.dot(k,k*b,colors.gold,4);ch.dot(k,k*.5,colors.green,4);
+  const ratio=10**(k*(b-.5)),scale=10**(k/2)*k*Math.LN10,relative=scale/(10**k/(k*Math.LN10));
+  $('growth-ratio').textContent=compact(ratio)+'×';$('growth-bound').textContent=scale.toExponential(2);$('growth-relative').textContent=(100*relative).toExponential(2)+'%';
+  $('growth-readout').textContent=`At x = 10^${k}, x^${b.toFixed(2)} is ${compact(ratio)} times √x. The RH error scale shown is not a certified numerical bound: big O hides a constant and a starting threshold. It is not the measured error either.`;
+}
+const quizData=[
+  {q:'1. At s = ½ + 14i, may we compute ζ(s) by simply taking more terms of ∑ n⁻ˢ?',a:['Yes, because the terms tend to zero.','No; that raw series does not converge there.'],right:1,why:'Terms tending to zero is necessary, not sufficient, for convergence. In the critical strip, ζ must be evaluated using a continuation formula.'},
+  {q:'2. What ingredient makes the Euler product count every positive integer exactly once?',a:['Unique prime factorization.','The prime number theorem.'],right:0,why:'Each choice of prime powers determines one integer, and each integer has one such factorization. Absolute convergence then justifies the infinite product identity.'},
+  {q:'3. Why does ξ(s) = ξ(1−s) not prove RH?',a:['The functional equation is only approximate.','Off-line reflected pairs can obey the same symmetry.'],right:1,why:'The equation is exact. A symmetric set can contain points away from its symmetry axis, as the hypothetical quartet demonstrates.'},
+  {q:'4. In x^(β+iγ), which coordinate determines the power-law growth?',a:['β, the real part.','γ, the imaginary part.'],right:0,why:'x^(β+iγ) = x^β exp(iγ log x). Its magnitude is x^β; γ controls oscillation in log x.'},
+  {q:'5. Would proving RH immediately prove fast integer factorization and break RSA?',a:['Yes, because primes become completely predictable.','No such implication is known.'],right:1,why:'An error estimate for cumulative prime counts is not a factoring algorithm. Ordinary RH also does not automatically prove GRH-based algorithmic claims.'},
+  {q:'6. Which would constitute a proof of RH?',a:['Checking the first trillion zeros.','Proving ψ(x) − x = O(√x (log x)²) for all sufficiently large x.'],right:1,why:'The uniform asymptotic bound is equivalent to RH. A finite zero check, however large, cannot exclude a counterexample beyond its range.'}
+];
+const correct=new Set();
+quizData.forEach((item,i)=>{const box=document.createElement('div');box.className='quiz';const p=document.createElement('p');p.textContent=item.q;const answers=document.createElement('div');answers.className='answers';answers.setAttribute('role','group');answers.setAttribute('aria-label',item.q);const feedback=document.createElement('p');feedback.className='feedback';feedback.setAttribute('aria-live','polite');item.a.forEach((answer,j)=>{const b=document.createElement('button');b.type='button';b.textContent=answer;b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>{for(const sibling of answers.children)sibling.setAttribute('aria-pressed',String(sibling===b));if(j===item.right)correct.add(i);else correct.delete(i);feedback.textContent=(j===item.right?'Correct. ':'Not quite. ')+item.why;$('quiz-score').textContent=`${correct.size} of 6 concepts answered correctly.`;});answers.append(b);});box.append(p,answers,feedback);$('quizzes').append(box);});
+bind(['prime-x'],drawPrimes);bind(['phasor-sigma','phasor-t','phasor-n'],drawPhasors);drawProduct();bind(['geo-z'],drawGeometric);bind(['ghost-beta'],drawStrip);bind(['zeta-sigma','zeta-t'],drawZeta);bind(['zero-count','psi-x'],drawPsi);bind(['growth-beta','growth-power'],drawGrowth);
+const links=[...document.querySelectorAll('.sidebar nav a')],sections=links.map(a=>document.querySelector(a.getAttribute('href')));
+links.forEach(a=>{const option=document.createElement('option');option.value=a.hash;option.textContent=a.textContent;$('chapter').append(option);});
+$('chapter').addEventListener('change',()=>{location.hash=$('chapter').value;});
+let scrolling=false;
+function updateReading(){let index=0;sections.forEach((s,i)=>{if(s.getBoundingClientRect().top<=160)index=i;});links.forEach((a,i)=>{a.classList.toggle('active',i===index);if(i===index)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});$('chapter').value=links[index].hash;$('progress').style.width=`${100*index/(sections.length-1)}%`;scrolling=false;}
+window.addEventListener('scroll',()=>{if(!scrolling){scrolling=true;requestAnimationFrame(updateReading);}},{passive:true});updateReading();
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{drawPrimes();drawPhasors();drawGeometric();drawStrip();drawZeta();drawPsi();drawGrowth();},150);});
+</script>
+</body>
+</html>
