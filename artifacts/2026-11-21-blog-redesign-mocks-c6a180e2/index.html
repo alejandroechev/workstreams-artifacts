@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fractal Pod &amp; Familia — 20 Redesign Mocks</title>
+<style>
+  :root { --bg:#f4f1ea; --ink:#1d1b17; --muted:#6f685b; --line:#ddd5c4; --accent:#2f6690; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); }
+  header.top { padding: 2rem 1.25rem 1rem; max-width: 1400px; margin: 0 auto; }
+  header.top h1 { margin:0; font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  header.top p { color:var(--muted); max-width: 62ch; line-height:1.5; }
+  .tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; }
+  .tabs button, .seg button { font:inherit; border:1px solid var(--line); background:#fff; padding:.55rem 1rem; border-radius:999px; cursor:pointer; color:var(--ink); }
+  .tabs button[aria-selected="true"], .seg button[aria-pressed="true"] { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .controls { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; margin-top:.75rem; color:var(--muted); font-size:.9rem; }
+  .seg { display:inline-flex; gap:.25rem; }
+  .seg button { padding:.35rem .8rem; font-size:.85rem; }
+  main { max-width:1400px; margin:0 auto; padding: 0 1.25rem 4rem; display:grid; gap:1.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .card .meta { padding: .9rem 1rem .6rem; }
+  .card .meta h2 { margin:0; font-size:1.05rem; }
+  .card .meta h2 span { color:var(--muted); font-weight:500; margin-right:.35rem; }
+  .card .meta p { margin:.35rem 0 0; color:var(--muted); font-size:.88rem; line-height:1.4; }
+  .card .meta .seg { margin-top:.6rem; }
+  .frame { margin: .25rem 1rem 1rem; height: 620px; border:1px solid var(--line); border-radius: 22px; overflow:auto; position:relative; background:#fff; }
+  .frame > .mock { min-height:100%; }
+  footer { text-align:center; color:var(--muted); font-size:.85rem; padding: 0 1rem 3rem; }
+
+  /* shared mock helpers */
+  .mock { font-size:15px; line-height:1.5; }
+  .mock * { box-sizing:border-box; }
+  .ph { display:block; width:100%; aspect-ratio: 4/3; border-radius:inherit; position:relative; }
+  .ph.g1 { background: linear-gradient(135deg,#f6c177,#eb6f92 60%,#9ccfd8); }
+  .ph.g2 { background: linear-gradient(160deg,#9ccfd8,#31748f 70%,#1f1d2e); }
+  .ph.g3 { background: linear-gradient(120deg,#a3be8c,#ebcb8b 55%,#d08770); }
+  .ph.g4 { background: linear-gradient(200deg,#b48ead,#5e81ac 60%,#2e3440); }
+  .ph.g5 { background: linear-gradient(140deg,#ffd6a5,#ffadad 50%,#bdb2ff); }
+  .ph.g6 { background: linear-gradient(180deg,#caffbf,#9bf6ff 60%,#a0c4ff); }
+  .ph.video::after { content:""; position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px 0 0 -26px; border-radius:50%;
+    background: rgba(0,0,0,.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/55% no-repeat; }
+  .mock a { color: inherit; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Fractal Pod &amp; Familia — 20 redesign mocks</h1>
+  <p>Ten directions for each site, rendered live with sample content (all text and "photos" are placeholders). Switch between the home page and a note page on each card. Scroll inside a frame to see the whole page.</p>
+  <div class="tabs" role="tablist" aria-label="Site">
+    <button role="tab" aria-selected="true" data-site="blog" id="tab-blog">Fractal Pod (blog)</button>
+    <button role="tab" aria-selected="false" data-site="familia" id="tab-familia">Familia (family journal)</button>
+  </div>
+  <div class="controls">
+    <span>Show all as:</span>
+    <div class="seg" role="group" aria-label="Page shown on every card">
+      <button data-all="home" aria-pressed="true">Home</button>
+      <button data-all="note" aria-pressed="false">Note</button>
+    </div>
+  </div>
+</header>
+<main id="grid" aria-live="polite"></main>
+<footer>Sample content only. Generated as design exploration for two small personal sites.</footer>
+
+<script>
+const BLOG = {
+  title: "Fractal Pod",
+  notes: [
+    { t: "On slow gardens", d: "Nov 18, 2026", ex: "A garden of notes grows the way a real one does: slowly, by return visits, mostly underground.", tags: ["writing", "tools"], g: "g2", read: "4 min" },
+    { t: "Deep time", d: "Nov 12, 2026", ex: "Standing in a quarry, the layers read like a ledger nobody finished balancing.", tags: ["geology"], g: "g4", read: "6 min" },
+    { t: "Why I write in public", d: "Nov 3, 2026", ex: "Not for an audience — for the future version of me who forgot why this mattered.", tags: ["writing"], g: null, read: "3 min" },
+    { t: "Attention is a garden too", d: "Oct 27, 2026", ex: "What you water grows. What you scroll past fades. A small argument for fewer inputs.", tags: ["attention"], g: "g3", read: "5 min" },
+    { t: "Field notes from a rainy week", d: "Oct 19, 2026", ex: "Seven days, three books, one leaking window, and an unexpected recipe.", tags: ["journal"], g: "g6", read: "2 min" },
+  ],
+  body: [
+    "A garden of notes grows the way a real one does: slowly, by return visits, mostly underground. Most of what happens is invisible — roots finding each other between one season and the next.",
+    "I started keeping this one as a place to put half-thoughts. The surprise was how often two of them, written months apart, turned out to be about the same thing.",
+  ],
+  quote: "The point is not to finish a thought, but to give it somewhere to keep growing.",
+  links: ["Deep time", "Attention is a garden too"],
+};
+const FAM = {
+  title: "Familia",
+  notes: [
+    { t: "Beach day", d: "Mar 7, 2026", ex: "The kids built an enormous sandcastle and defended it from the tide for an hour.", g: "g1", n: 3, video: false },
+    { t: "First ride without training wheels", d: "Mar 1, 2026", ex: "Three laps around the square, one wobble, zero falls.", g: "g3", n: 0, video: true },
+    { t: "Birthday cake", d: "Feb 22, 2026", ex: "Chocolate, lopsided, perfect.", g: "g5", n: 2, video: false },
+    { t: "Words he used to say", d: "Feb 10, 2026", ex: "\u201cHelicopto\u201d, \u201cbananda\u201d and the rest of the little dictionary.", g: null, n: 0, video: false },
+    { t: "Rainy afternoon fort", d: "Jan 30, 2026", ex: "Every blanket in the house, two flashlights, one dog.", g: "g2", n: 4, video: false },
+  ],
+  body: "The kids built an enormous sandcastle and defended it from the tide for an hour. When the wave finally came, nobody cried — they just started a bigger one further up the beach.",
+};
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ph = (g, cls = "", style = "") => g ? `<span class="ph ${g} ${cls}" style="${style}" role="img" aria-label="photo placeholder"></span>` : "";
+const B = BLOG.notes, N0 = B[0];
+const P = FAM.notes, F0 = P[0];
+const scopeSel = (id, s) => /^(\d+%|from|to)$/.test(s) ? s : s.startsWith(".mock") ? `.${id}${s.slice(5)}` : `.${id} ${s}`;
+const scope = (id, css) => css.replace(/(^|\})\s*([^{}@]+)\{/g, (m, b, sel) => `${b} ${sel.split(",").map((s) => scopeSel(id, s.trim())).join(", ")} {`);
+
+/* ─────────────── Fractal Pod: ten directions ─────────────── */
+const blogDesigns = [
+  {
+    name: "Paper Index", why: "Pure typography on warm paper: a numbered index of essays, no images, generous margins. Reads like a well-set book.",
+    css: `.mock{background:#fbf7ef;color:#222;font-family:Georgia,"Iowan Old Style",serif;padding:28px 24px}
+      h1{font-size:30px;margin:0 0 4px;font-weight:normal;letter-spacing:.02em} .sub{color:#8a7f6c;font-size:13px;letter-spacing:.15em;text-transform:uppercase}
+      ol{list-style:none;padding:0;margin:28px 0;counter-reset:n} li{counter-increment:n;padding:14px 0;border-top:1px solid #e7dfcf;display:grid;grid-template-columns:36px 1fr;gap:6px}
+      li::before{content:counter(n,decimal-leading-zero);color:#b3a68d;font-size:13px;padding-top:4px} li b{font-size:19px;font-weight:normal} li small{display:block;color:#8a7f6c;font-size:12px}
+      .art h2{font-size:30px;font-weight:normal;line-height:1.15;margin:20px 0 6px} .art p{font-size:17px;line-height:1.7} .art p:first-of-type::first-letter{font-size:52px;float:left;line-height:.9;padding:4px 6px 0 0}
+      blockquote{margin:22px 0;padding-left:16px;border-left:2px solid #222;font-style:italic} .back{font-size:13px;color:#8a7f6c;text-decoration:none}`,
+    home: () => `<h1>${BLOG.title}</h1><div class="sub">Essays &amp; notes</div><ol>${B.map((n) => `<li><span><b>${esc(n.t)}</b><small>${n.d} · ${n.read}</small></span></li>`).join("")}</ol>`,
+    note: () => `<a class="back" href="#">← Index</a><div class="art"><h2>${N0.t}</h2><div class="sub">${N0.d} · ${N0.read}</div>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}<blockquote>${BLOG.quote}</blockquote></div>`,
+  },
+  {
+    name: "Terminal Garden", why: "Monospace, dark, a nod to the CLI that publishes it. Each note is a command output; tags are flags.",
+    css: `.mock{background:#0f1411;color:#c9e3cf;font-family:ui-monospace,Menlo,monospace;font-size:13.5px;padding:20px 18px}
+      .prompt{color:#6fd08c} .dim{color:#5c7a64} h1{font-size:16px;margin:0 0 14px} .row{padding:10px 0;border-bottom:1px dashed #23332a}
+      .row b{color:#e9f5ec;font-weight:600} .tag{color:#e0b05c} .cursor{display:inline-block;width:8px;height:15px;background:#6fd08c;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+      @keyframes blink{50%{opacity:0}} .art p{line-height:1.7;color:#b7d1bd} .art h2{font-size:18px;color:#e9f5ec;margin:12px 0 4px}`,
+    home: () => `<h1><span class="prompt">~/fractalpod $</span> ls -t notas/</h1>${B.map((n) => `<div class="row"><span class="dim">${n.d}</span><br><b>${esc(n.t)}</b> ${n.tags.map((t) => `<span class="tag">--${t}</span>`).join(" ")}<br><span class="dim">${esc(n.ex)}</span></div>`).join("")}<p><span class="prompt">$</span> <span class="cursor"></span></p>`,
+    note: () => `<div><span class="prompt">$</span> cat notas/on-slow-gardens.md</div><div class="art"><h2># ${N0.t}</h2><div class="dim">published ${N0.d} · ${N0.read}</div>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}<p class="dim">→ linked from: ${BLOG.links.map((l) => `[[${l}]]`).join(", ")}</p></div>`,
+  },
+  {
+    name: "Magazine Cover", why: "Bold editorial: a full-bleed lead story, big condensed headline, then a tight grid of the rest. For when a post deserves a spotlight.",
+    css: `.mock{background:#fff;color:#111;font-family:"Helvetica Neue",Arial,sans-serif}
+      .mast{display:flex;justify-content:space-between;align-items:baseline;padding:14px 16px;border-bottom:3px solid #111} .mast b{font-size:22px;letter-spacing:-.03em;text-transform:uppercase} .mast span{font-size:11px}
+      .lead{position:relative} .lead .ph{aspect-ratio:4/5;border-radius:0} .lead h2{position:absolute;left:16px;right:16px;bottom:16px;margin:0;color:#fff;font-size:40px;line-height:.95;letter-spacing:-.03em;text-transform:uppercase;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+      .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#111;border-top:1px solid #111} .grid div{background:#fff;padding:12px} .grid b{display:block;font-size:15px;line-height:1.15} .grid small{font-size:11px;color:#777}
+      .art{padding:18px 16px} .art h2{font-size:34px;line-height:.95;text-transform:uppercase;letter-spacing:-.03em;margin:0 0 8px} .art p{font-size:16px} .kicker{color:#d7263d;font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase}`,
+    home: () => `<div class="mast"><b>${BLOG.title}</b><span>Issue Nº 42</span></div><div class="lead">${ph(N0.g)}<h2>${N0.t}</h2></div><div class="grid">${B.slice(1).map((n) => `<div><small>${n.tags[0]}</small><b>${esc(n.t)}</b></div>`).join("")}</div>`,
+    note: () => `${ph(N0.g, "", "aspect-ratio:16/10;border-radius:0")}<div class="art"><div class="kicker">${N0.tags.join(" / ")}</div><h2>${N0.t}</h2><small>${N0.d} — ${N0.read} read</small>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}</div>`,
+  },
+  {
+    name: "Swiss Grid", why: "Strict International Style: red accent, flush-left sans, a visible column grid with dates as a separate column.",
+    css: `.mock{background:#fff;color:#000;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;padding:22px 18px}
+      h1{font-size:44px;line-height:.9;margin:0;letter-spacing:-.04em} h1 i{color:#e30613;font-style:normal}
+      .rule{height:8px;background:#e30613;margin:18px 0 6px;width:40%} table{width:100%;border-collapse:collapse} td{vertical-align:top;padding:12px 0;border-top:1px solid #000}
+      td.d{width:30%;font-size:12px;padding-right:8px} td b{font-size:17px;display:block;line-height:1.15} td span{font-size:13px;color:#555}
+      .art h2{font-size:34px;line-height:.95;letter-spacing:-.03em;margin:14px 0} .art .cols{display:grid;grid-template-columns:30% 1fr;gap:8px;font-size:12px} .art p{font-size:15px;margin:0 0 12px}`,
+    home: () => `<h1>Fractal<br>Pod<i>.</i></h1><div class="rule"></div><table>${B.map((n) => `<tr><td class="d">${n.d}<br>${n.tags.join(", ")}</td><td><b>${esc(n.t)}</b><span>${esc(n.ex)}</span></td></tr>`).join("")}</table>`,
+    note: () => `<div class="rule"></div><div class="art"><h2>${N0.t}</h2><div class="cols"><div>${N0.d}<br>${N0.read}<br><br>Linked:<br>${BLOG.links.join("<br>")}</div><div>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}</div></div></div>`,
+  },
+  {
+    name: "Card Stack", why: "Soft cards with cover images and reading time, like a friendly reading app. Easiest to scan on a phone.",
+    css: `.mock{background:#f2f4f7;color:#1c2430;font-family:system-ui,sans-serif;padding:16px}
+      header{display:flex;align-items:center;gap:10px;margin-bottom:14px} .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7f5af0,#2cb67d)} header b{font-size:18px}
+      .c{background:#fff;border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 2px 10px rgba(20,30,50,.06)} .c .ph{aspect-ratio:16/9;border-radius:0} .c div{padding:12px 14px}
+      .c b{font-size:17px;display:block} .c p{margin:4px 0 8px;color:#5a6575;font-size:14px} .chip{display:inline-block;font-size:11px;background:#eef0ff;color:#4b3fd1;padding:2px 8px;border-radius:999px;margin-right:4px}
+      .art{background:#fff;border-radius:16px;padding:16px} .art h2{font-size:26px;margin:10px 0 4px} .art .ph{aspect-ratio:16/9}`,
+    home: () => `<header><span class="logo"></span><b>${BLOG.title}</b></header>${B.map((n) => `<div class="c">${ph(n.g)}<div><b>${esc(n.t)}</b><p>${esc(n.ex)}</p>${n.tags.map((t) => `<span class="chip">${t}</span>`).join("")}<span class="chip" style="background:#f1f1f1;color:#555">${n.read}</span></div></div>`).join("")}`,
+    note: () => `<div class="art">${ph(N0.g, "", "border-radius:12px")}<h2>${N0.t}</h2><span class="chip">${N0.read}</span> <small style="color:#888">${N0.d}</small>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}<p><b>Related</b><br>${BLOG.links.map((l) => `<span class="chip">${l}</span>`).join("")}</p></div>`,
+  },
+  {
+    name: "Garden Map", why: "Leans into the 'digital garden': notes are plants by growth stage (seedling, budding, evergreen) instead of a date-sorted feed.",
+    css: `.mock{background:#f3f6ee;color:#23301f;font-family:"Iowan Old Style",Georgia,serif;padding:20px 18px}
+      h1{margin:0;font-size:26px} .sub{color:#6c7d62;font-size:14px} .bed{margin-top:18px} .bed h3{font-family:system-ui;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6c7d62;margin:0 0 8px}
+      .plants{display:flex;flex-wrap:wrap;gap:8px} .plant{background:#fff;border:1px solid #d7e2cc;border-radius:999px;padding:6px 12px;font-size:14px} .plant::before{margin-right:6px}
+      .s .plant::before{content:"🌱"} .b .plant::before{content:"🌿"} .e .plant::before{content:"🌳"}
+      .stage{display:inline-block;background:#e2ecd7;border-radius:999px;padding:2px 10px;font-size:12px;font-family:system-ui} .art h2{font-size:28px;margin:12px 0 6px} .art p{font-size:16.5px;line-height:1.7}
+      .tend{font-family:system-ui;font-size:12px;color:#6c7d62;border-top:1px solid #d7e2cc;padding-top:10px}`,
+    home: () => `<h1>🌿 ${BLOG.title}</h1><div class="sub">A garden of notes. Some are seedlings; a few have grown up.</div>
+      <div class="bed e"><h3>Evergreen</h3><div class="plants"><span class="plant">${B[0].t}</span><span class="plant">${B[2].t}</span></div></div>
+      <div class="bed b"><h3>Budding</h3><div class="plants"><span class="plant">${B[3].t}</span><span class="plant">${B[1].t}</span></div></div>
+      <div class="bed s"><h3>Seedlings</h3><div class="plants"><span class="plant">${B[4].t}</span><span class="plant">Untitled thought on maps</span><span class="plant">Tea, again</span></div></div>`,
+    note: () => `<span class="stage">🌳 Evergreen · tended 6 times</span><div class="art"><h2>${N0.t}</h2>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}</div><div class="tend">Planted ${N0.d} · last tended Nov 20, 2026<br>Grows near: ${BLOG.links.join(" · ")}</div>`,
+  },
+  {
+    name: "Brutalist Notes", why: "Raw HTML energy: thick borders, system font, hard shadows, loud yellow. Honest and fast.",
+    css: `.mock{background:#fffdf0;color:#000;font-family:Arial,sans-serif;padding:16px}
+      h1{font-size:34px;margin:0 0 12px;background:#ffe500;display:inline-block;padding:2px 8px;border:3px solid #000} .n{border:3px solid #000;box-shadow:6px 6px 0 #000;padding:10px 12px;margin:0 6px 16px 0;background:#fff}
+      .n b{font-size:18px;text-decoration:underline} .n small{display:block;font-family:monospace} .art{border:3px solid #000;box-shadow:6px 6px 0 #000;background:#fff;padding:14px}
+      .art h2{font-size:28px;margin:0 0 8px;line-height:1} mark{background:#ffe500}`,
+    home: () => `<h1>${BLOG.title.toUpperCase()}</h1>${B.map((n) => `<div class="n"><small>${n.d}</small><b>${esc(n.t)}</b><p>${esc(n.ex)}</p></div>`).join("")}`,
+    note: () => `<div class="art"><small style="font-family:monospace">${N0.d}</small><h2>${N0.t}</h2>${BLOG.body.map((p, i) => `<p>${i ? p : p.replace("slowly", "<mark>slowly</mark>")}</p>`).join("")}<p>LINKS → ${BLOG.links.map((l) => `<u>${l}</u>`).join(" / ")}</p></div>`,
+  },
+  {
+    name: "Night Reader", why: "Dark, low-contrast-friendly reading mode with a serif body and amber accents, built for late-night reading.",
+    css: `.mock{background:#16161c;color:#d9d4c7;font-family:Georgia,serif;padding:24px 20px}
+      h1{font-size:22px;color:#f0c674;margin:0;font-weight:normal;letter-spacing:.08em} .feat{margin:20px 0;padding:18px;border-radius:14px;background:#1f1f28}
+      .feat small,.it small{color:#837d70;font-family:system-ui;font-size:11px;letter-spacing:.1em;text-transform:uppercase} .feat b{display:block;font-size:24px;color:#fff;font-weight:normal;margin:6px 0}
+      .it{padding:12px 0;border-bottom:1px solid #2a2a35} .it b{font-weight:normal;font-size:17px;color:#eee}
+      .art h2{color:#fff;font-weight:normal;font-size:28px;margin:10px 0} .art p{font-size:17px;line-height:1.8} .bar{height:3px;background:#2a2a35;border-radius:3px;margin-bottom:16px}.bar i{display:block;width:35%;height:100%;background:#f0c674;border-radius:3px}`,
+    home: () => `<h1>FRACTAL POD</h1><div class="feat"><small>Latest</small><b>${N0.t}</b>${esc(N0.ex)}</div>${B.slice(1).map((n) => `<div class="it"><small>${n.d}</small><br><b>${esc(n.t)}</b></div>`).join("")}`,
+    note: () => `<div class="bar"><i></i></div><small style="color:#837d70;font-family:system-ui">${N0.d} · ${N0.read}</small><div class="art"><h2>${N0.t}</h2>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}<p style="color:#f0c674">“${BLOG.quote}”</p></div>`,
+  },
+  {
+    name: "Timeline", why: "A vertical timeline grouped by month, so the archive shows how ideas accumulate over time.",
+    css: `.mock{background:#fff;color:#222;font-family:system-ui,sans-serif;padding:20px 18px}
+      h1{margin:0 0 16px;font-size:22px} .m{font-size:12px;font-weight:700;letter-spacing:.1em;color:#2f6690;margin:16px 0 6px} .tl{border-left:2px solid #d7e3ee;margin-left:6px;padding-left:16px}
+      .e{position:relative;padding:6px 0 12px} .e::before{content:"";position:absolute;left:-23px;top:12px;width:12px;height:12px;border-radius:50%;background:#2f6690;border:3px solid #fff;box-shadow:0 0 0 2px #d7e3ee}
+      .e b{display:block} .e span{color:#666;font-size:13px} .art h2{font-size:26px;margin:8px 0} .ver{font-size:12px;background:#eef4f9;border-radius:8px;padding:8px 10px;color:#2f6690}`,
+    home: () => `<h1>${BLOG.title}</h1><div class="m">NOVEMBER 2026</div><div class="tl">${B.slice(0, 3).map((n) => `<div class="e"><b>${esc(n.t)}</b><span>${n.d.split(",")[0]} — ${esc(n.ex)}</span></div>`).join("")}</div><div class="m">OCTOBER 2026</div><div class="tl">${B.slice(3).map((n) => `<div class="e"><b>${esc(n.t)}</b><span>${n.d.split(",")[0]} — ${esc(n.ex)}</span></div>`).join("")}</div>`,
+    note: () => `<div class="art"><h2>${N0.t}</h2><div class="ver">v3 · first published Oct 2 · updated ${N0.d}</div>${BLOG.body.map((p) => `<p>${p}</p>`).join("")}</div>`,
+  },
+  {
+    name: "Wiki Two-Pane", why: "Keeps the backlinks idea front and centre: the note on top, its connections underneath as a link panel with context.",
+    css: `.mock{background:#fafafa;color:#202122;font-family:system-ui,sans-serif}
+      .bar{background:#202122;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;font-size:14px} .bar input{border:0;border-radius:6px;padding:4px 8px;width:46%;font:inherit;font-size:12px}
+      .body{padding:14px} h1{font-size:15px;margin:0 0 8px;color:#555} .lst a{display:block;padding:9px 10px;background:#fff;border:1px solid #e3e3e3;border-radius:8px;margin-bottom:6px;text-decoration:none}
+      .lst small{color:#888;display:block} .art h2{font-family:Georgia,serif;font-weight:normal;font-size:28px;border-bottom:1px solid #ddd;padding-bottom:6px;margin:0 0 10px} .art p{line-height:1.7}
+      .links{background:#fff;border:1px solid #e3e3e3;border-radius:10px;padding:10px 12px;margin-top:16px} .links h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#888;margin:0 0 6px} .links a{color:#3366cc;text-decoration:none;display:block;padding:3px 0}`,
+    home: () => `<div class="bar"><b>Fractal Pod</b><input aria-label="Search" placeholder="Search notes…"></div><div class="body"><h1>All notes (5) · newest first</h1><div class="lst">${B.map((n) => `<a href="#"><b>${esc(n.t)}</b><small>${n.d} · ${n.tags.join(", ")}</small></a>`).join("")}</div></div>`,
+    note: () => `<div class="bar"><b>Fractal Pod</b><input aria-label="Search" placeholder="Search notes…"></div><div class="body art"><h2>${N0.t}</h2>${BLOG.body.map((p) => `<p>${p.replace("two of them", '<a href="#" style="color:#3366cc">two of them</a>')}</p>`).join("")}
+      <div class="links"><h3>Links to</h3>${BLOG.links.map((l) => `<a href="#">${l}</a>`).join("")}<h3 style="margin-top:10px">Linked from</h3><a href="#">Why I write in public</a></div></div>`,
+  },
+];
+
+/* ─────────────── Familia: ten directions ─────────────── */
+const famDesigns = [
+  {
+    name: "Photo Album", why: "Every note is a page in a printed album: white mat, slight tilt, handwritten-style captions. Warm and nostalgic.",
+    css: `.mock{background:#e9dfcc;color:#3b2f22;font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;padding:20px 16px}
+      h1{font-family:Georgia,serif;font-weight:normal;text-align:center;letter-spacing:.2em;font-size:20px;margin:0 0 18px} .p{background:#fff;padding:10px 10px 6px;margin:0 auto 22px;width:88%;box-shadow:0 6px 16px rgba(60,40,20,.18)}
+      .p:nth-child(odd){transform:rotate(-1.5deg)} .p:nth-child(even){transform:rotate(1.2deg)} .p .ph{border-radius:0} .p b{display:block;font-size:19px;font-weight:normal;margin-top:6px} .p small{font-size:13px;color:#8a7760}
+      .txt{background:#fff;padding:14px;font-size:18px;box-shadow:0 6px 16px rgba(60,40,20,.18);transform:rotate(-1deg)}`,
+    home: () => `<h1>FAMILIA</h1><div>${P.map((n) => `<div class="p">${n.g ? ph(n.g, n.video ? "video" : "") : `<div style="padding:16px 4px;font-size:18px">${esc(n.ex)}</div>`}<b>${esc(n.t)}</b><small>${n.d}</small></div>`).join("")}</div>`,
+    note: () => `<h1>FAMILIA</h1><div class="p">${ph("g1")}<b>${F0.t}</b><small>${F0.d}</small></div><div class="p">${ph("g6")}</div><div class="txt">${FAM.body}</div>`,
+  },
+  {
+    name: "Instagram-ish Feed", why: "One full-width post per note, photo first, swipeable dots for multi-photo notes, a heart to say 'I saw this'.",
+    css: `.mock{background:#fff;color:#111;font-family:system-ui,sans-serif}
+      .top{position:sticky;top:0;background:#fff;padding:12px 14px;border-bottom:1px solid #eee;font-weight:700;font-size:18px;z-index:1} .post{border-bottom:1px solid #eee;padding-bottom:10px}
+      .who{display:flex;gap:8px;align-items:center;padding:10px 12px;font-size:14px} .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f9a8d4,#fcd34d)}
+      .post .ph{border-radius:0;aspect-ratio:1} .dots{text-align:center;color:#bbb;letter-spacing:3px;font-size:11px} .dots b{color:#0095f6} .acts{padding:6px 12px;font-size:22px} .cap{padding:0 12px;font-size:14px} .cap small{color:#999;display:block;margin-top:4px}`,
+    home: () => `<div class="top">Familia</div>${P.filter((n) => n.g).map((n) => `<div class="post"><div class="who"><span class="av"></span><b>${esc(n.t)}</b></div>${ph(n.g, n.video ? "video" : "")}${n.n > 1 ? `<div class="dots"><b>●</b>${" ●".repeat(n.n - 1)}</div>` : ""}<div class="acts">♡ 💬</div><div class="cap">${esc(n.ex)}<small>${n.d}</small></div></div>`).join("")}`,
+    note: () => `<div class="top">← ${F0.t}</div><div class="post">${ph("g1")}<div class="dots"><b>●</b> ● ●</div><div class="acts">♡ 💬</div><div class="cap">${FAM.body}<small>${F0.d}</small></div></div>`,
+  },
+  {
+    name: "Masonry Wall", why: "A Pinterest-style wall of photos at mixed heights; tap any tile to open its note. Maximises photos per screen.",
+    css: `.mock{background:#faf7f2;color:#2a251e;font-family:system-ui,sans-serif;padding:12px}
+      h1{font-size:20px;margin:4px 4px 12px} .wall{columns:2;column-gap:8px} .t{break-inside:avoid;margin-bottom:8px;border-radius:12px;overflow:hidden;background:#fff;position:relative}
+      .t .ph{border-radius:0} .t b{position:absolute;left:8px;bottom:8px;color:#fff;font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,.5)} .q{padding:14px;font-size:14px;font-style:italic}
+      .gal{display:grid;grid-template-columns:1fr 1fr;gap:6px} .gal .ph{border-radius:10px} .gal .ph:first-child{grid-column:span 2}`,
+    home: () => `<h1>Familia</h1><div class="wall">${P.map((n, i) => n.g ? `<div class="t">${ph(n.g, n.video ? "video" : "", `aspect-ratio:${[3 / 4, 1, 4 / 5, 1, 3 / 4][i]}`)}<b>${esc(n.t)}</b></div>` : `<div class="t q">${esc(n.ex)}<br><small>— ${esc(n.t)}</small></div>`).join("")}<div class="t">${ph("g6", "", "aspect-ratio:1")}<b>Snow!</b></div></div>`,
+    note: () => `<h1>${F0.t}</h1><div class="gal">${ph("g1")}${ph("g6")}${ph("g5")}</div><p style="font-size:16px">${FAM.body}</p><small style="color:#999">${F0.d}</small>`,
+  },
+  {
+    name: "Calendar Year", why: "Navigate by time: a month grid where days with notes show a tiny photo. Great for 'what were we doing last March?'.",
+    css: `.mock{background:#fff;color:#222;font-family:system-ui,sans-serif;padding:16px}
+      .hd{display:flex;justify-content:space-between;align-items:center} .hd b{font-size:20px} .hd span{color:#999;font-size:20px}
+      .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:12px 0} .cal i{font-style:normal;font-size:10px;color:#999;text-align:center} .day{aspect-ratio:1;border-radius:8px;background:#f5f3ef;font-size:11px;padding:3px;position:relative;overflow:hidden}
+      .day .ph{position:absolute;inset:0;aspect-ratio:auto;height:100%;border-radius:8px} .day em{position:relative;z-index:1;font-style:normal;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+      .list b{display:block} .list div{padding:8px 0;border-top:1px solid #eee;font-size:14px} .list small{color:#999}`,
+    home: () => { const days = []; for (let d = 1; d <= 31; d++) { const hit = { 1: "g3", 7: "g1", 15: "g2", 22: "g5" }[d]; days.push(`<div class="day">${hit ? ph(hit) : ""}<em style="${hit ? "" : "color:#999;text-shadow:none;font-weight:400"}">${d}</em></div>`); }
+      return `<div class="hd"><span>‹</span><b>March 2026</b><span>›</span></div><div class="cal">${"MTWTFSS".split("").map((c) => `<i>${c}</i>`).join("")}<div></div><div></div><div></div><div></div><div></div><div></div>${days.join("")}</div><div class="list"><div><b>Beach day</b><small>Mar 7 · 3 photos, 1 video</small></div><div><b>First ride without training wheels</b><small>Mar 1 · video</small></div></div>`; },
+    note: () => `<div class="hd"><span>‹ Mar 1</span><b style="font-size:15px">Saturday, Mar 7</b><span>Mar 15 ›</span></div>${ph("g1", "", "margin-top:12px;border-radius:12px")}<h2 style="margin:12px 0 4px">${F0.t}</h2><p>${FAM.body}</p>`,
+  },
+  {
+    name: "Storybook", why: "Big rounded type and soft pastel blocks so the kids can 'read' it too. Each note is a short story page.",
+    css: `.mock{background:#fff7ea;color:#3d2c5c;font-family:"Avenir Next Rounded","Arial Rounded MT Bold","Trebuchet MS",sans-serif;padding:18px}
+      h1{font-size:30px;margin:0 0 4px} h1 + p{margin:0 0 16px;color:#8a7aa3} .pg{border-radius:26px;padding:14px;margin-bottom:16px} .pg:nth-child(5n+1){background:#ffe1e1}.pg:nth-child(5n+2){background:#e1f3ff}.pg:nth-child(5n+3){background:#e7ffe1}.pg:nth-child(5n+4){background:#fff1c9}.pg:nth-child(5n){background:#efe3ff}
+      .pg .ph{border-radius:18px} .pg b{display:block;font-size:22px;margin:10px 0 2px} .pg span{font-size:15px} .big{font-size:22px;line-height:1.5}`,
+    home: () => `<h1>Our Stories</h1><p>Once upon a time, in our house…</p><div>${P.map((n) => `<div class="pg">${ph(n.g, n.video ? "video" : "")}<b>${esc(n.t)}</b><span>${esc(n.ex)}</span></div>`).join("")}</div>`,
+    note: () => `<div class="pg" style="background:#ffe1e1">${ph("g1")}<b>${F0.t}</b></div><p class="big">${FAM.body}</p><p style="text-align:center;font-size:26px">🏖️ 🏰 🌊</p>`,
+  },
+  {
+    name: "Polaroid Grid", why: "A tidy 2-column grid of instant-photo frames with the title written underneath. Simple, scannable, playful.",
+    css: `.mock{background:#d9d4cc;color:#222;font-family:"Marker Felt","Chalkboard SE","Comic Sans MS",cursive;padding:14px}
+      h1{font-family:system-ui;font-size:13px;letter-spacing:.3em;text-transform:uppercase;text-align:center;color:#555;margin:6px 0 14px} .g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .pol{background:#fdfdfb;padding:7px 7px 0;box-shadow:0 3px 8px rgba(0,0,0,.18)} .pol .ph{aspect-ratio:1;border-radius:0} .pol p{margin:6px 0;font-size:14px;line-height:1.2;min-height:34px} .empty{aspect-ratio:1;background:#f1ede4;display:flex;align-items:center;justify-content:center;padding:8px;font-size:13px;text-align:center}
+      .one{background:#fdfdfb;padding:10px 10px 0;box-shadow:0 3px 8px rgba(0,0,0,.18);transform:rotate(-1deg)} .one .ph{border-radius:0;aspect-ratio:1} .one p{font-size:20px;margin:10px 0}`,
+    home: () => `<h1>Familia</h1><div class="g">${P.map((n) => `<div class="pol">${n.g ? ph(n.g, n.video ? "video" : "") : `<div class="empty">${esc(n.ex)}</div>`}<p>${esc(n.t)}</p></div>`).join("")}</div>`,
+    note: () => `<div class="one">${ph("g1")}<p>${F0.t} · ${F0.d}</p></div><p style="font-family:Georgia,serif;font-size:17px;line-height:1.6;margin-top:18px">${FAM.body}</p>`,
+  },
+  {
+    name: "Minimal Gallery", why: "Quiet, museum-like: lots of white, thin type, photos edge-to-edge, date as a small caption. Lets the pictures speak.",
+    css: `.mock{background:#fff;color:#111;font-family:"Helvetica Neue",Arial,sans-serif;font-weight:300}
+      .hd{padding:18px 16px;font-size:13px;letter-spacing:.35em;text-transform:uppercase} .it{margin-bottom:34px} .it .ph{border-radius:0} .it div{padding:8px 16px;display:flex;justify-content:space-between;font-size:13px} .it small{color:#999}
+      .art .ph{border-radius:0;margin-bottom:4px} .art p{padding:0 16px;font-size:17px;line-height:1.75}`,
+    home: () => `<div class="hd">Familia</div>${P.filter((n) => n.g).map((n) => `<div class="it">${ph(n.g, n.video ? "video" : "")}<div><span>${esc(n.t)}</span><small>${n.d}</small></div></div>`).join("")}`,
+    note: () => `<div class="hd">← Familia</div><div class="art">${ph("g1")}${ph("g6")}<p><small style="color:#999;letter-spacing:.2em">${F0.d.toUpperCase()}</small></p><p>${FAM.body}</p></div>`,
+  },
+  {
+    name: "Scrapbook", why: "Tape, stickers and paper scraps around photos — the digital version of a fridge collage.",
+    css: `.mock{background:#f3ead8 repeating-linear-gradient(0deg,transparent 0 27px,#e6dcc6 27px 28px);color:#3a2e1f;font-family:"Bradley Hand","Segoe Print",cursive;padding:18px}
+      h1{font-size:30px;margin:0 0 16px;transform:rotate(-2deg)} .s{position:relative;background:#fff;padding:8px;margin:0 8px 26px;box-shadow:0 4px 10px rgba(0,0,0,.15)} .s::before{content:"";position:absolute;top:-10px;left:40%;width:70px;height:20px;background:rgba(255,230,150,.75);transform:rotate(-4deg)}
+      .s:nth-child(odd){transform:rotate(1.5deg)} .s:nth-child(even){transform:rotate(-1.5deg);margin-left:24px} .s .ph{border-radius:0} .s b{font-size:20px;font-weight:normal} .stk{position:absolute;right:-8px;top:-12px;font-size:28px}
+      .note{background:#fffbe0;padding:12px;font-size:18px;transform:rotate(1deg);box-shadow:0 4px 10px rgba(0,0,0,.12)}`,
+    home: () => `<h1>Familia ✂️</h1><div>${P.map((n, i) => `<div class="s"><span class="stk">${["⭐", "🚲", "🎂", "💬", "⛺"][i]}</span>${n.g ? ph(n.g, n.video ? "video" : "") : ""}<b>${esc(n.t)}</b><br><small>${n.d}</small></div>`).join("")}</div>`,
+    note: () => `<div class="s"><span class="stk">🏖️</span>${ph("g1")}</div><div class="s">${ph("g5")}</div><div class="note">${FAM.body}</div>`,
+  },
+  {
+    name: "Kids' Growth Chart", why: "Organises notes per child and by age ('3 years 2 months'), so the site doubles as a growth diary.",
+    css: `.mock{background:#f6f8fb;color:#1e2a3a;font-family:system-ui,sans-serif;padding:16px}
+      .kids{display:flex;gap:8px;margin-bottom:14px} .kids button{font:inherit;border:0;border-radius:999px;padding:6px 12px;background:#e4ebf3;font-size:13px} .kids button.on{background:#2f6690;color:#fff}
+      .age{font-size:12px;font-weight:700;color:#2f6690;letter-spacing:.08em;margin:14px 0 6px} .r{display:flex;gap:10px;background:#fff;border-radius:12px;padding:8px;margin-bottom:8px;align-items:center}
+      .r .ph{width:64px;flex:none;aspect-ratio:1;border-radius:8px} .r .nop{width:64px;height:64px;flex:none;border-radius:8px;background:#e4ebf3;display:flex;align-items:center;justify-content:center;font-size:24px} .r b{display:block;font-size:15px} .r small{color:#738196}
+      .badge{display:inline-block;background:#e4ebf3;color:#2f6690;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}`,
+    home: () => `<div class="kids"><button class="on">Everyone</button><button>Child A</button><button>Child B</button></div><div class="age">3 YEARS, 2 MONTHS</div>${P.slice(0, 2).map((n) => `<div class="r">${n.g ? ph(n.g, n.video ? "video" : "") : `<span class="nop">💬</span>`}<span><b>${esc(n.t)}</b><small>${n.d}</small></span></div>`).join("")}<div class="age">3 YEARS, 1 MONTH</div>${P.slice(2).map((n) => `<div class="r">${n.g ? ph(n.g) : `<span class="nop">💬</span>`}<span><b>${esc(n.t)}</b><small>${n.d}</small></span></div>`).join("")}`,
+    note: () => `<span class="badge">Child A · 3 years, 2 months</span>${ph("g1", "", "margin:12px 0;border-radius:12px")}<h2 style="margin:0 0 6px">${F0.t}</h2><p>${FAM.body}</p>`,
+  },
+  {
+    name: "Story Reels", why: "A stories-style viewer: one fullscreen photo or video at a time, tap to advance, progress bars on top.",
+    css: `.mock{background:#000;color:#fff;font-family:system-ui,sans-serif;height:100%;min-height:618px;position:relative;overflow:hidden}
+      .bars{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:4px;z-index:2} .bars i{flex:1;height:3px;background:rgba(255,255,255,.35);border-radius:2px} .bars i.on{background:#fff}
+      .full{position:absolute;inset:0} .full .ph{height:100%;aspect-ratio:auto;border-radius:0} .cap{position:absolute;left:0;right:0;bottom:0;padding:60px 16px 22px;background:linear-gradient(transparent,rgba(0,0,0,.7));z-index:2}
+      .cap b{font-size:22px;display:block} .cap small{opacity:.8} .row{position:absolute;top:28px;left:14px;z-index:2;font-size:13px;display:flex;gap:8px;align-items:center} .av{width:28px;height:28px;border-radius:50%;border:2px solid #fff;background:#f9a8d4}
+      .rail{position:absolute;bottom:90px;left:0;right:0;display:flex;gap:8px;padding:0 12px;overflow:auto;z-index:2} .rail span{flex:none;width:56px;height:56px;border-radius:50%;border:2px solid #fff;overflow:hidden} .rail .ph{height:100%;aspect-ratio:auto}`,
+    home: () => `<div class="bars"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="row"><span class="av"></span>Familia · ${P[1].d}</div><div class="full">${ph(P[1].g, "video")}</div><div class="rail">${P.filter((n) => n.g).map((n) => `<span>${ph(n.g)}</span>`).join("")}</div><div class="cap"><b>${P[1].t}</b><small>${esc(P[1].ex)}</small></div>`,
+    note: () => `<div class="bars"><i class="on"></i><i class="on"></i><i></i></div><div class="row"><span class="av"></span>${F0.t}</div><div class="full">${ph("g1")}</div><div class="cap"><b>${F0.t}</b><small>${FAM.body}</small></div>`,
+  },
+];
+
+const designs = { blog: blogDesigns, familia: famDesigns };
+let site = "blog";
+const view = {}; // per-card view
+
+function render() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = designs[site].map((d, i) => {
+    const id = `${site}-d${i}`;
+    const v = view[id] || "home";
+    return `<article class="card" aria-labelledby="${id}-h">
+      <style>${scope(id, d.css)}</style>
+      <div class="meta"><h2 id="${id}-h"><span>${String(i + 1).padStart(2, "0")}</span>${esc(d.name)}</h2><p>${esc(d.why)}</p>
+        <div class="seg" role="group" aria-label="Page shown for ${esc(d.name)}">
+          <button data-card="${id}" data-view="home" aria-pressed="${v === "home"}">Home</button>
+          <button data-card="${id}" data-view="note" aria-pressed="${v === "note"}">Note</button>
+        </div></div>
+      <div class="frame" tabindex="0" aria-label="${esc(d.name)} ${v} page mock"><div class="mock ${id}">${d[v]()}</div></div>
+    </article>`;
+  }).join("");
+}
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) { if (e.target.closest(".frame a")) e.preventDefault(); return; }
+  if (b.dataset.site) {
+    site = b.dataset.site;
+    document.querySelectorAll(".tabs button").forEach((t) => t.setAttribute("aria-selected", String(t === b)));
+    render();
+  } else if (b.dataset.card) {
+    view[b.dataset.card] = b.dataset.view;
+    render();
+  } else if (b.dataset.all) {
+    designs[site].forEach((_, i) => (view[`${site}-d${i}`] = b.dataset.all));
+    document.querySelectorAll("[data-all]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  }
+});
+render();
+</script>
+</body>
+</html>
